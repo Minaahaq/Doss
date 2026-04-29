@@ -2,104 +2,82 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<title>لوحة التحكم</title>
+<title>Dashboard</title>
 
 <style>
-body {
-  font-family: Arial;
-  background: #0f0f0f;
-  color: white;
-  padding: 20px;
-}
-.card {
-  background: #1c1c1c;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 12px;
-}
-button {
-  margin: 5px;
-  padding: 6px 12px;
-  background: red;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-.loading {
-  text-align: center;
-}
+body { font-family: Arial; background:#0f0f0f; color:white; padding:20px; }
+h1 { text-align:center; }
+.card { background:#1c1c1c; padding:15px; margin:10px 0; border-radius:10px; }
+button { background:red; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:5px; }
+.loading { text-align:center; }
 </style>
 </head>
 
 <body>
 
-<h1>📚 إدارة الأبواب</h1>
-<div id="app" class="loading">جاري التحميل...</div>
+<h1>📚 إدارة المحتوى</h1>
+<div id="app" class="loading">Loading...</div>
 
 <script>
 async function loadData() {
+  const res = await fetch("/api/data");
+  const data = await res.json();
+
   const app = document.getElementById("app");
+  app.innerHTML = "";
 
-  try {
-    const res = await fetch("/data");
-    const data = await res.json();
+  data.years?.forEach(year => {
+    year.subjects?.forEach(subject => {
+      subject.teachers?.forEach(teacher => {
+        teacher.chapters?.forEach(chapter => {
 
-    app.innerHTML = "";
+          const div = document.createElement("div");
+          div.className = "card";
 
-    data.years.forEach(year => {
-      (year.subjects || []).forEach(subject => {
-        (subject.teachers || []).forEach(teacher => {
+          div.innerHTML = `
+            <h3>👨‍🏫 ${teacher.teacher_name}</h3>
+            <p>📘 ${chapter.chapter_name}</p>
 
-          (teacher.chapters || []).forEach(chapter => {
+            <button onclick="deleteChapter(${chapter.chapter_id})">
+              حذف الباب
+            </button>
 
-            const div = document.createElement("div");
-            div.className = "card";
-
-            div.innerHTML = `
-              <h3>${teacher.teacher_name}</h3>
-              <p>${chapter.chapter_name}</p>
-
-              <button onclick="deleteChapter('${chapter.chapter_id}')">
-                حذف الباب
-              </button>
-
+            <div>
               ${(chapter.lectures || []).map(lec => `
                 <p>
-                  ${lec.lecture_name}
-                  <button onclick="deleteLecture('${chapter.chapter_id}', '${lec.lecture_id}')">
+                  🎥 ${lec.lecture_name}
+                  <button onclick="deleteLecture(${chapter.chapter_id}, ${lec.lecture_id})">
                     حذف
                   </button>
                 </p>
               `).join("")}
-            `;
+            </div>
+          `;
 
-            app.appendChild(div);
-          });
-
+          app.appendChild(div);
         });
       });
     });
-
-  } catch {
-    app.innerHTML = "❌ فشل تحميل البيانات";
-  }
+  });
 }
 
 async function deleteChapter(id) {
-  await fetch("/delete-chapter", {
+  await fetch("/api/delete-chapter", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chapterId: id })
   });
+
   loadData();
 }
 
-async function deleteLecture(ch, lec) {
-  await fetch("/delete-lecture", {
+async function deleteLecture(chapterId, lectureId) {
+  await fetch("/api/delete-lecture", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chapterId: ch, lectureId: lec })
+    body: JSON.stringify({ chapterId, lectureId })
   });
+
   loadData();
 }
 
