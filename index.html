@@ -36,6 +36,11 @@ button {
 button:hover {
   opacity: 0.8;
 }
+
+.loading {
+  text-align: center;
+  color: #aaa;
+}
 </style>
 
 </head>
@@ -43,59 +48,78 @@ button:hover {
 
 <h1>📚 إدارة الأبواب والمحاضرات</h1>
 
-<div id="app"></div>
+<div id="app" class="loading">جاري تحميل البيانات...</div>
 
 <script>
 async function loadData() {
-  const res = await fetch("http://localhost:3000/data");
-  const data = await res.json();
-
   const app = document.getElementById("app");
-  app.innerHTML = "";
 
-  data.years.forEach(year => {
-    year.subjects.forEach(subject => {
-      subject.teachers.forEach(teacher => {
+  try {
+    const res = await fetch("/data"); 
+    if (!res.ok) throw new Error("API ERROR");
 
-        teacher.chapters?.forEach(chapter => {
+    const data = await res.json();
 
-          const div = document.createElement("div");
-          div.className = "card";
+    if (!data || !data.years) {
+      throw new Error("NO DATA FOUND");
+    }
 
-          div.innerHTML = `
-            <h3>👨‍🏫 ${teacher.teacher_name}</h3>
-            <p>📘 الباب: ${chapter.chapter_name}</p>
-            <button onclick="deleteChapter(${chapter.chapter_id})">
-              🗑️ حذف الباب
-            </button>
+    app.innerHTML = "";
 
-            <div>
-              ${chapter.lectures?.map(lec => `
-                <p>
-                  🎥 ${lec.lecture_name}
-                  <button onclick="deleteLecture(${chapter.chapter_id}, ${lec.lecture_id})">
-                    حذف المحاضرة
-                  </button>
-                </p>
-              `).join("")}
-            </div>
-          `;
+    data.years.forEach(year => {
+      (year.subjects || []).forEach(subject => {
+        (subject.teachers || []).forEach(teacher => {
 
-          app.appendChild(div);
+          (teacher.chapters || []).forEach(chapter => {
+
+            const div = document.createElement("div");
+            div.className = "card";
+
+            div.innerHTML = `
+              <h3>👨‍🏫 ${teacher.teacher_name || "بدون اسم"}</h3>
+              <p>📘 الباب: ${chapter.chapter_name || ""}</p>
+
+              <button onclick="deleteChapter(${chapter.chapter_id})">
+                🗑️ حذف الباب
+              </button>
+
+              <div>
+                ${(chapter.lectures || []).map(lec => `
+                  <p>
+                    🎥 ${lec.lecture_name}
+                    <button onclick="deleteLecture(${chapter.chapter_id}, ${lec.lecture_id})">
+                      حذف
+                    </button>
+                  </p>
+                `).join("")}
+              </div>
+            `;
+
+            app.appendChild(div);
+
+          });
 
         });
-
       });
     });
-  });
+
+  } catch (err) {
+    console.error(err);
+    app.innerHTML = `
+      <h3 style="color:red; text-align:center">
+        ❌ فشل تحميل البيانات<br>
+        تأكد إن السيرفر شغال /data
+      </h3>
+    `;
+  }
 }
 
 async function deleteChapter(id) {
   if (!confirm("متأكد تحذف الباب؟")) return;
 
-  await fetch("http://localhost:3000/delete-chapter", {
+  await fetch("/delete-chapter", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chapterId: id })
   });
 
@@ -105,9 +129,9 @@ async function deleteChapter(id) {
 async function deleteLecture(chapterId, lectureId) {
   if (!confirm("متأكد تحذف المحاضرة؟")) return;
 
-  await fetch("http://localhost:3000/delete-lecture", {
+  await fetch("/delete-lecture", {
     method: "POST",
-    headers: {"Content-Type": "application/json"},
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chapterId, lectureId })
   });
 
