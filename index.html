@@ -11,18 +11,12 @@ body {
   color: white;
   padding: 20px;
 }
-
-h1 {
-  text-align: center;
-}
-
 .card {
   background: #1c1c1c;
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 12px;
 }
-
 button {
   margin: 5px;
   padding: 6px 12px;
@@ -30,39 +24,25 @@ button {
   color: white;
   border: none;
   cursor: pointer;
-  border-radius: 6px;
 }
-
-button:hover {
-  opacity: 0.8;
-}
-
 .loading {
   text-align: center;
-  color: #aaa;
 }
 </style>
-
 </head>
+
 <body>
 
-<h1>📚 إدارة الأبواب والمحاضرات</h1>
-
-<div id="app" class="loading">جاري تحميل البيانات...</div>
+<h1>📚 إدارة الأبواب</h1>
+<div id="app" class="loading">جاري التحميل...</div>
 
 <script>
 async function loadData() {
   const app = document.getElementById("app");
 
   try {
-    const res = await fetch("/data"); 
-    if (!res.ok) throw new Error("API ERROR");
-
+    const res = await fetch("/data");
     const data = await res.json();
-
-    if (!data || !data.years) {
-      throw new Error("NO DATA FOUND");
-    }
 
     app.innerHTML = "";
 
@@ -76,65 +56,50 @@ async function loadData() {
             div.className = "card";
 
             div.innerHTML = `
-              <h3>👨‍🏫 ${teacher.teacher_name || "بدون اسم"}</h3>
-              <p>📘 الباب: ${chapter.chapter_name || ""}</p>
+              <h3>${teacher.teacher_name}</h3>
+              <p>${chapter.chapter_name}</p>
 
-              <button onclick="deleteChapter(${chapter.chapter_id})">
-                🗑️ حذف الباب
+              <button onclick="deleteChapter('${chapter.chapter_id}')">
+                حذف الباب
               </button>
 
-              <div>
-                ${(chapter.lectures || []).map(lec => `
-                  <p>
-                    🎥 ${lec.lecture_name}
-                    <button onclick="deleteLecture(${chapter.chapter_id}, ${lec.lecture_id})">
-                      حذف
-                    </button>
-                  </p>
-                `).join("")}
-              </div>
+              ${(chapter.lectures || []).map(lec => `
+                <p>
+                  ${lec.lecture_name}
+                  <button onclick="deleteLecture('${chapter.chapter_id}', '${lec.lecture_id}')">
+                    حذف
+                  </button>
+                </p>
+              `).join("")}
             `;
 
             app.appendChild(div);
-
           });
 
         });
       });
     });
 
-  } catch (err) {
-    console.error(err);
-    app.innerHTML = `
-      <h3 style="color:red; text-align:center">
-        ❌ فشل تحميل البيانات<br>
-        تأكد إن السيرفر شغال /data
-      </h3>
-    `;
+  } catch {
+    app.innerHTML = "❌ فشل تحميل البيانات";
   }
 }
 
 async function deleteChapter(id) {
-  if (!confirm("متأكد تحذف الباب؟")) return;
-
   await fetch("/delete-chapter", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ chapterId: id })
   });
-
   loadData();
 }
 
-async function deleteLecture(chapterId, lectureId) {
-  if (!confirm("متأكد تحذف المحاضرة؟")) return;
-
+async function deleteLecture(ch, lec) {
   await fetch("/delete-lecture", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chapterId, lectureId })
+    body: JSON.stringify({ chapterId: ch, lectureId: lec })
   });
-
   loadData();
 }
 
