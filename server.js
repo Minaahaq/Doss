@@ -8,32 +8,24 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 📁 مسار الملف
+// 👇 يخلي HTML يشتغل من السيرفر
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+app.use(express.static(__dirname));
+
 const FILE = path.join(__dirname, "database.json");
 
-// 📥 قراءة آمنة + إصلاح لو JSON بايظ
+// 📥 قراءة
 async function readData() {
   try {
     const file = await fs.readFile(FILE, "utf-8");
-
-    try {
-      return JSON.parse(file);
-    } catch {
-      console.log("⚠️ JSON فيه مشكلة - بيتم إصلاحه...");
-      // محاولة إصلاح بسيطة (إغلاق الأقواس)
-      const fixed = file + "\n]}]}]}]}";
-      return JSON.parse(fixed);
-    }
-
-  } catch (err) {
-    console.error("❌ Read Error:", err.message);
+    return JSON.parse(file);
+  } catch {
     return { years: [] };
   }
 }
 
-// 📤 كتابة آمنة (منع التضارب)
+// 📤 كتابة
 let isWriting = false;
 
 async function writeData(data) {
@@ -55,62 +47,49 @@ app.get("/data", async (req, res) => {
 
 // 🗑️ حذف باب
 app.post("/delete-chapter", async (req, res) => {
-  try {
-    const { chapterId } = req.body;
-    const data = await readData();
+  const { chapterId } = req.body;
+  const data = await readData();
 
-    data.years?.forEach(year => {
-      year.subjects?.forEach(subject => {
-        subject.teachers?.forEach(teacher => {
-          if (teacher.chapters) {
-            teacher.chapters = teacher.chapters.filter(
-              ch => ch.chapter_id !== chapterId
-            );
-          }
-        });
+  data.years?.forEach(year => {
+    year.subjects?.forEach(subject => {
+      subject.teachers?.forEach(teacher => {
+        teacher.chapters = (teacher.chapters || []).filter(
+          ch => ch.chapter_id != chapterId
+        );
       });
     });
+  });
 
-    await writeData(data);
-
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  await writeData(data);
+  res.json({ success: true });
 });
 
 // 🗑️ حذف محاضرة
 app.post("/delete-lecture", async (req, res) => {
-  try {
-    const { chapterId, lectureId } = req.body;
-    const data = await readData();
+  const { chapterId, lectureId } = req.body;
+  const data = await readData();
 
-    data.years?.forEach(year => {
-      year.subjects?.forEach(subject => {
-        subject.teachers?.forEach(teacher => {
+  data.years?.forEach(year => {
+    year.subjects?.forEach(subject => {
+      subject.teachers?.forEach(teacher => {
 
-          teacher.chapters?.forEach(ch => {
-            if (ch.chapter_id === chapterId && ch.lectures) {
-              ch.lectures = ch.lectures.filter(
-                lec => lec.lecture_id !== lectureId
-              );
-            }
-          });
-
+        teacher.chapters?.forEach(ch => {
+          if (ch.chapter_id == chapterId) {
+            ch.lectures = (ch.lectures || []).filter(
+              lec => lec.lecture_id != lectureId
+            );
+          }
         });
+
       });
     });
+  });
 
-    await writeData(data);
-
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+  await writeData(data);
+  res.json({ success: true });
 });
 
 // 🚀 تشغيل
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 http://localhost:${PORT}/data`);
+app.listen(3000, () => {
+  console.log("🚀 http://localhost:3000");
 });
