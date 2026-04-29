@@ -8,34 +8,46 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// ✅ حل مشكلة المسار
+// 📁 مسار الملف
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const FILE = path.join(__dirname, "database.json");
 
-// ✅ قراءة آمنة
+// 📥 قراءة آمنة + إصلاح لو JSON بايظ
 async function readData() {
   try {
     const file = await fs.readFile(FILE, "utf-8");
-    return JSON.parse(file);
+
+    try {
+      return JSON.parse(file);
+    } catch {
+      console.log("⚠️ JSON فيه مشكلة - بيتم إصلاحه...");
+      // محاولة إصلاح بسيطة (إغلاق الأقواس)
+      const fixed = file + "\n]}]}]}]}";
+      return JSON.parse(fixed);
+    }
+
   } catch (err) {
-    console.error("Read Error:", err.message);
+    console.error("❌ Read Error:", err.message);
     return { years: [] };
   }
 }
 
-// ✅ كتابة آمنة (منع تضارب)
+// 📤 كتابة آمنة (منع التضارب)
 let isWriting = false;
+
 async function writeData(data) {
   while (isWriting) {
     await new Promise(r => setTimeout(r, 50));
   }
   isWriting = true;
+
   await fs.writeFile(FILE, JSON.stringify(data, null, 2));
+
   isWriting = false;
 }
 
-// 📥 جلب البيانات
+// 📊 جلب البيانات
 app.get("/data", async (req, res) => {
   const data = await readData();
   res.json(data);
@@ -60,6 +72,7 @@ app.post("/delete-chapter", async (req, res) => {
     });
 
     await writeData(data);
+
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -89,14 +102,15 @@ app.post("/delete-lecture", async (req, res) => {
     });
 
     await writeData(data);
+
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// 🚀 تشغيل السيرفر
+// 🚀 تشغيل
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}/data`);
+  console.log(`🚀 http://localhost:${PORT}/data`);
 });
