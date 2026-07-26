@@ -1,88 +1,205 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوابة نتائج الطلاب</title>
 
-<style>
-body { font-family: Arial; background:#0f0f0f; color:white; padding:20px; }
-h1 { text-align:center; }
-.card { background:#1c1c1c; padding:15px; margin:10px 0; border-radius:10px; }
-button { background:red; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:5px; }
-.loading { text-align:center; }
-</style>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <!-- Cairo Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <!-- SheetJS -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <!-- html2canvas & jsPDF for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
-<h1>📚 إدارة المحتوى</h1>
-<div id="app" class="loading">Loading...</div>
+    <!-- ===== Floating Background Particles ===== -->
+    <div class="particles" id="particles"></div>
 
-<script>
-async function loadData() {
-  const res = await fetch("/api/data");
-  const data = await res.json();
+    <!-- ===== Animated Background Shapes ===== -->
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
 
-  const app = document.getElementById("app");
-  app.innerHTML = "";
-
-  data.years?.forEach(year => {
-    year.subjects?.forEach(subject => {
-      subject.teachers?.forEach(teacher => {
-        teacher.chapters?.forEach(chapter => {
-
-          const div = document.createElement("div");
-          div.className = "card";
-
-          div.innerHTML = `
-            <h3>👨‍🏫 ${teacher.teacher_name}</h3>
-            <p>📘 ${chapter.chapter_name}</p>
-
-            <button onclick="deleteChapter(${chapter.chapter_id})">
-              حذف الباب
-            </button>
-
-            <div>
-              ${(chapter.lectures || []).map(lec => `
-                <p>
-                  🎥 ${lec.lecture_name}
-                  <button onclick="deleteLecture(${chapter.chapter_id}, ${lec.lecture_id})">
-                    حذف
-                  </button>
-                </p>
-              `).join("")}
+    <!-- ===== Main Container ===== -->
+    <div class="container" id="app">
+        
+        <!-- ===== Header ===== -->
+        <header class="header glass text-center">
+            <div class="flex items-center justify-between mb-4">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap text-4xl text-blue-400"></i>
+                </div>
+                <button id="darkModeToggle" class="theme-toggle" title="الوضع الليلي">
+                    <i class="fas fa-moon"></i>
+                </button>
             </div>
-          `;
+            <h1 class="title">بوابة نتائج الطلاب</h1>
+            <p class="subtitle">الجهاز المركزي لشئون الطلاب — نتائج الفصل الدراسي</p>
+            <div class="divider"></div>
+        </header>
 
-          app.appendChild(div);
-        });
-      });
-    });
-  });
-}
+        <!-- ===== Search Section ===== -->
+        <section class="search-section glass">
+            <div class="search-wrapper">
+                <div class="input-group">
+                    <i class="fas fa-search input-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="أدخل رقم الجلوس..."
+                        inputmode="numeric"
+                        autocomplete="off"
+                        maxlength="15"
+                    />
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i>
+                        <span>عرض النتيجة</span>
+                    </button>
+                </div>
+                <p class="hint-text">
+                    <i class="fas fa-info-circle"></i>
+                    أدخل رقم الجلوس المكون من أرقام فقط ثم اضغط Enter أو زر البحث
+                </p>
+            </div>
+        </section>
 
-async function deleteChapter(id) {
-  await fetch("/api/delete-chapter", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chapterId: id })
-  });
+        <!-- ===== Loading Spinner ===== -->
+        <div id="loadingSpinner" class="loading-spinner hidden">
+            <div class="spinner-container glass">
+                <div class="spinner"></div>
+                <p class="loading-text">جاري البحث عن النتيجة...</p>
+            </div>
+        </div>
 
-  loadData();
-}
+        <!-- ===== Result Card ===== -->
+        <section id="resultSection" class="result-section hidden">
+            <div class="result-card glass">
+                <!-- Card Header -->
+                <div class="result-header">
+                    <div class="status-badge" id="statusBadge">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="statusText">ناجح</span>
+                    </div>
+                    <div class="result-actions">
+                        <button class="action-btn" id="printBtn" title="طباعة النتيجة">
+                            <i class="fas fa-print"></i>
+                        </button>
+                        <button class="action-btn" id="pdfBtn" title="تحميل PDF">
+                            <i class="fas fa-file-pdf"></i>
+                        </button>
+                        <button class="action-btn" id="shareBtn" title="مشاركة النتيجة">
+                            <i class="fas fa-share-alt"></i>
+                        </button>
+                        <button class="action-btn" id="copyBtn" title="نسخ النتيجة">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="action-btn" id="newSearchBtn" title="بحث جديد">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                    </div>
+                </div>
 
-async function deleteLecture(chapterId, lectureId) {
-  await fetch("/api/delete-lecture", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chapterId, lectureId })
-  });
+                <!-- Student Info -->
+                <div class="student-info">
+                    <div class="student-avatar">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="student-details">
+                        <h2 class="student-name" id="studentName">—</h2>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">رقم الجلوس</span>
+                                <span class="info-value" id="studentSeatNo">—</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">الشعبة</span>
+                                <span class="info-value" id="studentBranch">—</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  loadData();
-}
+                <!-- Grades Table -->
+                <div class="table-container">
+                    <table class="grades-table" id="gradesTable">
+                        <thead>
+                            <tr>
+                                <th>المادة</th>
+                                <th>الدرجة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesBody">
+                            <!-- Grades will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
 
-loadData();
-</script>
+                <!-- Summary -->
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="summary-label">المجموع الكلي</span>
+                        <span class="summary-value" id="totalDegree">—</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">النسبة المئوية</span>
+                        <span class="summary-value" id="percentage">—</span>
+                    </div>
+                    <div class="summary-item highlight">
+                        <span class="summary-label">التقدير</span>
+                        <span class="summary-value" id="grade">—</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- ===== Error Message ===== -->
+        <section id="errorSection" class="error-section hidden">
+            <div class="error-card glass">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="error-title">رقم الجلوس غير موجود</h3>
+                <p class="error-desc">
+                    لم نتمكن من العثور على هذا الرقم في قاعدة البيانات. يرجى التأكد من صحة الرقم والمحاولة مرة أخرى.
+                </p>
+                <button class="retry-btn" id="retryBtn">
+                    <i class="fas fa-redo"></i>
+                    محاولة مرة أخرى
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== Footer ===== -->
+        <footer class="footer glass text-center">
+            <p>جميع الحقوق محفوظة &copy; <span id="year"></span> — بوابة نتائج الطلاب</p>
+            <p class="footer-version">الإصدار 2.0</p>
+        </footer>
+
+    </div>
+
+    <!-- ===== Toast Container ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== Confetti Canvas ===== -->
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- ===== Scripts ===== -->
+    <script src="script.js"></script>
 </body>
 </html>
+
