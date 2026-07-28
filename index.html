@@ -1,205 +1,217 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html dir="rtl" lang="ar">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>بوابة نتائج الطلاب</title>
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <!-- Cairo Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-    <!-- SheetJS -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
-    <!-- html2canvas & jsPDF for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نتيجة الثانوية العامة 2026 - بحث فوري</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tahoma', Arial, sans-serif; }
+        body { background: #eef1f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { background: #ffffff; max-width: 850px; width: 100%; padding: 30px; border-radius: 24px; box-shadow: 0 12px 40px rgba(0,0,0,0.1); border-top: 6px solid #1a237e; }
+        h1 { color: #1a237e; text-align: center; font-size: 28px; }
+        .sub { text-align: center; color: #555; margin-bottom: 25px; font-size: 15px; }
+        .search-box { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
+        .search-box input { flex: 1; padding: 14px 20px; border: 2px solid #dde1e8; border-radius: 40px; font-size: 18px; outline: none; transition: 0.3s; min-width: 200px; }
+        .search-box input:focus { border-color: #1a237e; }
+        .search-box button { padding: 14px 35px; background: #1a237e; color: #fff; border: none; border-radius: 40px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .search-box button:hover { background: #0d1555; transform: scale(1.02); }
+        .loader { display: none; text-align: center; padding: 30px; font-size: 18px; color: #1a237e; }
+        .loader::after { content: " ⏳"; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+        .error { color: #d32f2f; text-align: center; padding: 20px; font-size: 17px; display: none; background: #ffebee; border-radius: 12px; }
+        .result-card { background: #f8faff; border-radius: 16px; padding: 25px; border-right: 6px solid #1a237e; display: none; margin-top: 10px; }
+        .result-card h2 { color: #1a237e; font-size: 22px; margin-bottom: 20px; border-bottom: 2px dashed #ddd; padding-bottom: 12px; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+        .info-item { background: #fff; padding: 12px 18px; border-radius: 12px; border: 1px solid #e8ecf5; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .info-item span { font-weight: bold; color: #1a237e; display: inline-block; width: 100px; }
+        .grade-badge { display: inline-block; padding: 4px 22px; background: #ffb300; border-radius: 40px; font-weight: bold; color: #1a237e; }
+        .subjects-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 15px; }
+        .subjects-table th { background: #1a237e; color: #fff; padding: 10px 12px; text-align: right; }
+        .subjects-table td { padding: 10px 12px; border-bottom: 1px solid #e4e7f0; }
+        .subjects-table tr:nth-child(even) { background: #f4f6fc; }
+        .source-note { margin-top: 20px; font-size: 12px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 15px; }
+        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
-
-    <!-- ===== Floating Background Particles ===== -->
-    <div class="particles" id="particles"></div>
-
-    <!-- ===== Animated Background Shapes ===== -->
-    <div class="bg-shapes">
-        <div class="shape shape-1"></div>
-        <div class="shape shape-2"></div>
-        <div class="shape shape-3"></div>
-        <div class="shape shape-4"></div>
+<div class="container">
+    <h1>🎓 نتيجة الثانوية العامة 2026</h1>
+    <p class="sub">أدخل رقم الجلوس لجلب النتيجة مباشرة من موقع نذاكر (بدون سيرفر)</p>
+    <div class="search-box">
+        <input type="text" id="seatInput" placeholder="مثال: 1776500" value="1776500">
+        <button onclick="fetchResult()">🔍 بحث فوري</button>
     </div>
+    <div class="loader" id="loader">جاري جلب النتيجة من الخادم...</div>
+    <div class="error" id="errorMsg"></div>
+    <div class="result-card" id="resultCard"></div>
+</div>
 
-    <!-- ===== Main Container ===== -->
-    <div class="container" id="app">
-        
-        <!-- ===== Header ===== -->
-        <header class="header glass text-center">
-            <div class="flex items-center justify-between mb-4">
-                <div class="logo">
-                    <i class="fas fa-graduation-cap text-4xl text-blue-400"></i>
-                </div>
-                <button id="darkModeToggle" class="theme-toggle" title="الوضع الليلي">
-                    <i class="fas fa-moon"></i>
-                </button>
+<script>
+    // Proxy مجاني لتجاوز مشكلة CORS (يجلب HTML الخارجي)
+    const PROXY_URL = 'https://api.allorigins.win/raw?url=';
+    const TARGET_BASE = 'https://than.nezakr.net/?system=s1&t=glos&k=';
+
+    async function fetchResult() {
+        const seat = document.getElementById('seatInput').value.trim();
+        const card = document.getElementById('resultCard');
+        const errorDiv = document.getElementById('errorMsg');
+        const loader = document.getElementById('loader');
+
+        // إخفاء كل شيء
+        card.style.display = 'none';
+        errorDiv.style.display = 'none';
+        loader.style.display = 'block';
+
+        if (!seat) {
+            errorDiv.textContent = '⚠️ برجاء إدخال رقم الجلوس';
+            errorDiv.style.display = 'block';
+            loader.style.display = 'none';
+            return;
+        }
+        if (!/^\d+$/.test(seat)) {
+            errorDiv.textContent = '⚠️ رقم الجلوس يجب أن يكون أرقام فقط';
+            errorDiv.style.display = 'block';
+            loader.style.display = 'none';
+            return;
+        }
+
+        try {
+            const targetUrl = TARGET_BASE + seat;
+            const proxyFullUrl = PROXY_URL + encodeURIComponent(targetUrl);
+
+            const response = await fetch(proxyFullUrl, {
+                headers: { 'Accept': 'text/html' }
+            });
+
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            const htmlText = await response.text();
+
+            // تحويل النص إلى DOM قابل للتعامل
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, 'text/html');
+
+            // 1. الاسم من التايتل
+            let name = 'غير معروف';
+            const title = doc.querySelector('title');
+            if (title) {
+                const match = title.textContent.match(/نتيجة الطالب (.*?) في/);
+                if (match) name = match[1].trim();
+            }
+
+            // 2. البيانات الأساسية (نبحث في النص الكامل)
+            const bodyText = doc.body.innerText;
+
+            const extractField = (text, label) => {
+                const regex = new RegExp(`${label}\\s*([^\\n\\d]+?)(?:\\d|\\n|$)`);
+                const match = text.match(regex);
+                return match ? match[1].trim() : 'غير محدد';
+            };
+
+            const section = extractField(bodyText, 'الشعبة');
+            const eduType = extractField(bodyText, 'نوع التعليم');
+            const grade = extractField(bodyText, 'التقدير');
+
+            // 3. استخراج جدول المواد (أقوى طريقة: البحث عن الأرقام بجوار أسماء المواد)
+            const subjects = {};
+            // الطريقة الأولى: البحث عن الجداول في الـ HTML
+            const tables = doc.querySelectorAll('table');
+            tables.forEach(table => {
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const cols = row.querySelectorAll('td');
+                    if (cols.length >= 2) {
+                        const subjName = cols[0].textContent.trim();
+                        const gradeText = cols[1].textContent.trim();
+                        // نتأكد أنها مادة وليست عنوان جانبي
+                        if (subjName.length > 1 && (gradeText.includes('/') || /\d/.test(gradeText))) {
+                            // نتجنب الكلمات المكررة مثل "المادة"
+                            if (!['المادة', 'الدرجة', 'التقدير', 'المستوى'].includes(subjName)) {
+                                subjects[subjName] = gradeText;
+                            }
+                        }
+                    }
+                });
+            });
+
+            // لو الجدول فشل، نستخدم الـ Regex على النص كامل
+            if (Object.keys(subjects).length === 0) {
+                const lines = bodyText.split('\n');
+                for (let line of lines) {
+                    line = line.trim();
+                    // نبحث عن نمط: اسم المادة + أرقام
+                    const match = line.match(/^([\u0600-\u06FF\s]{2,}?)\s*(\d+\.?\d*\s*\/\s*\d+)/);
+                    if (match) {
+                        const subj = match[1].trim();
+                        const score = match[2].trim();
+                        if (subj.length > 1 && !['الصف', 'الفصل', 'المجموع'].includes(subj)) {
+                            subjects[subj] = score;
+                        }
+                    }
+                }
+            }
+
+            // لو لسة مفيش، نضيف رسالة واضحة
+            if (Object.keys(subjects).length === 0) {
+                subjects['ملاحظة'] = 'لم يتم العثور على جدول المواد، لكن النتيجة موجودة. تأكد من رقم الجلوس.';
+            }
+
+            // عرض النتيجة
+            renderResult({
+                name: name,
+                seat: seat,
+                section: section,
+                education_type: eduType,
+                grade: grade,
+                subjects: subjects,
+                source: targetUrl
+            });
+
+        } catch (error) {
+            console.error(error);
+            errorDiv.textContent = `❌ فشل الجلب: ${error.message}. تأكد من اتصال الإنترنت أو حاول لاحقاً.`;
+            errorDiv.style.display = 'block';
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    function renderResult(data) {
+        const card = document.getElementById('resultCard');
+        let subjectsHtml = '';
+        if (typeof data.subjects === 'object') {
+            for (const [name, score] of Object.entries(data.subjects)) {
+                subjectsHtml += `<tr><td>${name}</td><td>${score}</td><td>غير متاح</td></tr>`;
+            }
+        } else {
+            subjectsHtml = `<tr><td colspan="3">${data.subjects || 'لا توجد بيانات'}</td></tr>`;
+        }
+
+        card.innerHTML = `
+            <h2>📌 نتيجة الطالب: ${data.name}</h2>
+            <div class="info-grid">
+                <div class="info-item"><span>رقم الجلوس:</span> ${data.seat}</div>
+                <div class="info-item"><span>الشعبة:</span> ${data.section}</div>
+                <div class="info-item"><span>نوع التعليم:</span> ${data.education_type}</div>
+                <div class="info-item"><span>التقدير:</span> <span class="grade-badge">${data.grade}</span></div>
             </div>
-            <h1 class="title">بوابة نتائج الطلاب</h1>
-            <p class="subtitle">الجهاز المركزي لشئون الطلاب — نتائج الفصل الدراسي</p>
-            <div class="divider"></div>
-        </header>
+            <h3 style="margin-bottom:5px;">📘 تفاصيل الدرجات (جلب مباشر)</h3>
+            <table class="subjects-table">
+                <thead><tr><th>المادة</th><th>الدرجة</th><th>المستوى</th></tr></thead>
+                <tbody>${subjectsHtml}</tbody>
+            </table>
+            <div class="source-note">✅ مصدر البيانات: <a href="${data.source}" target="_blank">${data.source}</a> (تم الجلب بواسطة Proxy)</div>
+        `;
+        card.style.display = 'block';
+    }
 
-        <!-- ===== Search Section ===== -->
-        <section class="search-section glass">
-            <div class="search-wrapper">
-                <div class="input-group">
-                    <i class="fas fa-search input-icon"></i>
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        class="search-input" 
-                        placeholder="أدخل رقم الجلوس..."
-                        inputmode="numeric"
-                        autocomplete="off"
-                        maxlength="15"
-                    />
-                    <button id="searchBtn" class="search-btn">
-                        <i class="fas fa-search"></i>
-                        <span>عرض النتيجة</span>
-                    </button>
-                </div>
-                <p class="hint-text">
-                    <i class="fas fa-info-circle"></i>
-                    أدخل رقم الجلوس المكون من أرقام فقط ثم اضغط Enter أو زر البحث
-                </p>
-            </div>
-        </section>
+    // بحث بالضغط على Enter
+    document.getElementById('seatInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') fetchResult();
+    });
 
-        <!-- ===== Loading Spinner ===== -->
-        <div id="loadingSpinner" class="loading-spinner hidden">
-            <div class="spinner-container glass">
-                <div class="spinner"></div>
-                <p class="loading-text">جاري البحث عن النتيجة...</p>
-            </div>
-        </div>
-
-        <!-- ===== Result Card ===== -->
-        <section id="resultSection" class="result-section hidden">
-            <div class="result-card glass">
-                <!-- Card Header -->
-                <div class="result-header">
-                    <div class="status-badge" id="statusBadge">
-                        <i class="fas fa-check-circle"></i>
-                        <span id="statusText">ناجح</span>
-                    </div>
-                    <div class="result-actions">
-                        <button class="action-btn" id="printBtn" title="طباعة النتيجة">
-                            <i class="fas fa-print"></i>
-                        </button>
-                        <button class="action-btn" id="pdfBtn" title="تحميل PDF">
-                            <i class="fas fa-file-pdf"></i>
-                        </button>
-                        <button class="action-btn" id="shareBtn" title="مشاركة النتيجة">
-                            <i class="fas fa-share-alt"></i>
-                        </button>
-                        <button class="action-btn" id="copyBtn" title="نسخ النتيجة">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <button class="action-btn" id="newSearchBtn" title="بحث جديد">
-                            <i class="fas fa-undo"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Student Info -->
-                <div class="student-info">
-                    <div class="student-avatar">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <div class="student-details">
-                        <h2 class="student-name" id="studentName">—</h2>
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <span class="info-label">رقم الجلوس</span>
-                                <span class="info-value" id="studentSeatNo">—</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">الشعبة</span>
-                                <span class="info-value" id="studentBranch">—</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Grades Table -->
-                <div class="table-container">
-                    <table class="grades-table" id="gradesTable">
-                        <thead>
-                            <tr>
-                                <th>المادة</th>
-                                <th>الدرجة</th>
-                            </tr>
-                        </thead>
-                        <tbody id="gradesBody">
-                            <!-- Grades will be injected here -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Summary -->
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <span class="summary-label">المجموع الكلي</span>
-                        <span class="summary-value" id="totalDegree">—</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">النسبة المئوية</span>
-                        <span class="summary-value" id="percentage">—</span>
-                    </div>
-                    <div class="summary-item highlight">
-                        <span class="summary-label">التقدير</span>
-                        <span class="summary-value" id="grade">—</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== Error Message ===== -->
-        <section id="errorSection" class="error-section hidden">
-            <div class="error-card glass">
-                <div class="error-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h3 class="error-title">رقم الجلوس غير موجود</h3>
-                <p class="error-desc">
-                    لم نتمكن من العثور على هذا الرقم في قاعدة البيانات. يرجى التأكد من صحة الرقم والمحاولة مرة أخرى.
-                </p>
-                <button class="retry-btn" id="retryBtn">
-                    <i class="fas fa-redo"></i>
-                    محاولة مرة أخرى
-                </button>
-            </div>
-        </section>
-
-        <!-- ===== Footer ===== -->
-        <footer class="footer glass text-center">
-            <p>جميع الحقوق محفوظة &copy; <span id="year"></span> — بوابة نتائج الطلاب</p>
-            <p class="footer-version">الإصدار 2.0</p>
-        </footer>
-
-    </div>
-
-    <!-- ===== Toast Container ===== -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <!-- ===== Confetti Canvas ===== -->
-    <canvas id="confettiCanvas"></canvas>
-
-    <!-- ===== Scripts ===== -->
-    <script src="script.js"></script>
+    // تشغيل بحث تلقائي عند فتح الصفحة
+    window.onload = fetchResult;
+</script>
 </body>
 </html>
-
