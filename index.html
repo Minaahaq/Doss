@@ -15,9 +15,9 @@
         .search-box input:focus { border-color: #1a237e; }
         .search-box button { padding: 14px 35px; background: #1a237e; color: #fff; border: none; border-radius: 40px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .search-box button:hover { background: #0d1555; transform: scale(1.02); }
-        .loader { display: none; text-align: center; padding: 30px; font-size: 18px; color: #1a237e; }
-        .loader::after { content: " ⏳"; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
+        .loader { display: none; text-align: center; padding: 20px; font-size: 16px; color: #1a237e; }
+        .progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 10px; margin: 10px 0; overflow: hidden; display: none; }
+        .progress-bar .fill { height: 100%; width: 0%; background: #1a237e; transition: width 0.5s; }
         .error { color: #d32f2f; text-align: center; padding: 20px; font-size: 17px; display: none; background: #ffebee; border-radius: 12px; border-right: 4px solid #d32f2f; }
         .result-card { background: #f8faff; border-radius: 16px; padding: 25px; border-right: 6px solid #1a237e; display: none; margin-top: 10px; }
         .result-card h2 { color: #1a237e; font-size: 22px; margin-bottom: 20px; border-bottom: 2px dashed #ddd; padding-bottom: 12px; }
@@ -36,12 +36,13 @@
 <body>
 <div class="container">
     <h1>🎓 نتيجة الثانوية العامة 2026</h1>
-    <p class="sub">أدخل رقم الجلوس – النظام يجرب 3 بروكسيات مختلفة لضمان وصول النتيجة</p>
+    <p class="sub">أدخل رقم الجلوس – نظام ذكي يجرب 5 بروكسيات مع إعادة المحاولة</p>
     <div class="search-box">
         <input type="text" id="seatInput" placeholder="مثال: 1776500" value="1776500">
         <button onclick="fetchResult()">🔍 بحث فوري</button>
     </div>
-    <div class="loader" id="loader">⏳ جاري جلب النتيجة (قد يستغرق 5 ثوان)...</div>
+    <div class="loader" id="loader">⏳ جاري البحث...</div>
+    <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
     <div class="error" id="errorMsg"></div>
     <div class="result-card" id="resultCard"></div>
 </div>
@@ -49,23 +50,35 @@
 <script>
     const TARGET_BASE = 'https://than.nezakr.net/?system=s1&t=glos&k=';
 
-    // قائمة البروكسيات (كل واحد بياخد الـ URL النهائي)
+    // 5 بروكسيات (بعضها جديد ومستقر)
     const PROXIES = [
         (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
         (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-        (url) => `https://api.cors.lol/?url=${encodeURIComponent(url)}`
+        (url) => `https://api.cors.lol/?url=${encodeURIComponent(url)}`,
+        (url) => `https://cors-anywhere.herokuapp.com/${url}`,
+        (url) => `https://proxy.cors.sh/${url}`
     ];
 
-    async function fetchWithTimeout(url, timeout = 12000) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
-        try {
-            const response = await fetch(url, { signal: controller.signal });
-            clearTimeout(timeoutId);
-            return response;
-        } catch (error) {
-            clearTimeout(timeoutId);
-            throw error;
+    // دالة جلب مع تايمت وإعادة محاولة (لكل بروكسي 3 مرات)
+    async function fetchWithRetry(proxyFn, targetUrl, retries = 3, timeout = 8000) {
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+                const proxyUrl = proxyFn(targetUrl);
+                const response = await fetch(proxyUrl, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const text = await response.text();
+                if (text.length < 100) throw new Error('استجابة فارغة');
+                return text;
+            } catch (err) {
+                // لو كانت آخر محاولة، نرمي الخطأ عشان نعرضه
+                if (attempt === retries) throw err;
+                // وإلا نستنى 200 ميلي ثانية قبل إعادة المحاولة
+                await new Promise(r => setTimeout(r, 200));
+            }
         }
     }
 
@@ -74,68 +87,63 @@
         const card = document.getElementById('resultCard');
         const errorDiv = document.getElementById('errorMsg');
         const loader = document.getElementById('loader');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
 
         card.style.display = 'none';
         errorDiv.style.display = 'none';
         loader.style.display = 'block';
-        loader.textContent = '⏳ جاري المحاولة على البروكسيات...';
+        progressBar.style.display = 'block';
+        progressFill.style.width = '0%';
+        loader.textContent = '⏳ بدء البحث...';
 
         if (!seat || !/^\d+$/.test(seat)) {
             errorDiv.textContent = '⚠️ برجاء إدخال رقم جلوس صحيح (أرقام فقط)';
             errorDiv.style.display = 'block';
             loader.style.display = 'none';
+            progressBar.style.display = 'none';
             return;
         }
 
         const targetUrl = TARGET_BASE + seat;
         let lastError = '';
 
-        // تجربة كل بروكسي بالترتيب
+        // جرب كل بروكسي مع إعادة المحاولة
         for (let i = 0; i < PROXIES.length; i++) {
+            const progress = Math.round(((i) / PROXIES.length) * 100);
+            progressFill.style.width = progress + '%';
+            loader.textContent = `⏳ جاري التجربة ${i+1}/${PROXIES.length} (إعادة المحاولة 3 مرات)...`;
+
             try {
-                const proxyUrl = PROXIES[i](targetUrl);
-                loader.textContent = `⏳ جاري التجربة ${i+1}/${PROXIES.length}...`;
-
-                const response = await fetchWithTimeout(proxyUrl, 10000);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-
-                const htmlText = await response.text();
-
-                // لو النص جاي فاضي أو طوله صغير جداً، اعتبره فاشل
-                if (htmlText.length < 100) {
-                    throw new Error('استجابة فارغة من هذا البروكسي');
-                }
-
-                // تحليل النتيجة
+                const htmlText = await fetchWithRetry(PROXIES[i], targetUrl, 3, 8000);
+                // نجاح – نحلل ونعرض
                 const data = parseHTML(htmlText, seat, targetUrl);
                 renderResult(data);
                 loader.style.display = 'none';
-                return; // نجحنا، نوقف البحث
-
+                progressBar.style.display = 'none';
+                return;
             } catch (err) {
                 lastError = err.message;
-                console.warn(`Proxy ${i+1} فشل:`, err);
+                console.warn(`Proxy ${i+1} فشل بعد 3 محاولات:`, err);
                 // نكمل للتالي
             }
         }
 
         // لو كل البروكسيات فشلت
         loader.style.display = 'none';
-        errorDiv.innerHTML = `❌ فشل الجلب من جميع البروكسيات. آخر خطأ: ${lastError}<br>
-                              <span style="font-size:14px;">نصائح: تأكد من اتصال الإنترنت، أو جرب VPN، أو افتح الملف في متصفح Chrome.</span>`;
+        progressBar.style.display = 'none';
+        errorDiv.innerHTML = `❌ فشل الجلب من كل البروكسيات. آخر خطأ: ${lastError}<br>
+                              <span style="font-size:14px;">تأكد من اتصال الإنترنت، أو حاول بعد دقيقة، أو استخدم VPN.</span>`;
         errorDiv.style.display = 'block';
     }
 
-    // ===== دالة تحليل الـ HTML (نفس المنطق القوي) =====
+    // ===== تحليل HTML (نفسه لكن أقوى) =====
     function parseHTML(html, seat, sourceUrl) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
         const bodyText = doc.body.innerText;
 
-        // 1. الاسم
+        // اسم من title
         let name = 'غير معروف';
         const title = doc.querySelector('title');
         if (title) {
@@ -143,7 +151,7 @@
             if (match) name = match[1].trim();
         }
 
-        // 2. الحقول
+        // حقول
         const extractField = (text, label) => {
             const regex = new RegExp(`${label}\\s*([^\\n\\d]+?)(?:\\d|\\n|$)`);
             const match = text.match(regex);
@@ -153,9 +161,8 @@
         const eduType = extractField(bodyText, 'نوع التعليم');
         const grade = extractField(bodyText, 'التقدير');
 
-        // 3. المواد (جداول + Regex)
+        // مواد
         const subjects = {};
-        // الطريقة الأولى: الجداول
         const tables = doc.querySelectorAll('table');
         tables.forEach(table => {
             const rows = table.querySelectorAll('tr');
@@ -172,7 +179,6 @@
             });
         });
 
-        // الطريقة الثانية: Regex على السطور
         if (Object.keys(subjects).length === 0) {
             const lines = bodyText.split('\n');
             for (let line of lines) {
@@ -221,7 +227,7 @@
         card.style.display = 'block';
     }
 
-    // Enter و بحث تلقائي
+    // Enter + بحث تلقائي
     document.getElementById('seatInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') fetchResult();
     });
