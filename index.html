@@ -1,324 +1,598 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نتيجة الثانوية العامة 2026 - النظام الجبار</title>
+    <title>نتيجة الثانوية العامة 2026 - بحث فوري</title>
+    <!-- Bootstrap RTL + Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tahoma', Arial, sans-serif; }
-        body { background: linear-gradient(135deg, #e8eaf6, #c5cae9); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { background: #ffffff; max-width: 900px; width: 100%; padding: 30px; border-radius: 28px; box-shadow: 0 20px 60px rgba(26, 35, 126, 0.2); border-top: 8px solid #1a237e; position: relative; overflow: hidden; }
-        .container::before { content: "⚡"; position: absolute; top: -10px; left: -10px; font-size: 100px; opacity: 0.03; transform: rotate(-15deg); pointer-events: none; }
-        h1 { color: #1a237e; text-align: center; font-size: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .sub { text-align: center; color: #555; margin-bottom: 25px; font-size: 15px; }
-        .search-box { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
-        .search-box input { flex: 1; padding: 16px 24px; border: 2px solid #dde1e8; border-radius: 50px; font-size: 18px; outline: none; transition: 0.3s; min-width: 200px; background: #f8f9fc; }
-        .search-box input:focus { border-color: #1a237e; box-shadow: 0 0 0 4px rgba(26,35,126,0.1); }
-        .search-box button { padding: 16px 40px; background: linear-gradient(45deg, #1a237e, #283593); color: #fff; border: none; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(26,35,126,0.3); }
-        .search-box button:hover { transform: scale(1.05); box-shadow: 0 8px 25px rgba(26,35,126,0.4); }
-        .loader { display: none; text-align: center; padding: 20px; font-size: 16px; color: #1a237e; }
-        .progress-bar { width: 100%; height: 6px; background: #e0e0e0; border-radius: 10px; margin: 10px 0; overflow: hidden; display: none; }
-        .progress-bar .fill { height: 100%; width: 0%; background: linear-gradient(90deg, #1a237e, #42a5f5); transition: width 0.5s; }
-        .error { color: #d32f2f; text-align: center; padding: 20px; font-size: 17px; display: none; background: #ffebee; border-radius: 16px; border-right: 6px solid #d32f2f; }
-        
-        /* بطاقة النتيجة الجبارة */
-        .result-card { background: #fafbff; border-radius: 20px; padding: 25px; border: 1px solid #e8ecf5; display: none; margin-top: 10px; animation: fadeUp 0.6s ease; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .result-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 2px solid #e8ecf5; padding-bottom: 15px; margin-bottom: 20px; }
-        .result-header h2 { color: #1a237e; font-size: 24px; }
-        .total-score-badge { background: linear-gradient(135deg, #1a237e, #3949ab); color: white; padding: 8px 25px; border-radius: 40px; font-size: 22px; font-weight: bold; box-shadow: 0 4px 12px rgba(26,35,126,0.3); }
-        .total-score-badge small { font-size: 14px; font-weight: normal; opacity: 0.8; }
-        
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .info-item { background: #fff; padding: 12px 18px; border-radius: 14px; border: 1px solid #e8ecf5; box-shadow: 0 2px 6px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 8px; }
-        .info-item span { font-weight: bold; color: #1a237e; display: inline-block; width: 100px; }
-        .grade-badge { display: inline-block; padding: 6px 25px; border-radius: 40px; font-weight: bold; color: #fff; }
-        .grade-excellent { background: #2e7d32; }
-        .grade-verygood { background: #1976d2; }
-        .grade-good { background: #f9a825; color: #333; }
-        .grade-pass { background: #ef6c00; }
-        .grade-fail { background: #c62828; }
-
-        /* مواد + نسب */
-        .subjects-title { font-size: 20px; color: #1a237e; margin: 20px 0 15px; display: flex; align-items: center; gap: 10px; }
-        .subject-item { background: white; border-radius: 14px; padding: 12px 18px; margin-bottom: 12px; border: 1px solid #eef1f7; transition: 0.2s; }
-        .subject-item:hover { transform: translateX(-5px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .subject-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-        .subject-name { font-weight: bold; font-size: 16px; width: 140px; color: #1a237e; }
-        .subject-score { font-weight: bold; color: #333; background: #f5f6fa; padding: 2px 15px; border-radius: 30px; }
-        .subject-percent { font-weight: bold; min-width: 60px; text-align: center; }
-        .subject-bar-bg { flex: 1; min-width: 100px; height: 8px; background: #e8ecf5; border-radius: 10px; overflow: hidden; }
-        .subject-bar-fill { height: 100%; border-radius: 10px; transition: width 1s ease; }
-        .subject-level { font-size: 13px; padding: 2px 12px; border-radius: 30px; color: #fff; font-weight: bold; }
-        
-        .summary-box { background: linear-gradient(135deg, #e8eaf6, #f5f5ff); padding: 15px 20px; border-radius: 16px; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 15px; margin-top: 25px; border: 1px solid #d5d9eb; }
-        .summary-item { text-align: center; }
-        .summary-item .label { font-size: 14px; color: #555; }
-        .summary-item .value { font-size: 24px; font-weight: bold; color: #1a237e; }
-
-        .source-note { margin-top: 20px; font-size: 12px; color: #888; text-align: center; border-top: 1px solid #eee; padding-top: 15px; }
-        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } .subject-row { flex-wrap: wrap; } }
+        /* ===== محاكاة تصميم نذاكر بالكامل ===== */
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0a58ca;
+            --muted: #6c757d;
+            --light-bg: #f8f9fa;
+        }
+        body {
+            font-family: 'Tahoma', 'Alexandria', sans-serif;
+            background-color: var(--light-bg);
+            padding-top: 20px;
+            color: #212529;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding: 0 15px;
+        }
+        /* شريط البحث */
+        .search-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .search-input {
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            border: 2px solid #dee2e6;
+        }
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        .search-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+        }
+        /* بطاقة النتيجة (مطابقة للتصميم الأصلي) */
+        .nzk-result-shell {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-top: 20px;
+        }
+        .nzk-score-card {
+            background: linear-gradient(145deg, #0d6efd, #0a58ca);
+            color: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            flex: 1 1 280px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(13,110,253,0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        .nzk-score-card .nzk-result-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .nzk-score-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#ffc107 0% var(--score, 0%), rgba(255,255,255,0.2) var(--score, 0%) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px auto;
+            position: relative;
+        }
+        .nzk-score-ring::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: #0d6efd;
+            border-radius: 50%;
+        }
+        .nzk-score-ring b {
+            position: relative;
+            z-index: 2;
+            font-size: 22px;
+        }
+        .nzk-score-ring small {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .nzk-score-total {
+            background: rgba(0,0,0,0.15);
+            border-radius: 30px;
+            padding: 10px;
+            margin-top: 15px;
+        }
+        .nzk-score-total b { font-size: 24px; }
+        .nzk-score-total small { font-size: 14px; opacity: 0.8; display: block; }
+        .nzk-result-main-column {
+            flex: 2 1 500px;
+        }
+        .nzk-student-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .nzk-student-card-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #f1f3f5;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .nzk-student-card-head h1 {
+            font-size: 1.6rem;
+            color: var(--primary);
+        }
+        .nzk-student-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            opacity: 0.3;
+        }
+        .nzk-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .nzk-info-item {
+            background: #f8f9fa;
+            padding: 12px 18px;
+            border-radius: 12px;
+            border-right: 4px solid var(--primary);
+        }
+        .nzk-info-item small {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+        }
+        .nzk-info-item b {
+            font-size: 1.2rem;
+        }
+        .nzk-actions-card {
+            margin-top: 20px;
+        }
+        .nzk-action-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .nzk-action-tile {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #212529;
+            flex: 1 1 150px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+            border: 1px solid #dee2e6;
+        }
+        .nzk-action-tile:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .nzk-action-tile i { font-size: 1.8rem; }
+        .nzk-action-tile span b { display: block; font-size: 1rem; }
+        .nzk-action-tile span small { font-size: 0.75rem; opacity: 0.7; }
+        .green { border-right: 4px solid #28a745; }
+        .gold { border-right: 4px solid #ffc107; }
+        .purple { border-right: 4px solid #6f42c1; }
+        /* جدول الدرجات */
+        .nzk-subjects-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .nzk-section-heading {
+            margin-bottom: 25px;
+        }
+        .nzk-section-heading span {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .nzk-section-heading h2 {
+            font-size: 1.8rem;
+        }
+        .nzk-subjects-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .nzk-subject-row {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 0.8fr 1.2fr;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            gap: 10px;
+        }
+        .nzk-subject-row.header {
+            background: var(--primary);
+            color: #fff;
+            font-weight: bold;
+            border-radius: 12px 12px 0 0;
+        }
+        .nzk-subject-name b { font-size: 1rem; }
+        .nzk-subject-score { font-weight: bold; }
+        .nzk-grade-pill {
+            background: #6c757d;
+            color: #fff;
+            padding: 2px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+        }
+        .nzk-progress {
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .nzk-progress span {
+            display: block;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        /* ملخص */
+        .summary-boxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        .summary-box {
+            background: #f8f9fa;
+            padding: 15px 25px;
+            border-radius: 16px;
+            text-align: center;
+            flex: 1 1 150px;
+            border: 1px solid #dee2e6;
+        }
+        .summary-box h4 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 0;
+        }
+        .summary-box small {
+            display: block;
+            color: var(--muted);
+        }
+        .footer-note {
+            text-align: center;
+            padding: 20px;
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 30px;
+        }
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        @media (max-width: 768px) {
+            .nzk-info-grid { grid-template-columns: 1fr; }
+            .nzk-subject-row { grid-template-columns: 1fr 1fr; gap: 5px; }
+            .nzk-subject-row.header { display: none; }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>🎓 <span>الكنترول الجبار</span> ⚡</h1>
-    <p class="sub">أدخل رقم الجلوس – تحليل فوري بالنسب المئوية والتقديرات الذكية</p>
-    <div class="search-box">
-        <input type="text" id="seatInput" placeholder="مثال: 1776500" value="1776500">
-        <button onclick="fetchResult()">🔍 بحث فوري</button>
+    <div class="container main-container">
+        <!-- شريط البحث -->
+        <div class="search-card">
+            <h4 class="text-center mb-3"><i class="fas fa-search text-primary"></i> بحث عن نتيجة الطالب</h4>
+            <div class="row g-2">
+                <div class="col-md-8">
+                    <input type="text" id="seatInput" class="form-control search-input" placeholder="أدخل رقم الجلوس (مثال: 1776500)" value="1776500">
+                </div>
+                <div class="col-md-4">
+                    <button class="btn search-btn w-100" onclick="fetchResult()"><i class="fas fa-arrow-left"></i> بحث فوري</button>
+                </div>
+            </div>
+            <div class="loader" id="loader">
+                <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                <p>جاري جلب النتيجة...</p>
+            </div>
+        </div>
+
+        <!-- حاوية النتيجة (ستظهر عند البحث) -->
+        <div id="resultContainer"></div>
+
+        <!-- تذييل -->
+        <div class="footer-note">
+            <i class="fas fa-graduation-cap text-primary"></i> مع تمنيات فريق نذاكر بالتوفيق والنجاح 🎓
+            <div class="mt-2">
+                <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
+            </div>
+        </div>
     </div>
-    <div class="loader" id="loader">⏳ جاري التحليل الجبار...</div>
-    <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
-    <div class="error" id="errorMsg"></div>
-    <div class="result-card" id="resultCard"></div>
-</div>
 
-<script>
-    const TARGET_BASE = 'https://than.nezakr.net/?system=s1&t=glos&k=';
+    <script>
+        // ===== إعدادات البروكسيات =====
+        const TARGET_BASE = 'https://than.nezakr.net/?system=s1&t=glos&k=';
+        const PROXIES = [
+            url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+            url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+            url => `https://api.cors.lol/?url=${encodeURIComponent(url)}`
+        ];
 
-    const PROXIES = [
-        (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-        (url) => `https://api.cors.lol/?url=${encodeURIComponent(url)}`,
-        (url) => `https://cors-anywhere.herokuapp.com/${url}`,
-        (url) => `https://proxy.cors.sh/${url}`
-    ];
-
-    async function fetchWithRetry(proxyFn, targetUrl, retries = 3, timeout = 8000) {
-        for (let attempt = 1; attempt <= retries; attempt++) {
+        async function fetchWithTimeout(url, timeout = 10000) {
+            const ctrl = new AbortController();
+            const id = setTimeout(() => ctrl.abort(), timeout);
             try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), timeout);
-                const response = await fetch(proxyFn(targetUrl), { signal: controller.signal });
-                clearTimeout(timeoutId);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const text = await response.text();
-                if (text.length < 100) throw new Error('استجابة فارغة');
-                return text;
-            } catch (err) {
-                if (attempt === retries) throw err;
-                await new Promise(r => setTimeout(r, 200));
+                const res = await fetch(url, { signal: ctrl.signal });
+                clearTimeout(id);
+                return res;
+            } catch (e) {
+                clearTimeout(id);
+                throw e;
             }
         }
-    }
 
-    // ===== التحليل الذكي (استخراج الأرقام وحساب النسب) =====
-    function parseHTML(html, seat, sourceUrl) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        const bodyText = doc.body.innerText;
+        // ===== تحليل HTML =====
+        function parseStudentData(html, seat) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const body = doc.body.innerText;
 
-        // 1. الاسم
-        let name = 'غير معروف';
-        const title = doc.querySelector('title');
-        if (title) {
-            const match = title.textContent.match(/نتيجة الطالب (.*?) في/);
-            if (match) name = match[1].trim();
-        }
+            // الاسم من العنوان
+            let name = 'غير معروف';
+            const title = doc.querySelector('title');
+            if (title) {
+                const m = title.textContent.match(/نتيجة الطالب (.*?) في/);
+                if (m) name = m[1].trim();
+            }
 
-        // 2. الحقول الأساسية
-        const extractField = (text, label) => {
-            const regex = new RegExp(`${label}\\s*([^\\n\\d]+?)(?:\\d|\\n|$)`);
-            const match = text.match(regex);
-            return match ? match[1].trim() : 'غير محدد';
-        };
-        const section = extractField(bodyText, 'الشعبة');
-        const eduType = extractField(bodyText, 'نوع التعليم');
-        const rawGrade = extractField(bodyText, 'التقدير'); // تقدير الموقع (مقبول مثلاً)
+            // استخراج الحقول الأساسية
+            const extract = (label) => {
+                const regex = new RegExp(`${label}\\s*([^\\n\\d]+?)(?:\\d|\\n|$)`);
+                const m = body.match(regex);
+                return m ? m[1].trim() : 'غير محدد';
+            };
+            const section = extract('الشعبة');
+            const eduType = extract('نوع التعليم');
+            const rawGrade = extract('التقدير');
 
-        // 3. استخراج المواد والدرجات (الأساسية)
-        const subjects = {};
-        let totalStudent = 0;
-        let totalMax = 0;
-
-        // الطريقة الأقوى: البحث عن النمط "اسم المادة X.X / Y.Y"
-        const lines = bodyText.split('\n');
-        for (let line of lines) {
-            line = line.trim();
-            // النمط: اسم عربي + مسافة + رقم/رقم
-            const match = line.match(/^([\u0600-\u06FF\s]{2,}?)\s*(\d+\.?\d*)\s*\/\s*(\d+\.?\d*)/);
-            if (match) {
-                let subj = match[1].trim();
-                const earned = parseFloat(match[2]);
-                const max = parseFloat(match[3]);
-                // نتأكد إنها مادة مش كلام فاضي
-                if (subj.length > 1 && !['المادة', 'الدرجة', 'التقدير', 'المستوى', 'الصف', 'الفصل', 'المجموع'].includes(subj) && !isNaN(earned) && !isNaN(max) && max > 0) {
-                    // تنظيف اسم المادة من الأرقام الزائدة
-                    subj = subj.replace(/[0-9]/g, '').trim();
-                    if (subj.length > 1) {
-                        const percent = (earned / max) * 100;
-                        subjects[subj] = { earned, max, percent: Math.round(percent * 100) / 100 };
-                        totalStudent += earned;
-                        totalMax += max;
+            // استخراج المواد والدرجات
+            const subjects = {};
+            let totalEarned = 0, totalMax = 0;
+            const lines = body.split('\n');
+            for (let line of lines) {
+                line = line.trim();
+                // النمط: اسم عربي + أرقام مفصولة بـ /
+                const match = line.match(/^([\u0600-\u06FF\s]{2,}?)\s*(\d+\.?\d*)\s*\/\s*(\d+\.?\d*)/);
+                if (match) {
+                    let subj = match[1].trim();
+                    const earned = parseFloat(match[2]);
+                    const max = parseFloat(match[3]);
+                    if (subj.length > 1 && !['المادة','الدرجة','التقدير','المستوى','الصف','الفصل','المجموع'].includes(subj) && !isNaN(earned) && !isNaN(max) && max > 0) {
+                        subj = subj.replace(/[0-9]/g,'').trim();
+                        if (subj.length > 1) {
+                            const percent = (earned / max) * 100;
+                            subjects[subj] = { earned, max, percent: Math.round(percent * 100) / 100 };
+                            totalEarned += earned;
+                            totalMax += max;
+                        }
                     }
                 }
             }
-        }
 
-        // لو مفيش مواد، نرجع رسالة
-        if (Object.keys(subjects).length === 0) {
-            subjects['ملاحظة'] = { earned: 0, max: 0, percent: 0, raw: 'لم يتم العثور على مواد' };
-        }
-
-        // حساب النسبة الإجمالية
-        const totalPercent = totalMax > 0 ? Math.round((totalStudent / totalMax) * 10000) / 100 : 0;
-
-        // تحديد التقدير الفعلي حسب النسبة
-        const getGrade = (p) => {
-            if (p >= 90) return { text: 'ممتاز', class: 'grade-excellent' };
-            if (p >= 80) return { text: 'جيد جداً', class: 'grade-verygood' };
-            if (p >= 65) return { text: 'جيد', class: 'grade-good' };
-            if (p >= 50) return { text: 'مقبول', class: 'grade-pass' };
-            return { text: 'ضعيف', class: 'grade-fail' };
-        };
-        const finalGrade = getGrade(totalPercent);
-
-        return {
-            name,
-            seat,
-            section,
-            education_type: eduType,
-            raw_grade: rawGrade,
-            totalStudent: Math.round(totalStudent * 100) / 100,
-            totalMax: Math.round(totalMax * 100) / 100,
-            totalPercent: totalPercent,
-            finalGrade: finalGrade,
-            subjects: subjects,
-            source: sourceUrl
-        };
-    }
-
-    // ===== العرض الجبار =====
-    function renderResult(data) {
-        const card = document.getElementById('resultCard');
-        let subjectsHtml = '';
-
-        for (const [name, info] of Object.entries(data.subjects)) {
-            if (name === 'ملاحظة') {
-                subjectsHtml += `<div class="subject-item"><div class="subject-row"><span>⚠️ ${info.raw || info}</span></div></div>`;
-                continue;
+            // لو مفيش مواد، نضيف رسالة
+            if (Object.keys(subjects).length === 0) {
+                subjects['لا توجد مواد'] = { earned: 0, max: 0, percent: 0 };
             }
-            const p = info.percent;
-            let barColor = '#e53935';
-            let levelText = 'ضعيف';
-            if (p >= 90) { barColor = '#2e7d32'; levelText = 'ممتاز'; }
-            else if (p >= 80) { barColor = '#1976d2'; levelText = 'جيد جداً'; }
-            else if (p >= 65) { barColor = '#f9a825'; levelText = 'جيد'; }
-            else if (p >= 50) { barColor = '#ef6c00'; levelText = 'مقبول'; }
 
-            subjectsHtml += `
-                <div class="subject-item">
-                    <div class="subject-row">
-                        <span class="subject-name">${name}</span>
-                        <span class="subject-score">${info.earned} / ${info.max}</span>
-                        <span class="subject-percent" style="color:${barColor}">${p}%</span>
-                        <div class="subject-bar-bg"><div class="subject-bar-fill" style="width:${p}%; background:${barColor};"></div></div>
-                        <span class="subject-level" style="background:${barColor}">${levelText}</span>
+            const totalPercent = totalMax > 0 ? Math.round((totalEarned / totalMax) * 10000) / 100 : 0;
+            const getGrade = (p) => {
+                if (p >= 90) return { text: 'ممتاز', class: 'success' };
+                if (p >= 80) return { text: 'جيد جداً', class: 'primary' };
+                if (p >= 65) return { text: 'جيد', class: 'warning' };
+                if (p >= 50) return { text: 'مقبول', class: 'orange' };
+                return { text: 'ضعيف', class: 'danger' };
+            };
+            const finalGrade = getGrade(totalPercent);
+
+            return {
+                name,
+                seat,
+                section,
+                eduType,
+                rawGrade,
+                totalEarned: Math.round(totalEarned * 100) / 100,
+                totalMax: Math.round(totalMax * 100) / 100,
+                totalPercent,
+                finalGrade,
+                subjects
+            };
+        }
+
+        // ===== العرض =====
+        function renderResult(data) {
+            const container = document.getElementById('resultContainer');
+            let subjectsHtml = '';
+            for (const [name, info] of Object.entries(data.subjects)) {
+                if (name === 'لا توجد مواد') {
+                    subjectsHtml += `<div class="nzk-subject-row"><span>⚠️ ${info.earned || 'لم يتم العثور على مواد'}</span></div>`;
+                    continue;
+                }
+                const p = info.percent;
+                let color = '#e53935', level = 'ضعيف';
+                if (p >= 90) { color = '#2e7d32'; level = 'ممتاز'; }
+                else if (p >= 80) { color = '#1976d2'; level = 'جيد جداً'; }
+                else if (p >= 65) { color = '#f9a825'; level = 'جيد'; }
+                else if (p >= 50) { color = '#ef6c00'; level = 'مقبول'; }
+
+                subjectsHtml += `
+                    <div class="nzk-subject-row">
+                        <span class="nzk-subject-name"><b>${name}</b></span>
+                        <span class="nzk-subject-score">${info.earned} <small style="color:var(--muted);font-size:11px;">/ ${info.max}</small></span>
+                        <span><span class="nzk-grade-pill" style="background:${color};">${level}</span></span>
+                        <span>
+                            <div class="nzk-progress"><span style="width:${p}%; background:${color};"></span></div>
+                            <small style="font-size:11px;">${p}%</small>
+                        </span>
                     </div>
+                `;
+            }
+
+            // تقدير
+            const gradeMap = {
+                'ممتاز': 'success',
+                'جيد جداً': 'primary',
+                'جيد': 'warning',
+                'مقبول': 'orange',
+                'ضعيف': 'danger'
+            };
+            const badgeClass = gradeMap[data.finalGrade.text] || 'secondary';
+
+            container.innerHTML = `
+                <div class="nzk-result-shell">
+                    <!-- بطاقة النسبة -->
+                    <aside class="nzk-score-card" style="--score:${data.totalPercent};">
+                        <span class="nzk-result-badge"><i class="fas fa-circle-check"></i> ${data.finalGrade.text}</span>
+                        <div class="nzk-score-ring">
+                            <b>${data.totalPercent}%</b>
+                        </div>
+                        <h2>🎉 ${data.finalGrade.text}</h2>
+                        <p>${data.rawGrade}</p>
+                        <div class="nzk-score-total">
+                            <b>${data.totalEarned}</b> <small>/ ${data.totalMax}</small>
+                            <small>المجموع الكلي</small>
+                        </div>
+                    </aside>
+
+                    <!-- العمود الرئيسي -->
+                    <div class="nzk-result-main-column">
+                        <div class="nzk-student-card">
+                            <div class="nzk-student-card-head">
+                                <div>
+                                    <span class="nzk-eyebrow"><i class="fas fa-user-graduate"></i> نتيجة الطالب</span>
+                                    <h1>نتيجة الطالب ${data.name}</h1>
+                                    <p>كل بيانات الطالب الأساسية في بطاقة واحدة واضحة.</p>
+                                </div>
+                                <div class="nzk-student-icon"><i class="fas fa-graduation-cap"></i></div>
+                            </div>
+                            <div class="nzk-info-grid">
+                                <div class="nzk-info-item"><small>رقم الجلوس</small><b>${data.seat}</b></div>
+                                <div class="nzk-info-item"><small>الشعبة</small><b>${data.section}</b></div>
+                                <div class="nzk-info-item"><small>نوع التعليم</small><b>${data.eduType}</b></div>
+                                <div class="nzk-info-item">
+                                    <small>التقدير</small>
+                                    <b><span class="badge bg-${badgeClass}">${data.finalGrade.text}</span></b>
+                                    <small style="display:block;font-size:11px;color:var(--muted);">(الموقع: ${data.rawGrade})</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- أزرار إضافية -->
+                        <div class="nzk-actions-card">
+                            <div class="nzk-action-grid">
+                                <a class="nzk-action-tile green" href="#"><i class="fas fa-building-columns"></i><span><b>توقع التنسيق</b><small>هل الكلية متاحة لك؟</small></span></a>
+                                <a class="nzk-action-tile gold" href="#"><i class="fas fa-trophy"></i><span><b>اعرف ترتيبك</b><small>داخل الشعبة</small></span></a>
+                                <a class="nzk-action-tile purple" href="#"><i class="fas fa-chart-column"></i><span><b>المجاميع التكرارية</b><small>حلل موقع المجموع</small></span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- جدول المواد -->
+                <div class="nzk-subjects-card">
+                    <div class="nzk-section-heading">
+                        <span>تفاصيل الدرجات</span>
+                        <h2>درجات المواد مع النسب</h2>
+                        <p>التقدير والشريط النسبي حسب الدرجة الفعلية.</p>
+                    </div>
+                    <div class="nzk-subjects-list">
+                        <div class="nzk-subject-row header">
+                            <span>المادة</span><span>الدرجة</span><span>التقدير</span><span>المستوى</span>
+                        </div>
+                        ${subjectsHtml}
+                    </div>
+                </div>
+
+                <!-- ملخص المجاميع -->
+                <div class="summary-boxes">
+                    <div class="summary-box"><h4>${data.totalEarned}</h4><small>المجموع الكلي</small></div>
+                    <div class="summary-box"><h4>${data.totalMax}</h4><small>المجموع الكلي الكلي</small></div>
+                    <div class="summary-box"><h4 style="color:${data.totalPercent >= 90 ? '#2e7d32' : data.totalPercent >= 80 ? '#1976d2' : data.totalPercent >= 65 ? '#f9a825' : data.totalPercent >= 50 ? '#ef6c00' : '#c62828'};">${data.totalPercent}%</h4><small>النسبة المئوية</small></div>
+                    <div class="summary-box"><h4>${data.finalGrade.text}</h4><small>التقدير النهائي</small></div>
                 </div>
             `;
         }
 
-        // عرض المجموع والنسبة والتقدير
-        card.innerHTML = `
-            <div class="result-header">
-                <h2>📌 ${data.name}</h2>
-                <div class="total-score-badge">
-                    ${data.totalStudent} <small>/ ${data.totalMax}</small>
-                </div>
-            </div>
+        // ===== دالة البحث الرئيسية =====
+        async function fetchResult() {
+            const seat = document.getElementById('seatInput').value.trim();
+            const container = document.getElementById('resultContainer');
+            const loader = document.getElementById('loader');
+            container.innerHTML = '';
+            loader.style.display = 'block';
 
-            <div class="info-grid">
-                <div class="info-item"><span>🎫 رقم الجلوس:</span> ${data.seat}</div>
-                <div class="info-item"><span>📚 الشعبة:</span> ${data.section}</div>
-                <div class="info-item"><span>🏫 نوع التعليم:</span> ${data.education_type}</div>
-                <div class="info-item">
-                    <span>⭐ التقدير:</span> 
-                    <span class="grade-badge ${data.finalGrade.class}">${data.finalGrade.text} (${data.totalPercent}%)</span>
-                    <span style="font-size:12px;color:#888;margin-right:10px;">(الموقع: ${data.raw_grade})</span>
-                </div>
-            </div>
-
-            <div class="subjects-title">📘 تفاصيل الدرجات مع النسب المئوية</div>
-            ${subjectsHtml}
-
-            <div class="summary-box">
-                <div class="summary-item"><span class="label">المجموع الكلي</span><div class="value">${data.totalStudent}</div></div>
-                <div class="summary-item"><span class="label">المجموع الكلي الكلي</span><div class="value">${data.totalMax}</div></div>
-                <div class="summary-item"><span class="label">النسبة المئوية</span><div class="value" style="color:${data.totalPercent >= 90 ? '#2e7d32' : data.totalPercent >= 80 ? '#1976d2' : data.totalPercent >= 65 ? '#f9a825' : data.totalPercent >= 50 ? '#ef6c00' : '#c62828'}">${data.totalPercent}%</div></div>
-                <div class="summary-item"><span class="label">التقدير النهائي</span><div class="value" style="font-size:20px;">${data.finalGrade.text}</div></div>
-            </div>
-
-            <div class="source-note">✅ تم الجلب عبر بروكسي من: <a href="${data.source}" target="_blank">${data.source}</a></div>
-        `;
-        card.style.display = 'block';
-        // تشغيل أنيميشن الشرائط بعد العرض
-        setTimeout(() => {
-            document.querySelectorAll('.subject-bar-fill').forEach(el => {
-                const w = el.style.width;
-                el.style.width = '0%';
-                setTimeout(() => { el.style.width = w; }, 100);
-            });
-        }, 200);
-    }
-
-    // ===== دالة البحث الرئيسية =====
-    async function fetchResult() {
-        const seat = document.getElementById('seatInput').value.trim();
-        const card = document.getElementById('resultCard');
-        const errorDiv = document.getElementById('errorMsg');
-        const loader = document.getElementById('loader');
-        const progressBar = document.getElementById('progressBar');
-        const progressFill = document.getElementById('progressFill');
-
-        card.style.display = 'none';
-        errorDiv.style.display = 'none';
-        loader.style.display = 'block';
-        progressBar.style.display = 'block';
-        progressFill.style.width = '0%';
-        loader.textContent = '⏳ بدء التحليل الجبار...';
-
-        if (!seat || !/^\d+$/.test(seat)) {
-            errorDiv.textContent = '⚠️ برجاء إدخال رقم جلوس صحيح (أرقام فقط)';
-            errorDiv.style.display = 'block';
-            loader.style.display = 'none';
-            progressBar.style.display = 'none';
-            return;
-        }
-
-        const targetUrl = TARGET_BASE + seat;
-        let lastError = '';
-
-        for (let i = 0; i < PROXIES.length; i++) {
-            const progress = Math.round(((i) / PROXIES.length) * 100);
-            progressFill.style.width = progress + '%';
-            loader.textContent = `⏳ جاري التجربة ${i+1}/${PROXIES.length} (مع إعادة المحاولة)...`;
-
-            try {
-                const htmlText = await fetchWithRetry(PROXIES[i], targetUrl, 3, 8000);
-                const data = parseHTML(htmlText, seat, targetUrl);
-                renderResult(data);
+            if (!seat || !/^\d+$/.test(seat)) {
                 loader.style.display = 'none';
-                progressBar.style.display = 'none';
+                container.innerHTML = `<div class="alert alert-danger">⚠️ برجاء إدخال رقم جلوس صحيح (أرقام فقط)</div>`;
                 return;
-            } catch (err) {
-                lastError = err.message;
-                console.warn(`Proxy ${i+1} فشل:`, err);
             }
+
+            const targetUrl = TARGET_BASE + seat;
+            let lastError = '';
+
+            for (let i = 0; i < PROXIES.length; i++) {
+                try {
+                    const proxyUrl = PROXIES[i](targetUrl);
+                    const response = await fetchWithTimeout(proxyUrl, 10000);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    const html = await response.text();
+                    if (html.length < 100) throw new Error('استجابة فارغة');
+
+                    const data = parseStudentData(html, seat);
+                    renderResult(data);
+                    loader.style.display = 'none';
+                    return;
+                } catch (err) {
+                    lastError = err.message;
+                    console.warn(`Proxy ${i+1} فشل:`, err);
+                }
+            }
+
+            loader.style.display = 'none';
+            container.innerHTML = `
+                <div class="alert alert-danger">
+                    ❌ فشل الجلب من جميع البروكسيات. آخر خطأ: ${lastError}<br>
+                    <span style="font-size:14px;">تأكد من اتصال الإنترنت أو حاول لاحقاً.</span>
+                </div>
+            `;
         }
 
-        loader.style.display = 'none';
-        progressBar.style.display = 'none';
-        errorDiv.innerHTML = `❌ فشل الجلب بعد كل المحاولات. آخر خطأ: ${lastError}<br><span style="font-size:14px;">تأكد من الإنترنت أو حاول لاحقاً.</span>`;
-        errorDiv.style.display = 'block';
-    }
+        // البحث عند الضغط على Enter
+        document.getElementById('seatInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') fetchResult();
+        });
 
-    document.getElementById('seatInput').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') fetchResult();
-    });
-    window.onload = fetchResult;
-</script>
+        // تشغيل بحث تلقائي عند تحميل الصفحة
+        window.onload = fetchResult;
+    </script>
 </body>
 </html>
