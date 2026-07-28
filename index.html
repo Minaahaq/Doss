@@ -18,7 +18,7 @@
         .loader { display: none; text-align: center; padding: 30px; font-size: 18px; color: #1a237e; }
         .loader::after { content: " ⏳"; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
-        .error { color: #d32f2f; text-align: center; padding: 20px; font-size: 17px; display: none; background: #ffebee; border-radius: 12px; }
+        .error { color: #d32f2f; text-align: center; padding: 20px; font-size: 17px; display: none; background: #ffebee; border-radius: 12px; border-right: 4px solid #d32f2f; }
         .result-card { background: #f8faff; border-radius: 16px; padding: 25px; border-right: 6px solid #1a237e; display: none; margin-top: 10px; }
         .result-card h2 { color: #1a237e; font-size: 22px; margin-bottom: 20px; border-bottom: 2px dashed #ddd; padding-bottom: 12px; }
         .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
@@ -36,20 +36,38 @@
 <body>
 <div class="container">
     <h1>🎓 نتيجة الثانوية العامة 2026</h1>
-    <p class="sub">أدخل رقم الجلوس لجلب النتيجة مباشرة من موقع نذاكر (بدون سيرفر)</p>
+    <p class="sub">أدخل رقم الجلوس – النظام يجرب 3 بروكسيات مختلفة لضمان وصول النتيجة</p>
     <div class="search-box">
         <input type="text" id="seatInput" placeholder="مثال: 1776500" value="1776500">
         <button onclick="fetchResult()">🔍 بحث فوري</button>
     </div>
-    <div class="loader" id="loader">جاري جلب النتيجة من الخادم...</div>
+    <div class="loader" id="loader">⏳ جاري جلب النتيجة (قد يستغرق 5 ثوان)...</div>
     <div class="error" id="errorMsg"></div>
     <div class="result-card" id="resultCard"></div>
 </div>
 
 <script>
-    // Proxy مجاني لتجاوز مشكلة CORS (يجلب HTML الخارجي)
-    const PROXY_URL = 'https://api.allorigins.win/raw?url=';
     const TARGET_BASE = 'https://than.nezakr.net/?system=s1&t=glos&k=';
+
+    // قائمة البروكسيات (كل واحد بياخد الـ URL النهائي)
+    const PROXIES = [
+        (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+        (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+        (url) => `https://api.cors.lol/?url=${encodeURIComponent(url)}`
+    ];
+
+    async function fetchWithTimeout(url, timeout = 12000) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            return response;
+        } catch (error) {
+            clearTimeout(timeoutId);
+            throw error;
+        }
+    }
 
     async function fetchResult() {
         const seat = document.getElementById('seatInput').value.trim();
@@ -57,134 +75,132 @@
         const errorDiv = document.getElementById('errorMsg');
         const loader = document.getElementById('loader');
 
-        // إخفاء كل شيء
         card.style.display = 'none';
         errorDiv.style.display = 'none';
         loader.style.display = 'block';
+        loader.textContent = '⏳ جاري المحاولة على البروكسيات...';
 
-        if (!seat) {
-            errorDiv.textContent = '⚠️ برجاء إدخال رقم الجلوس';
-            errorDiv.style.display = 'block';
-            loader.style.display = 'none';
-            return;
-        }
-        if (!/^\d+$/.test(seat)) {
-            errorDiv.textContent = '⚠️ رقم الجلوس يجب أن يكون أرقام فقط';
+        if (!seat || !/^\d+$/.test(seat)) {
+            errorDiv.textContent = '⚠️ برجاء إدخال رقم جلوس صحيح (أرقام فقط)';
             errorDiv.style.display = 'block';
             loader.style.display = 'none';
             return;
         }
 
-        try {
-            const targetUrl = TARGET_BASE + seat;
-            const proxyFullUrl = PROXY_URL + encodeURIComponent(targetUrl);
+        const targetUrl = TARGET_BASE + seat;
+        let lastError = '';
 
-            const response = await fetch(proxyFullUrl, {
-                headers: { 'Accept': 'text/html' }
-            });
+        // تجربة كل بروكسي بالترتيب
+        for (let i = 0; i < PROXIES.length; i++) {
+            try {
+                const proxyUrl = PROXIES[i](targetUrl);
+                loader.textContent = `⏳ جاري التجربة ${i+1}/${PROXIES.length}...`;
 
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const response = await fetchWithTimeout(proxyUrl, 10000);
 
-            const htmlText = await response.text();
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
 
-            // تحويل النص إلى DOM قابل للتعامل
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlText, 'text/html');
+                const htmlText = await response.text();
 
-            // 1. الاسم من التايتل
-            let name = 'غير معروف';
-            const title = doc.querySelector('title');
-            if (title) {
-                const match = title.textContent.match(/نتيجة الطالب (.*?) في/);
-                if (match) name = match[1].trim();
+                // لو النص جاي فاضي أو طوله صغير جداً، اعتبره فاشل
+                if (htmlText.length < 100) {
+                    throw new Error('استجابة فارغة من هذا البروكسي');
+                }
+
+                // تحليل النتيجة
+                const data = parseHTML(htmlText, seat, targetUrl);
+                renderResult(data);
+                loader.style.display = 'none';
+                return; // نجحنا، نوقف البحث
+
+            } catch (err) {
+                lastError = err.message;
+                console.warn(`Proxy ${i+1} فشل:`, err);
+                // نكمل للتالي
             }
+        }
 
-            // 2. البيانات الأساسية (نبحث في النص الكامل)
-            const bodyText = doc.body.innerText;
+        // لو كل البروكسيات فشلت
+        loader.style.display = 'none';
+        errorDiv.innerHTML = `❌ فشل الجلب من جميع البروكسيات. آخر خطأ: ${lastError}<br>
+                              <span style="font-size:14px;">نصائح: تأكد من اتصال الإنترنت، أو جرب VPN، أو افتح الملف في متصفح Chrome.</span>`;
+        errorDiv.style.display = 'block';
+    }
 
-            const extractField = (text, label) => {
-                const regex = new RegExp(`${label}\\s*([^\\n\\d]+?)(?:\\d|\\n|$)`);
-                const match = text.match(regex);
-                return match ? match[1].trim() : 'غير محدد';
-            };
+    // ===== دالة تحليل الـ HTML (نفس المنطق القوي) =====
+    function parseHTML(html, seat, sourceUrl) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const bodyText = doc.body.innerText;
 
-            const section = extractField(bodyText, 'الشعبة');
-            const eduType = extractField(bodyText, 'نوع التعليم');
-            const grade = extractField(bodyText, 'التقدير');
+        // 1. الاسم
+        let name = 'غير معروف';
+        const title = doc.querySelector('title');
+        if (title) {
+            const match = title.textContent.match(/نتيجة الطالب (.*?) في/);
+            if (match) name = match[1].trim();
+        }
 
-            // 3. استخراج جدول المواد (أقوى طريقة: البحث عن الأرقام بجوار أسماء المواد)
-            const subjects = {};
-            // الطريقة الأولى: البحث عن الجداول في الـ HTML
-            const tables = doc.querySelectorAll('table');
-            tables.forEach(table => {
-                const rows = table.querySelectorAll('tr');
-                rows.forEach(row => {
-                    const cols = row.querySelectorAll('td');
-                    if (cols.length >= 2) {
-                        const subjName = cols[0].textContent.trim();
-                        const gradeText = cols[1].textContent.trim();
-                        // نتأكد أنها مادة وليست عنوان جانبي
-                        if (subjName.length > 1 && (gradeText.includes('/') || /\d/.test(gradeText))) {
-                            // نتجنب الكلمات المكررة مثل "المادة"
-                            if (!['المادة', 'الدرجة', 'التقدير', 'المستوى'].includes(subjName)) {
-                                subjects[subjName] = gradeText;
-                            }
-                        }
+        // 2. الحقول
+        const extractField = (text, label) => {
+            const regex = new RegExp(`${label}\\s*([^\\n\\d]+?)(?:\\d|\\n|$)`);
+            const match = text.match(regex);
+            return match ? match[1].trim() : 'غير محدد';
+        };
+        const section = extractField(bodyText, 'الشعبة');
+        const eduType = extractField(bodyText, 'نوع التعليم');
+        const grade = extractField(bodyText, 'التقدير');
+
+        // 3. المواد (جداول + Regex)
+        const subjects = {};
+        // الطريقة الأولى: الجداول
+        const tables = doc.querySelectorAll('table');
+        tables.forEach(table => {
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cols = row.querySelectorAll('td');
+                if (cols.length >= 2) {
+                    const subj = cols[0].textContent.trim();
+                    const score = cols[1].textContent.trim();
+                    if (subj.length > 1 && (score.includes('/') || /\d/.test(score)) &&
+                        !['المادة', 'الدرجة', 'التقدير', 'المستوى'].includes(subj)) {
+                        subjects[subj] = score;
                     }
-                });
+                }
             });
+        });
 
-            // لو الجدول فشل، نستخدم الـ Regex على النص كامل
-            if (Object.keys(subjects).length === 0) {
-                const lines = bodyText.split('\n');
-                for (let line of lines) {
-                    line = line.trim();
-                    // نبحث عن نمط: اسم المادة + أرقام
-                    const match = line.match(/^([\u0600-\u06FF\s]{2,}?)\s*(\d+\.?\d*\s*\/\s*\d+)/);
-                    if (match) {
-                        const subj = match[1].trim();
-                        const score = match[2].trim();
-                        if (subj.length > 1 && !['الصف', 'الفصل', 'المجموع'].includes(subj)) {
-                            subjects[subj] = score;
-                        }
+        // الطريقة الثانية: Regex على السطور
+        if (Object.keys(subjects).length === 0) {
+            const lines = bodyText.split('\n');
+            for (let line of lines) {
+                line = line.trim();
+                const match = line.match(/^([\u0600-\u06FF\s]{2,}?)\s*(\d+\.?\d*\s*\/\s*\d+)/);
+                if (match) {
+                    const subj = match[1].trim();
+                    const score = match[2].trim();
+                    if (subj.length > 1 && !['الصف', 'الفصل', 'المجموع'].includes(subj)) {
+                        subjects[subj] = score;
                     }
                 }
             }
-
-            // لو لسة مفيش، نضيف رسالة واضحة
-            if (Object.keys(subjects).length === 0) {
-                subjects['ملاحظة'] = 'لم يتم العثور على جدول المواد، لكن النتيجة موجودة. تأكد من رقم الجلوس.';
-            }
-
-            // عرض النتيجة
-            renderResult({
-                name: name,
-                seat: seat,
-                section: section,
-                education_type: eduType,
-                grade: grade,
-                subjects: subjects,
-                source: targetUrl
-            });
-
-        } catch (error) {
-            console.error(error);
-            errorDiv.textContent = `❌ فشل الجلب: ${error.message}. تأكد من اتصال الإنترنت أو حاول لاحقاً.`;
-            errorDiv.style.display = 'block';
-        } finally {
-            loader.style.display = 'none';
         }
+
+        if (Object.keys(subjects).length === 0) {
+            subjects['ملاحظة'] = 'تم جلب الصفحة لكن لم يتم العثور على جدول المواد. تأكد من رقم الجلوس.';
+        }
+
+        return { name, seat, section, education_type: eduType, grade, subjects, source: sourceUrl };
     }
 
+    // ===== عرض النتيجة =====
     function renderResult(data) {
         const card = document.getElementById('resultCard');
         let subjectsHtml = '';
-        if (typeof data.subjects === 'object') {
-            for (const [name, score] of Object.entries(data.subjects)) {
-                subjectsHtml += `<tr><td>${name}</td><td>${score}</td><td>غير متاح</td></tr>`;
-            }
-        } else {
-            subjectsHtml = `<tr><td colspan="3">${data.subjects || 'لا توجد بيانات'}</td></tr>`;
+        for (const [name, score] of Object.entries(data.subjects)) {
+            subjectsHtml += `<tr><td>${name}</td><td>${score}</td><td>غير متاح</td></tr>`;
         }
 
         card.innerHTML = `
@@ -195,22 +211,20 @@
                 <div class="info-item"><span>نوع التعليم:</span> ${data.education_type}</div>
                 <div class="info-item"><span>التقدير:</span> <span class="grade-badge">${data.grade}</span></div>
             </div>
-            <h3 style="margin-bottom:5px;">📘 تفاصيل الدرجات (جلب مباشر)</h3>
+            <h3>📘 تفاصيل الدرجات</h3>
             <table class="subjects-table">
                 <thead><tr><th>المادة</th><th>الدرجة</th><th>المستوى</th></tr></thead>
                 <tbody>${subjectsHtml}</tbody>
             </table>
-            <div class="source-note">✅ مصدر البيانات: <a href="${data.source}" target="_blank">${data.source}</a> (تم الجلب بواسطة Proxy)</div>
+            <div class="source-note">✅ تم الجلب عبر بروكسي من: <a href="${data.source}" target="_blank">${data.source}</a></div>
         `;
         card.style.display = 'block';
     }
 
-    // بحث بالضغط على Enter
-    document.getElementById('seatInput').addEventListener('keypress', function(e) {
+    // Enter و بحث تلقائي
+    document.getElementById('seatInput').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') fetchResult();
     });
-
-    // تشغيل بحث تلقائي عند فتح الصفحة
     window.onload = fetchResult;
 </script>
 </body>
