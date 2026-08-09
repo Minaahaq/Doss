@@ -1,625 +1,1558 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نتيجة الثانوية العامة 2026 - بحث فوري</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #0d6efd;
-            --primary-dark: #0a58ca;
-            --muted: #6c757d;
-            --light-bg: #f8f9fa;
-        }
-        body {
-            font-family: 'Tahoma', 'Alexandria', sans-serif;
-            background-color: var(--light-bg);
-            padding-top: 20px;
-            color: #212529;
-        }
-        .main-container {
-            max-width: 1200px;
-            margin: 30px auto 0;
-            padding: 0 15px;
-        }
-        .search-card {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-        .search-input {
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            border: 2px solid #dee2e6;
-        }
-        .search-btn {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            font-weight: 600;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 12px;
-            transition: 0.3s;
-        }
-        .search-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(13,110,253,0.3);
-        }
-        .nzk-result-shell {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            margin-top: 20px;
-        }
-        .nzk-score-card {
-            background: linear-gradient(145deg, #0d6efd, #0a58ca);
-            color: #fff;
-            border-radius: 20px;
-            padding: 25px;
-            flex: 1 1 280px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(13,110,253,0.25);
-            position: relative;
-            overflow: hidden;
-        }
-        .nzk-score-card .nzk-result-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 6px 18px;
-            border-radius: 40px;
-            font-size: 14px;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-        .nzk-score-ring {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: conic-gradient(#ffc107 0% var(--score, 0%), rgba(255,255,255,0.2) var(--score, 0%) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 15px auto;
-            position: relative;
-        }
-        .nzk-score-ring::after {
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: #0d6efd;
-            border-radius: 50%;
-        }
-        .nzk-score-ring b {
-            position: relative;
-            z-index: 2;
-            font-size: 22px;
-        }
-        .nzk-score-ring small {
-            display: block;
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        .nzk-score-total {
-            background: rgba(0,0,0,0.15);
-            border-radius: 30px;
-            padding: 10px;
-            margin-top: 15px;
-        }
-        .nzk-score-total b { font-size: 24px; }
-        .nzk-score-total small { font-size: 14px; opacity: 0.8; display: block; }
-        .nzk-result-main-column {
-            flex: 2 1 500px;
-        }
-        .nzk-student-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-        .nzk-student-card-head {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 2px solid #f1f3f5;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        .nzk-student-card-head h1 {
-            font-size: 1.6rem;
-            color: var(--primary);
-        }
-        .nzk-student-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            opacity: 0.3;
-        }
-        .nzk-info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .nzk-info-item {
-            background: #f8f9fa;
-            padding: 12px 18px;
-            border-radius: 12px;
-            border-right: 4px solid var(--primary);
-        }
-        .nzk-info-item small {
-            display: block;
-            color: var(--muted);
-            font-size: 12px;
-        }
-        .nzk-info-item b {
-            font-size: 1.2rem;
-        }
-        .nzk-actions-card {
-            margin-top: 20px;
-        }
-        .nzk-action-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .nzk-action-tile {
-            background: #f8f9fa;
-            padding: 12px 20px;
-            border-radius: 16px;
-            text-decoration: none;
-            color: #212529;
-            flex: 1 1 150px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: 0.3s;
-            border: 1px solid #dee2e6;
-        }
-        .nzk-action-tile:hover {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-        }
-        .nzk-action-tile i { font-size: 1.8rem; }
-        .nzk-action-tile span b { display: block; font-size: 1rem; }
-        .nzk-action-tile span small { font-size: 0.75rem; opacity: 0.7; }
-        .green { border-right: 4px solid #28a745; }
-        .gold { border-right: 4px solid #ffc107; }
-        .purple { border-right: 4px solid #6f42c1; }
-        .nzk-subjects-card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 25px;
-            margin-top: 30px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-        .nzk-section-heading {
-            margin-bottom: 25px;
-        }
-        .nzk-section-heading span {
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 14px;
-        }
-        .nzk-section-heading h2 {
-            font-size: 1.8rem;
-        }
-        .nzk-subjects-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .nzk-subject-row {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr 0.8fr 1.2fr;
-            align-items: center;
-            padding: 10px 12px;
-            border-radius: 12px;
-            background: #f8f9fa;
-            gap: 10px;
-        }
-        .nzk-subject-row.header {
-            background: var(--primary);
-            color: #fff;
-            font-weight: bold;
-            border-radius: 12px 12px 0 0;
-        }
-        .nzk-subject-name b { font-size: 1rem; }
-        .nzk-subject-score { font-weight: bold; }
-        .nzk-grade-pill {
-            background: #6c757d;
-            color: #fff;
-            padding: 2px 16px;
-            border-radius: 40px;
-            font-size: 12px;
-        }
-        .nzk-progress {
-            height: 8px;
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            width: 100%;
-        }
-        .nzk-progress span {
-            display: block;
-            height: 100%;
-            border-radius: 10px;
-        }
-        .summary-boxes {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 25px;
-            justify-content: center;
-        }
-        .summary-box {
-            background: #f8f9fa;
-            padding: 15px 25px;
-            border-radius: 16px;
-            text-align: center;
-            flex: 1 1 150px;
-            border: 1px solid #dee2e6;
-        }
-        .summary-box h4 {
-            color: var(--primary);
-            font-size: 1.8rem;
-            margin: 0;
-        }
-        .summary-box small {
-            display: block;
-            color: var(--muted);
-        }
-        .footer-note {
-            text-align: center;
-            padding: 20px;
-            color: var(--muted);
-            font-size: 13px;
-            margin-top: 30px;
-        }
-        .loader {
-            display: none;
-            text-align: center;
-            padding: 30px;
-        }
-        @media (max-width: 768px) {
-            .nzk-info-grid { grid-template-columns: 1fr; }
-            .nzk-subject-row { grid-template-columns: 1fr 1fr; gap: 5px; }
-            .nzk-subject-row.header { display: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d1219">
+<title>مخزني — نظام إدارة المخازن</title>
+
+<!-- خطوط فقط (وليست مكتبات)، والتطبيق يعمل بدونها إن غاب الإنترنت -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Changa:wght@500;600;700;800&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   نظام التصميم — متغيرات الواجهة الداكنة
+============================================================ */
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#0d1219;
+  --surface:#151c28;
+  --surface-2:#1a2332;
+  --line:#25324a;
+  --line-soft:#1e2939;
+
+  --ink:#e9eef6;
+  --muted:#8ba0bb;
+
+  --primary:#2fd6a3;  --primary-ink:#04281e;  --primary-soft:rgba(47,214,163,.14);
+  --amber:#ffb224;    --amber-soft:rgba(255,178,36,.14);
+  --coral:#ff6b5e;    --coral-soft:rgba(255,107,94,.14);
+  --blue:#5aa2ff;     --blue-soft:rgba(90,162,255,.14);
+  --violet:#b48cff;
+
+  --radius:14px;
+  --shadow:0 10px 26px rgba(0,0,0,.35);
+
+  --font-display:'Changa',sans-serif;
+  --font-body:'Almarai',system-ui,'Segoe UI',sans-serif;
+}
+
+::selection{background:var(--primary);color:var(--primary-ink)}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  font-size:15px;line-height:1.65;
+  background:
+    radial-gradient(900px 420px at 88% -60px, rgba(47,214,163,.08), transparent 60%),
+    radial-gradient(720px 400px at -8% 105%, rgba(255,178,36,.05), transparent 60%),
+    radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px) 0 0/22px 22px,
+    var(--bg);
+  min-height:100vh;
+}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:#2c3a54;border-radius:99px}
+::-webkit-scrollbar-track{background:transparent}
+button{font-family:inherit}
+
+/* ============================================================
+   الهيكل: شريط جانبي + محتوى
+============================================================ */
+.app{display:flex;min-height:100vh}
+
+.sidebar{
+  width:252px;flex-shrink:0;
+  position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;
+  background:#0f1520;
+  border-inline-end:1px solid var(--line-soft);
+}
+.brand{display:flex;gap:.75rem;align-items:center;padding:1.25rem 1.2rem 1.1rem}
+.brand-mark{
+  width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(150deg,#59f0c0,var(--primary) 55%,#0f9d77);
+  display:grid;place-items:center;color:var(--primary-ink);
+  box-shadow:0 5px 16px rgba(47,214,163,.3);
+}
+.brand h1{font-family:var(--font-display);font-size:1.35rem;font-weight:800;line-height:1.05}
+.brand small{color:var(--muted);font-size:.7rem;font-weight:700}
+
+.nav{display:flex;flex-direction:column;gap:.35rem;padding:.5rem .8rem;flex:1}
+.nav-item{
+  display:flex;align-items:center;gap:.7rem;
+  padding:.65rem .9rem;border-radius:10px;border:none;
+  background:transparent;color:#9fb2ca;
+  font-size:.9rem;font-weight:800;cursor:pointer;text-align:start;
+  position:relative;transition:background .18s,color .18s;
+}
+.nav-item svg{width:19px;height:19px;flex-shrink:0}
+.nav-item:hover{background:rgba(255,255,255,.05);color:#fff}
+.nav-item.active{background:var(--primary-soft);color:#7cf0cd}
+.nav-item.active::before{
+  content:'';position:absolute;inset-inline-start:0;top:9px;bottom:9px;
+  width:3px;border-radius:99px;background:var(--primary);
+}
+
+.sidebar-foot{padding:1rem 1.2rem;border-top:1px solid var(--line-soft);font-size:.72rem;color:var(--muted)}
+.storage-line{display:flex;justify-content:space-between;margin-bottom:.45rem}
+.meter{height:5px;background:#1b2536;border-radius:99px;overflow:hidden;margin-bottom:.5rem}
+.meter i{display:block;height:100%;width:8%;background:var(--primary);border-radius:99px;transition:width .6s ease}
+.db-ready{display:flex;align-items:center;gap:.4rem;margin-top:.5rem}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 0 0 rgba(47,214,163,.55);animation:dotPulse 2s infinite}
+@keyframes dotPulse{0%{box-shadow:0 0 0 0 rgba(47,214,163,.5)}70%{box-shadow:0 0 0 7px rgba(47,214,163,0)}100%{box-shadow:0 0 0 0 rgba(47,214,163,0)}}
+
+.content{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* ============================================================
+   الشريط العلوي (عنوان + ساعة حية + جرس التنبيهات)
+============================================================ */
+.topbar{
+  position:sticky;top:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  padding:.85rem 1.6rem;
+  background:rgba(13,18,25,.82);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line-soft);
+}
+.topbar h2{font-family:var(--font-display);font-size:1.4rem;font-weight:800;line-height:1.2}
+.date-line{font-size:.75rem;color:var(--muted);display:flex;gap:.6rem;align-items:center}
+.clock{
+  font-family:var(--font-display);font-weight:700;color:var(--primary);
+  background:var(--primary-soft);padding:.05rem .55rem;border-radius:7px;font-size:.78rem;
+}
+.topbar-actions{display:flex;align-items:center;gap:.6rem}
+
+.icon-btn{
+  width:41px;height:41px;border-radius:10px;position:relative;
+  border:1px solid var(--line);background:var(--surface);
+  display:grid;place-items:center;cursor:pointer;color:var(--ink);
+  transition:transform .18s,border-color .18s;
+}
+.icon-btn:hover{transform:translateY(-2px);border-color:var(--primary)}
+.icon-btn svg{width:19px;height:19px}
+.bell .dot{
+  position:absolute;top:-5px;inset-inline-end:-5px;min-width:18px;height:18px;padding:0 4px;
+  border-radius:99px;background:var(--coral);color:#2b0705;
+  font-size:.66rem;font-weight:800;display:grid;place-items:center;
+}
+.bell.has-alerts::after{
+  content:'';position:absolute;inset:-5px;border-radius:13px;
+  border:2px solid rgba(255,107,94,.45);animation:ringPulse 1.8s infinite;
+}
+@keyframes ringPulse{0%{opacity:.9;transform:scale(.92)}70%{opacity:0;transform:scale(1.22)}100%{opacity:0}}
+
+main{padding:1.3rem 1.6rem 3rem}
+
+/* ============================================================
+   الأزرار والحقول
+============================================================ */
+.btn{
+  display:inline-flex;align-items:center;gap:.45rem;
+  border:none;border-radius:9px;padding:.6rem 1.05rem;
+  font-size:.86rem;font-weight:800;cursor:pointer;
+  transition:transform .15s,box-shadow .2s,filter .2s,border-color .2s;
+}
+.btn svg{width:16px;height:16px}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--primary);color:var(--primary-ink);box-shadow:0 4px 14px rgba(47,214,163,.28)}
+.btn-primary:hover{filter:brightness(1.07)}
+.btn-line{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.btn-line:hover{border-color:var(--primary);color:#7cf0cd}
+.btn-danger{background:var(--coral);color:#2b0705;box-shadow:0 4px 14px rgba(255,107,94,.28)}
+.btn-sm{padding:.42rem .8rem;font-size:.78rem}
+
+.input,.select{
+  width:100%;padding:.55rem .8rem;
+  border:1px solid var(--line);border-radius:9px;
+  font:inherit;background:#101724;color:var(--ink);
+  transition:border-color .2s,box-shadow .2s;
+}
+.input::placeholder{color:#5c6f8b}
+.input:focus,.select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(47,214,163,.16)}
+.input:disabled{background:#141b28;color:var(--muted)}
+.select option{background:#151c28}
+.filter-select{width:auto;min-width:150px}
+
+/* ============================================================
+   الصفحات + بطاقات الإحصاء
+============================================================ */
+.page{display:none}
+.page.active{display:block;animation:pageIn .35s ease both}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1rem;margin-bottom:1.2rem}
+.stat{
+  display:flex;gap:.9rem;align-items:center;
+  padding:1.05rem 1.15rem;position:relative;overflow:hidden;
+  background:var(--surface);border:1px solid var(--line-soft);
+  border-radius:var(--radius);
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+}
+.stat:hover{transform:translateY(-3px);border-color:var(--stat);box-shadow:var(--shadow)}
+.stat::before{content:'';position:absolute;inset-block:0;inset-inline-start:0;width:4px;background:var(--stat)}
+.stat-icon{width:47px;height:47px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;background:var(--stat-soft);color:var(--stat)}
+.stat-icon svg{width:22px;height:22px}
+.stat-label{font-size:.76rem;font-weight:700;color:var(--muted);display:block}
+.stat-value{font-family:var(--font-display);font-size:1.55rem;font-weight:800;line-height:1.2;display:block}
+.stat-sub{font-size:.71rem;color:var(--muted);display:block}
+
+/* ============================================================
+   اللوحات + الرسم البياني للتصنيفات
+============================================================ */
+.dash-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:1rem;margin-bottom:1rem}
+.panel{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:hidden}
+.panel-head{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;border-bottom:1px solid var(--line-soft)}
+.panel-head h3{font-family:var(--font-display);font-size:.95rem;font-weight:700;flex:1}
+.panel-head .head-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center}
+.panel-head .head-icon svg{width:16px;height:16px}
+.hi-warn{background:var(--amber-soft);color:var(--amber)}
+.hi-info{background:var(--blue-soft);color:var(--blue)}
+.hi-teal{background:var(--primary-soft);color:var(--primary)}
+.count-pill{background:var(--primary-soft);color:#7cf0cd;font-size:.72rem;font-weight:800;padding:.15rem .6rem;border-radius:99px}
+.panel-list{list-style:none;max-height:340px;overflow:auto}
+.panel.attention{animation:panelAttn 1.6s ease}
+@keyframes panelAttn{0%,60%{box-shadow:0 0 0 3px rgba(255,178,36,.35)}100%{box-shadow:none}}
+
+.chart{padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.75rem}
+.bar-row{display:grid;grid-template-columns:110px 1fr auto;gap:.7rem;align-items:center;font-size:.78rem}
+.bar-label{color:var(--muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{height:10px;background:#101724;border-radius:99px;overflow:hidden}
+.bar-track i{display:block;height:100%;width:0;border-radius:99px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.bar-val{font-family:var(--font-display);font-weight:700;font-size:.78rem}
+
+/* عناصر لوحة التنبيهات */
+.low-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.1rem;border-bottom:1px solid var(--line-soft);transition:background .15s}
+.low-item:hover{background:#182133}
+.low-info{flex:1;min-width:0}
+.low-info strong{display:block;font-size:.87rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.low-meta{font-size:.71rem;color:var(--muted)}
+.low-qty{text-align:center;font-size:.68rem;color:var(--muted)}
+.low-qty b{display:block;font-family:var(--font-display);font-size:1.15rem;line-height:1.2}
+.low-qty.low b{color:var(--amber)} .low-qty.out b{color:var(--coral)}
+
+/* شريط أحدث الحركات (بطاقات أفقية) */
+.ops-strip{display:grid;grid-auto-flow:column;grid-auto-columns:225px;gap:.8rem;overflow-x:auto;padding:1rem 1.1rem;scroll-snap-type:x proximity}
+.op-card{
+  scroll-snap-align:start;background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:12px;padding:.8rem .9rem;
+  transition:transform .18s,border-color .18s;
+}
+.op-card:hover{transform:translateY(-3px);border-color:var(--oc)}
+.op-card .oc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+.op-card .oc-icon{width:30px;height:30px;border-radius:8px;display:grid;place-items:center}
+.op-card .oc-icon svg{width:15px;height:15px}
+.op-card.in{--oc:var(--primary)} .op-card.in .oc-icon{background:var(--primary-soft);color:var(--primary)}
+.op-card.out{--oc:var(--coral)} .op-card.out .oc-icon{background:var(--coral-soft);color:var(--coral)}
+.op-card time{font-size:.66rem;color:var(--muted)}
+.op-card strong{display:block;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.35rem}
+.op-card .oc-num{font-family:var(--font-display);font-weight:800;font-size:.95rem}
+.op-card.in .oc-num{color:var(--primary)} .op-card.out .oc-num{color:var(--coral)}
+.op-card .oc-num small{font-family:var(--font-body);font-weight:400;color:var(--muted);font-size:.68rem}
+
+/* سجل العمليات (قائمة) */
+.log-item{
+  display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;
+  column-gap:.85rem;row-gap:.1rem;align-items:center;
+  padding:.8rem 1.1rem;border-bottom:1px solid var(--line-soft);transition:background .15s;
+}
+.log-item:hover{background:#182133}
+.log-icon{grid-row:1/3;width:36px;height:36px;border-radius:10px;display:grid;place-items:center}
+.log-icon svg{width:17px;height:17px}
+.log-icon.in{background:var(--primary-soft);color:var(--primary)}
+.log-icon.out{background:var(--coral-soft);color:var(--coral)}
+.log-body{grid-column:2;grid-row:1}.log-body strong{font-size:.87rem}
+.log-meta{grid-column:2;grid-row:2;font-size:.72rem;color:var(--muted)}
+.log-qty{grid-column:3;grid-row:1;font-family:var(--font-display);font-weight:800;text-align:end}
+.log-qty.in{color:var(--primary)} .log-qty.out{color:var(--coral)}
+.log-qty small{display:block;font-family:var(--font-body);font-weight:400;font-size:.67rem;color:var(--muted)}
+.log-time{grid-column:3;grid-row:2;font-size:.66rem;color:var(--muted);text-align:end}
+
+/* ============================================================
+   شريط الأدوات + الجدول
+============================================================ */
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem;margin-bottom:1rem}
+.toolbar-spacer{flex:1}
+.search-box{position:relative;flex:1;min-width:220px}
+.search-box svg{position:absolute;inset-inline-start:.75rem;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted);pointer-events:none}
+.search-box .input{padding-inline-start:2.4rem}
+.search-box.small{flex:0 1 240px;min-width:170px}
+
+.chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.chip{
+  border:1px solid var(--line);background:transparent;color:var(--muted);
+  padding:.34rem .85rem;border-radius:99px;font-size:.76rem;font-weight:800;cursor:pointer;transition:all .18s;
+}
+.chip:hover{border-color:var(--primary);color:#7cf0cd}
+.chip.active{background:var(--primary);border-color:var(--primary);color:var(--primary-ink)}
+
+.table-meta{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem}
+.table-meta h3{font-family:var(--font-display);font-size:1rem;font-weight:700}
+
+.table-wrap{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);overflow:auto}
+.tbl{width:100%;border-collapse:collapse;min-width:840px}
+.tbl th{
+  font-size:.74rem;color:var(--muted);text-align:start;white-space:nowrap;
+  padding:.7rem .9rem;border-bottom:1px solid var(--line);
+  background:#131a26;position:sticky;top:0;z-index:2;
+}
+.tbl td{padding:.65rem .9rem;border-bottom:1px solid var(--line-soft);vertical-align:middle;font-size:.85rem}
+.tbl tbody tr{transition:background .15s}
+.tbl tbody tr:hover{background:#182133}
+.tbl tbody tr:last-child td{border-bottom:none}
+tr.flash{animation:rowFlash 1.6s ease}
+@keyframes rowFlash{0%{background:var(--primary-soft)}100%{background:transparent}}
+
+.sortable{cursor:pointer;user-select:none}
+.sortable::after{content:'↕';margin-inline-start:.35rem;font-size:.75em;opacity:.35}
+.sortable:hover{color:var(--ink)}
+.sortable.asc::after{content:'↑';opacity:1;color:var(--primary)}
+.sortable.desc::after{content:'↓';opacity:1;color:var(--primary)}
+
+.prod-cell strong{display:block;font-size:.87rem}
+.sku{font-size:.7rem;color:var(--muted);letter-spacing:.04em}
+.cat-tag{background:#1c2739;border:1px solid var(--line);color:#a9c2e0;padding:.12rem .55rem;border-radius:99px;font-size:.71rem;font-weight:700;white-space:nowrap}
+
+.qty-badge{font-family:var(--font-display);font-weight:800;padding:.18rem .6rem;border-radius:8px;font-size:.85rem}
+.qty-badge.ok{background:var(--primary-soft);color:var(--primary)}
+.qty-badge.low{background:var(--amber-soft);color:var(--amber)}
+.qty-badge.out{background:var(--coral-soft);color:var(--coral)}
+
+.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .65rem;border-radius:99px;font-size:.72rem;font-weight:800;white-space:nowrap}
+.pill::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.ok{background:var(--primary-soft);color:var(--primary)}
+.pill.low{background:var(--amber-soft);color:var(--amber)}
+.pill.out{background:var(--coral-soft);color:var(--coral)}
+.pill.out::before{animation:dotPulse 1.6s infinite}
+
+.row-actions{display:flex;gap:.3rem;justify-content:flex-end}
+.icon-action{
+  width:32px;height:32px;border-radius:8px;border:none;background:transparent;
+  display:grid;place-items:center;cursor:pointer;color:var(--muted);transition:all .18s;
+}
+.icon-action svg{width:16px;height:16px}
+.icon-action.in:hover{background:var(--primary-soft);color:var(--primary)}
+.icon-action.out:hover{background:var(--coral-soft);color:var(--coral)}
+.icon-action.edit:hover{background:var(--blue-soft);color:var(--blue)}
+.icon-action.del:hover{background:var(--coral-soft);color:var(--coral)}
+
+.empty{display:none;text-align:center;padding:2.8rem 1rem;color:var(--muted)}
+.empty.show{display:block}
+.empty svg{width:44px;height:44px;opacity:.3;margin-bottom:.6rem}
+.empty p{font-weight:700}
+
+/* ============================================================
+   النوافذ المنبثقة
+============================================================ */
+.modal-wrap{
+  position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  padding:1rem;background:rgba(4,8,14,.66);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity .22s;
+}
+.modal-wrap.open{opacity:1;pointer-events:auto}
+.modal{
+  width:100%;max-width:580px;max-height:92vh;overflow:auto;
+  background:#182030;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);
+  transform:translateY(22px) scale(.97);transition:transform .28s cubic-bezier(.2,.9,.3,1.15);
+}
+.modal-wrap.open .modal{transform:none}
+.modal-sm{max-width:430px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid var(--line-soft)}
+.modal-head h3{font-family:var(--font-display);font-size:1.05rem;font-weight:800}
+.modal-body{padding:1.15rem 1.25rem}
+.modal-foot{display:flex;justify-content:flex-end;gap:.6rem;padding:1rem 1.25rem;border-top:1px solid var(--line-soft);background:#151c2a}
+.close-x{width:34px;height:34px;border-radius:8px;border:none;background:transparent;color:var(--muted);display:grid;place-items:center;cursor:pointer;transition:.18s}
+.close-x:hover{background:var(--coral-soft);color:var(--coral)}
+.close-x svg{width:17px;height:17px}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.85rem 1rem}
+.span-2{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:.3rem}
+.field label{font-size:.76rem;font-weight:800;color:#aebdd2}
+.field .hint{font-size:.7rem;color:var(--muted)}
+.field .err{font-size:.7rem;color:var(--coral);min-height:.9em;line-height:1.2}
+.field.invalid .input{border-color:var(--coral);box-shadow:0 0 0 3px rgba(255,107,94,.12)}
+
+.segment{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#101724;border:1px solid var(--line);border-radius:10px;padding:4px}
+.segment button{border:none;background:transparent;padding:.55rem;border-radius:8px;font-weight:800;font-size:.83rem;color:var(--muted);cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.segment button svg{width:15px;height:15px}
+.segment button.active[data-type="in"]{background:var(--primary-soft);color:var(--primary)}
+.segment button.active[data-type="out"]{background:var(--coral-soft);color:var(--coral)}
+
+.op-info{
+  display:flex;gap:1.4rem;flex-wrap:wrap;
+  background:#121a28;border:1px dashed var(--line);border-radius:10px;
+  padding:.7rem .95rem;font-size:.8rem;margin-bottom:.9rem;
+}
+.op-info div span{display:block;font-size:.67rem;color:var(--muted)}
+.op-info div b{font-family:var(--font-display)}
+
+/* ============================================================
+   التنبيهات (Toast) + شريط الجوال
+============================================================ */
+.toasts{position:fixed;bottom:1.2rem;inset-inline-start:1.2rem;z-index:80;display:flex;flex-direction:column;gap:.55rem;max-width:min(370px,90vw)}
+.toast{
+  display:flex;gap:.6rem;align-items:center;
+  background:#182030;border:1px solid var(--line);color:var(--ink);
+  padding:.75rem 1rem;border-radius:10px;box-shadow:var(--shadow);
+  border-inline-start:4px solid var(--primary);
+  font-size:.84rem;font-weight:700;
+  animation:toastIn .3s ease;transition:opacity .3s,transform .3s;
+}
+.toast svg{width:18px;height:18px;flex-shrink:0;color:var(--primary)}
+.toast-warning{border-inline-start-color:var(--amber)} .toast-warning svg{color:var(--amber)}
+.toast-error{border-inline-start-color:var(--coral)} .toast-error svg{color:var(--coral)}
+.toast.hide{opacity:0;transform:translateY(8px)}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.bottom-nav{
+  display:none;position:fixed;bottom:0;inset-inline:0;z-index:40;
+  background:#0f1520;border-top:1px solid var(--line-soft);
+  padding:.35rem .5rem calc(.35rem + env(safe-area-inset-bottom));
+}
+.bottom-nav button{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;color:var(--muted);
+  font-size:.67rem;font-weight:800;padding:.4rem;border-radius:9px;cursor:pointer;transition:color .2s;
+}
+.bottom-nav button svg{width:20px;height:20px}
+.bottom-nav button.active{color:var(--primary)}
+
+/* ============================================================
+   التجاوب
+============================================================ */
+@media (max-width:1000px){.dash-grid{grid-template-columns:1fr}}
+@media (max-width:900px){
+  .sidebar{display:none}
+  .bottom-nav{display:flex}
+  main{padding:1rem 1rem 6.5rem}
+  .topbar{padding:.75rem 1rem}
+}
+/* الجدول يتحول إلى بطاقات على الشاشات الضيقة */
+@media (max-width:860px){
+  .tbl{min-width:0}
+  .tbl thead{display:none}
+  .tbl tbody tr{display:block;padding:.85rem .95rem;border-bottom:1px solid var(--line-soft)}
+  .tbl td{display:flex;justify-content:space-between;align-items:center;gap:1rem;border:none;padding:.3rem 0}
+  .tbl td::before{content:attr(data-label);font-size:.72rem;font-weight:800;color:var(--muted)}
+}
+@media (max-width:560px){
+  .form-grid{grid-template-columns:1fr}
+  .topbar h2{font-size:1.1rem}
+  #quickAddBtn .label{display:none}
+  .toolbar-spacer{display:none}
+}
+</style>
 </head>
 <body>
-    <div class="container main-container">
-        <div class="search-card">
-            <h4 class="text-center mb-3"><i class="fas fa-search text-primary"></i> بحث عن نتيجة الطالب</h4>
-            <div class="row g-2">
-                <div class="col-md-8">
-                    <input type="text" id="seatInput" class="form-control search-input" placeholder="أدخل رقم الجلوس" value="1776500">
-                </div>
-                <div class="col-md-4">
-                    <button class="btn search-btn w-100" onclick="fetchResult()"><i class="fas fa-arrow-left"></i> بحث فوري</button>
-                </div>
-            </div>
-            <div class="loader" id="loader">
-                <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
-                <p id="loaderText">جاري جلب النتيجة...</p>
-            </div>
-        </div>
-        <div id="resultContainer"></div>
-        <div class="footer-note">
-            <i class="fas fa-graduation-cap text-primary"></i> مع تمنيات فريق نذاكر بالتوفيق والنجاح 🎓
-            <div class="mt-2">
-                <button class="btn btn-outline-secondary btn-sm" onclick="window.print()"><i class="fas fa-print"></i> طباعة</button>
-            </div>
-        </div>
+
+<!-- مكتبة أيقونات SVG مضمّنة -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M7 4v13M4 7l3-3 3 3M17 20V7M14 17l3 3 3-3"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 10-12 0c0 7-3 8-3 8h18s-3-1-3-8M13.7 21a2 2 0 01-3.4 0"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9L1.8 18a2 2 0 001.7 3h17a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0zM12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 5v14M19 12l-7 7-7-7"/></symbol>
+  <symbol id="i-money" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="13" rx="2"/><circle cx="12" cy="12.5" r="3"/><path d="M5.5 9.5h.01M18.5 15.5h.01"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="M23 6l-9.5 9.5-5-5L1 18M17 6h6v6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></symbol>
+</svg>
+
+<div class="app">
+
+  <!-- ================= الشريط الجانبي ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div>
+      <div>
+        <h1>مخزني</h1>
+        <small>غرفة عمليات المخزون</small>
+      </div>
     </div>
 
-    <script>
-        // ===== قائمة بروكسيات موسعة (7 خيارات) =====
-        const TARGET_BASE = 'https://than.nezakr.net/?system=s1&t=glos&k=';
-        const PROXIES = [
-            url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-            url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-            url => `https://api.cors.lol/?url=${encodeURIComponent(url)}`,
-            url => `https://cors-anywhere.herokuapp.com/${url}`,
-            url => `https://proxy.cors.sh/${url}`,
-            url => `https://cors.bridged.cc/${url}`,
-            url => `https://thingproxy.freeboard.io/fetch/${url}`
-        ];
+    <nav class="nav" aria-label="التنقل الرئيسي">
+      <button class="nav-item active" data-page="dashboard">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-grid"/></svg>
+        لوحة التحكم
+      </button>
+      <button class="nav-item" data-page="products">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg>
+        المنتجات
+      </button>
+      <button class="nav-item" data-page="operations">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-swap"/></svg>
+        حركات المخزون
+      </button>
+    </nav>
 
-        // ===== جلب مع إعادة محاولة =====
-        async function fetchWithRetry(proxyFn, targetUrl, retries = 3, timeout = 8000) {
-            for (let attempt = 1; attempt <= retries; attempt++) {
-                try {
-                    const controller = new AbortController();
-                    const id = setTimeout(() => controller.abort(), timeout);
-                    const proxyUrl = proxyFn(targetUrl);
-                    const response = await fetch(proxyUrl, { signal: controller.signal });
-                    clearTimeout(id);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const text = await response.text();
-                    if (text.length < 100) throw new Error('استجابة فارغة أو قصيرة جداً');
-                    return text;
-                } catch (err) {
-                    if (attempt === retries) throw err;
-                    await new Promise(r => setTimeout(r, 300 * attempt));
-                }
-            }
-        }
+    <div class="sidebar-foot">
+      <div class="storage-line"><span>التخزين المحلي</span><span id="storageSize">0 KB</span></div>
+      <div class="meter"><i id="storageMeterFill"></i></div>
+      <div id="storageCount">—</div>
+      <div class="db-ready">
+        <span class="pulse-dot"></span>
+        <span>جاهز للربط بقاعدة بيانات</span>
+      </div>
+    </div>
+  </aside>
 
-        // ===== تحليل HTML باستخدام DOM و Regex كاحتياطي =====
-        function parseStudentData(html, seat) {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const body = doc.body.innerText;
+  <!-- ================= المحتوى ================= -->
+  <div class="content">
 
-            // 1. استخراج الاسم
-            let name = 'غير معروف';
-            const title = doc.querySelector('title');
-            if (title) {
-                const m = title.textContent.match(/نتيجة الطالب (.*?) في/);
-                if (m) name = m[1].trim();
-            }
+    <header class="topbar">
+      <div>
+        <h2 id="pageTitle">لوحة التحكم</h2>
+        <span class="date-line"><span id="todayDate"></span><span class="clock" id="clock">00:00:00</span></span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn bell" id="alertBell" title="تنبيهات انخفاض المخزون" aria-label="التنبيهات">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-bell"/></svg>
+          <span class="dot" id="alertCount" hidden>0</span>
+        </button>
+        <button class="btn btn-primary" id="quickAddBtn">
+          <svg fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg>
+          <span class="label">إضافة منتج</span>
+        </button>
+      </div>
+    </header>
 
-            // 2. استخراج الحقول الأساسية (باستخدام النص)
-            const extract = (label) => {
-                const regex = new RegExp(`${label}\\s*([^\\n\\d]+?)(?:\\d|\\n|$)`);
-                const m = body.match(regex);
-                return m ? m[1].trim() : 'غير محدد';
-            };
-            const section = extract('الشعبة');
-            const eduType = extract('نوع التعليم');
-            const rawGrade = extract('التقدير');
+    <main>
 
-            // 3. استخراج المواد والدرجات (DOM أولاً)
-            const subjects = {};
-            let totalEarned = 0, totalMax = 0;
+      <!-- ---------- لوحة التحكم ---------- -->
+      <section class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <article class="stat" style="--stat:var(--blue);--stat-soft:var(--blue-soft)">
+            <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg></div>
+            <div>
+              <span class="stat-label">إجمالي المنتجات</span>
+              <strong class="stat-value" id="statProducts">0</strong>
+              <span class="stat-sub" id="subProducts">—</span>
+            </div>
+          </article>
+          <article class="stat" style="--stat:var(--primary);--stat-soft:var(--primary-soft)">
+            <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-money"/></svg></div>
+            <div>
+              <span class="stat-label">قيمة المخزون (تكلفة)</span>
+              <strong class="stat-value" id="statCost">0</strong>
+              <span class="stat-sub">سعر الشراء × الكميات الحالية</span>
+            </div>
+          </article>
+          <article class="stat" style="--stat:var(--violet);--stat-soft:rgba(180,140,255,.14)">
+            <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trend"/></svg></div>
+            <div>
+              <span class="stat-label">قيمة متوقعة بالبيع</span>
+              <strong class="stat-value" id="statSale">0</strong>
+              <span class="stat-sub" id="subSale">—</span>
+            </div>
+          </article>
+          <article class="stat" style="--stat:var(--amber);--stat-soft:var(--amber-soft)">
+            <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-alert"/></svg></div>
+            <div>
+              <span class="stat-label">تنبيهات المخزون</span>
+              <strong class="stat-value" id="statAlerts">0</strong>
+              <span class="stat-sub" id="subAlerts">—</span>
+            </div>
+          </article>
+        </div>
 
-            // البحث عن جدول الدرجات (أكثر من طريقة)
-            let gradeTable = null;
-            // حاول العثور على جدول يحتوي على "المادة" و"الدرجة"
-            const tables = doc.querySelectorAll('table');
-            for (let table of tables) {
-                const headerText = table.innerText;
-                if (headerText.includes('المادة') && (headerText.includes('الدرجة') || headerText.includes('المجموع'))) {
-                    gradeTable = table;
-                    break;
-                }
-            }
+        <div class="dash-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <span class="head-icon hi-teal"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-trend"/></svg></span>
+              <h3>قيمة المخزون حسب التصنيف</h3>
+            </div>
+            <div class="chart" id="categoryChart"></div>
+          </section>
 
-            if (gradeTable) {
-                const rows = gradeTable.querySelectorAll('tr');
-                rows.forEach(row => {
-                    const cols = row.querySelectorAll('td');
-                    if (cols.length >= 3) {
-                        // عادةً العمود الأول اسم المادة، الثاني الدرجة
-                        let subj = cols[0].textContent.trim();
-                        let scoreText = cols[1].textContent.trim();
-                        // قد يكون الدرجة بصيغة "0.0 / 80" أو "0.0"
-                        if (scoreText.includes('/')) {
-                            const parts = scoreText.split('/');
-                            const earned = parseFloat(parts[0].trim());
-                            const max = parseFloat(parts[1].trim());
-                            if (!isNaN(earned) && !isNaN(max) && max > 0) {
-                                // تنظيف اسم المادة
-                                subj = subj.replace(/[0-9]/g, '').trim();
-                                if (subj.length > 1 && !['المادة', 'الدرجة', 'التقدير', 'المستوى', 'المجموع'].includes(subj)) {
-                                    const percent = (earned / max) * 100;
-                                    subjects[subj] = { earned, max, percent: Math.round(percent * 100) / 100 };
-                                    totalEarned += earned;
-                                    totalMax += max;
-                                }
-                            }
-                        } else {
-                            // قد يكون النص "غير متاح" – نتجاوزه
-                        }
-                    }
-                });
-            }
+          <section class="panel" id="lowPanel">
+            <div class="panel-head">
+              <span class="head-icon hi-warn"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-alert"/></svg></span>
+              <h3>منتجات تحتاج إعادة تعبئة</h3>
+              <span class="count-pill" id="lowCount">0</span>
+            </div>
+            <ul class="panel-list" id="lowStockList"></ul>
+            <div class="empty" id="lowEmpty">
+              <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-check"/></svg>
+              <p>لا توجد تنبيهات — كل الكميات بحالة جيدة</p>
+            </div>
+          </section>
+        </div>
 
-            // إذا لم نجد شيئاً في الجدول، نستخدم Regex على النص
-            if (Object.keys(subjects).length === 0) {
-                const lines = body.split('\n');
-                for (let line of lines) {
-                    line = line.trim();
-                    const match = line.match(/^([\u0600-\u06FF\s]{2,}?)\s*(\d+\.?\d*)\s*\/\s*(\d+\.?\d*)/);
-                    if (match) {
-                        let subj = match[1].trim();
-                        const earned = parseFloat(match[2]);
-                        const max = parseFloat(match[3]);
-                        if (subj.length > 1 && !['المادة','الدرجة','التقدير','المستوى','الصف','الفصل','المجموع'].includes(subj) && !isNaN(earned) && !isNaN(max) && max > 0) {
-                            subj = subj.replace(/[0-9]/g,'').trim();
-                            if (subj.length > 1) {
-                                const percent = (earned / max) * 100;
-                                subjects[subj] = { earned, max, percent: Math.round(percent * 100) / 100 };
-                                totalEarned += earned;
-                                totalMax += max;
-                            }
-                        }
-                    }
-                }
-            }
+        <section class="panel">
+          <div class="panel-head">
+            <span class="head-icon hi-info"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-swap"/></svg></span>
+            <h3>أحدث الحركات</h3>
+          </div>
+          <div class="ops-strip" id="opsStrip"></div>
+          <div class="empty" id="recentEmpty">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-swap"/></svg>
+            <p>لا توجد حركات مسجلة بعد</p>
+          </div>
+        </section>
+      </section>
 
-            if (Object.keys(subjects).length === 0) {
-                subjects['لا توجد مواد'] = { earned: 0, max: 0, percent: 0 };
-            }
+      <!-- ---------- المنتجات ---------- -->
+      <section class="page" id="page-products">
+        <div class="toolbar">
+          <div class="search-box">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><use href="#i-search"/></svg>
+            <input class="input" id="productSearch" type="search" placeholder="ابحث بالاسم أو الكود أو التصنيف…  ( / )">
+          </div>
+          <select class="select filter-select" id="categoryFilter" aria-label="تصفية حسب التصنيف"></select>
+          <div class="chips" id="statusChips">
+            <button class="chip active" data-status="all">الكل</button>
+            <button class="chip" data-status="ok">متوفر</button>
+            <button class="chip" data-status="low">منخفض</button>
+            <button class="chip" data-status="out">نفد</button>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="btn btn-line btn-sm" id="exportBtn">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-download"/></svg>
+            تصدير نسخة
+          </button>
+          <button class="btn btn-primary btn-sm" id="addProductBtn">
+            <svg fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg>
+            إضافة منتج
+          </button>
+        </div>
 
-            const totalPercent = totalMax > 0 ? Math.round((totalEarned / totalMax) * 10000) / 100 : 0;
-            const getGrade = (p) => {
-                if (p >= 90) return { text: 'ممتاز', class: 'success' };
-                if (p >= 80) return { text: 'جيد جداً', class: 'primary' };
-                if (p >= 65) return { text: 'جيد', class: 'warning' };
-                if (p >= 50) return { text: 'مقبول', class: 'orange' };
-                return { text: 'ضعيف', class: 'danger' };
-            };
-            const finalGrade = getGrade(totalPercent);
+        <div class="table-meta">
+          <h3>قائمة المنتجات</h3>
+          <span class="count-pill" id="productsCount">0</span>
+        </div>
 
-            return {
-                name, seat, section, eduType, rawGrade,
-                totalEarned: Math.round(totalEarned * 100) / 100,
-                totalMax: Math.round(totalMax * 100) / 100,
-                totalPercent, finalGrade, subjects
-            };
-        }
+        <div class="table-wrap">
+          <table class="tbl" id="productsTable">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="name">المنتج</th>
+                <th>التصنيف</th>
+                <th class="sortable" data-sort="purchasePrice">شراء</th>
+                <th class="sortable" data-sort="salePrice">بيع</th>
+                <th class="sortable" data-sort="quantity">الكمية</th>
+                <th class="sortable" data-sort="value">قيمة المخزون</th>
+                <th>الحالة</th>
+                <th style="text-align:end">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="productsBody"></tbody>
+          </table>
+          <div class="empty" id="productsEmpty">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg>
+            <p>لا توجد منتجات مطابقة</p>
+          </div>
+        </div>
+      </section>
 
-        // ===== عرض النتيجة =====
-        function renderResult(data) {
-            const container = document.getElementById('resultContainer');
-            let subjectsHtml = '';
-            for (const [name, info] of Object.entries(data.subjects)) {
-                if (name === 'لا توجد مواد') {
-                    subjectsHtml += `<div class="nzk-subject-row"><span>⚠️ ${info.earned || 'لم يتم العثور على مواد'}</span></div>`;
-                    continue;
-                }
-                const p = info.percent;
-                let color = '#e53935', level = 'ضعيف';
-                if (p >= 90) { color = '#2e7d32'; level = 'ممتاز'; }
-                else if (p >= 80) { color = '#1976d2'; level = 'جيد جداً'; }
-                else if (p >= 65) { color = '#f9a825'; level = 'جيد'; }
-                else if (p >= 50) { color = '#ef6c00'; level = 'مقبول'; }
+      <!-- ---------- حركات المخزون ---------- -->
+      <section class="page" id="page-operations">
+        <div class="toolbar">
+          <button class="btn btn-primary" id="newOpBtn">
+            <svg fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><use href="#i-plus"/></svg>
+            تسجيل حركة جديدة
+          </button>
+          <div class="chips" id="logChips">
+            <button class="chip active" data-type="all">الكل</button>
+            <button class="chip" data-type="in">وارد فقط</button>
+            <button class="chip" data-type="out">منصرف فقط</button>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <div class="search-box small">
+            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><use href="#i-search"/></svg>
+            <input class="input" id="logSearch" type="search" placeholder="بحث في السجل…">
+          </div>
+        </div>
 
-                subjectsHtml += `
-                    <div class="nzk-subject-row">
-                        <span class="nzk-subject-name"><b>${name}</b></span>
-                        <span class="nzk-subject-score">${info.earned} <small style="color:var(--muted);font-size:11px;">/ ${info.max}</small></span>
-                        <span><span class="nzk-grade-pill" style="background:${color};">${level}</span></span>
-                        <span>
-                            <div class="nzk-progress"><span style="width:${p}%; background:${color};"></span></div>
-                            <small style="font-size:11px;">${p}%</small>
-                        </span>
-                    </div>
-                `;
-            }
+        <div class="panel">
+          <div class="panel-head">
+            <span class="head-icon hi-info"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-swap"/></svg></span>
+            <h3>سجل جميع العمليات</h3>
+            <span class="count-pill" id="logCount">0</span>
+          </div>
+          <ul class="panel-list" id="logList" style="max-height:600px"></ul>
+          <div class="empty" id="logEmpty">
+            <svg fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><use href="#i-swap"/></svg>
+            <p>لا توجد عمليات مطابقة</p>
+          </div>
+        </div>
+      </section>
 
-            const gradeMap = {
-                'ممتاز': 'success',
-                'جيد جداً': 'primary',
-                'جيد': 'warning',
-                'مقبول': 'orange',
-                'ضعيف': 'danger'
-            };
-            const badgeClass = gradeMap[data.finalGrade.text] || 'secondary';
+    </main>
+  </div>
 
-            container.innerHTML = `
-                <div class="nzk-result-shell">
-                    <aside class="nzk-score-card" style="--score:${data.totalPercent};">
-                        <span class="nzk-result-badge"><i class="fas fa-circle-check"></i> ${data.finalGrade.text}</span>
-                        <div class="nzk-score-ring">
-                            <b>${data.totalPercent}%</b>
-                        </div>
-                        <h2>🎉 ${data.finalGrade.text}</h2>
-                        <p>${data.rawGrade}</p>
-                        <div class="nzk-score-total">
-                            <b>${data.totalEarned}</b> <small>/ ${data.totalMax}</small>
-                            <small>المجموع الكلي</small>
-                        </div>
-                    </aside>
+  <!-- شريط تنقل سفلي للجوال -->
+  <nav class="bottom-nav" aria-label="تنقل الجوال">
+    <button class="active" data-page="dashboard"><svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-grid"/></svg>الرئيسية</button>
+    <button data-page="products"><svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-box"/></svg>المنتجات</button>
+    <button data-page="operations"><svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><use href="#i-swap"/></svg>الحركات</button>
+  </nav>
+</div>
 
-                    <div class="nzk-result-main-column">
-                        <div class="nzk-student-card">
-                            <div class="nzk-student-card-head">
-                                <div>
-                                    <span class="nzk-eyebrow"><i class="fas fa-user-graduate"></i> نتيجة الطالب</span>
-                                    <h1>نتيجة الطالب ${data.name}</h1>
-                                    <p>كل بيانات الطالب الأساسية في بطاقة واحدة واضحة.</p>
-                                </div>
-                                <div class="nzk-student-icon"><i class="fas fa-graduation-cap"></i></div>
-                            </div>
-                            <div class="nzk-info-grid">
-                                <div class="nzk-info-item"><small>رقم الجلوس</small><b>${data.seat}</b></div>
-                                <div class="nzk-info-item"><small>الشعبة</small><b>${data.section}</b></div>
-                                <div class="nzk-info-item"><small>نوع التعليم</small><b>${data.eduType}</b></div>
-                                <div class="nzk-info-item">
-                                    <small>التقدير</small>
-                                    <b><span class="badge bg-${badgeClass}">${data.finalGrade.text}</span></b>
-                                    <small style="display:block;font-size:11px;color:var(--muted);">(الموقع: ${data.rawGrade})</small>
-                                </div>
-                            </div>
-                        </div>
+<!-- ================= نافذة: إضافة / تعديل منتج ================= -->
+<div class="modal-wrap" id="productModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="productModalTitle">إضافة منتج جديد</h3>
+      <button class="close-x" data-close aria-label="إغلاق"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><use href="#i-x"/></svg></button>
+    </div>
+    <form id="productForm" novalidate>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field span-2">
+            <label for="pName">اسم المنتج *</label>
+            <input class="input" id="pName" type="text" placeholder="مثال: ماوس لاسلكي">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="pSku">كود المنتج (SKU) *</label>
+            <input class="input" id="pSku" type="text" placeholder="مثال: MS-1001">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="pCategory">التصنيف *</label>
+            <input class="input" id="pCategory" type="text" list="categoryList" placeholder="مثال: إلكترونيات">
+            <datalist id="categoryList"></datalist>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="pPurchase">سعر الشراء *</label>
+            <input class="input" id="pPurchase" type="number" min="0" step="0.01" placeholder="0.00">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="pSale">سعر البيع *</label>
+            <input class="input" id="pSale" type="number" min="0" step="0.01" placeholder="0.00">
+            <small class="err"></small>
+          </div>
+          <div class="field" id="qtyField">
+            <label for="pQty">الكمية الحالية</label>
+            <input class="input" id="pQty" type="number" min="0" step="1" value="0">
+            <span class="hint" id="qtyHint" hidden>💡 تعديل الكميات يتم عبر «حركات المخزون» للحفاظ على دقة السجل.</span>
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="pMin">الحد الأدنى للمخزون *</label>
+            <input class="input" id="pMin" type="number" min="0" step="1" value="5">
+            <small class="err"></small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-line" data-close>إلغاء</button>
+        <button type="submit" class="btn btn-primary" id="saveProductBtn">حفظ المنتج</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-                        <div class="nzk-actions-card">
-                            <div class="nzk-action-grid">
-                                <a class="nzk-action-tile green" href="#"><i class="fas fa-building-columns"></i><span><b>توقع التنسيق</b><small>هل الكلية متاحة لك؟</small></span></a>
-                                <a class="nzk-action-tile gold" href="#"><i class="fas fa-trophy"></i><span><b>اعرف ترتيبك</b><small>داخل الشعبة</small></span></a>
-                                <a class="nzk-action-tile purple" href="#"><i class="fas fa-chart-column"></i><span><b>المجاميع التكرارية</b><small>حلل موقع المجموع</small></span></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!-- ================= نافذة: حركة مخزون ================= -->
+<div class="modal-wrap" id="operationModal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="opModalTitle">حركة مخزون</h3>
+      <button class="close-x" data-close aria-label="إغلاق"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><use href="#i-x"/></svg></button>
+    </div>
+    <form id="opForm" novalidate>
+      <div class="modal-body">
+        <div class="field" style="margin-bottom:.9rem">
+          <label for="opProduct">المنتج</label>
+          <select class="select" id="opProduct"></select>
+        </div>
+        <div class="op-info" id="opInfo"></div>
+        <div class="field" style="margin-bottom:.9rem">
+          <label>نوع الحركة</label>
+          <div class="segment" id="opSegment">
+            <button type="button" data-type="in" class="active"><svg fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-up"/></svg> إضافة للمخزون</button>
+            <button type="button" data-type="out"><svg fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><use href="#i-down"/></svg> صرف من المخزون</button>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label for="opQty">الكمية *</label>
+            <input class="input" id="opQty" type="number" min="1" step="1" placeholder="0">
+            <small class="err"></small>
+          </div>
+          <div class="field">
+            <label for="opNote">ملاحظة (اختياري)</label>
+            <input class="input" id="opNote" type="text" placeholder="مثال: توريد شركة النور">
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-line" data-close>إلغاء</button>
+        <button type="submit" class="btn btn-primary" id="opSubmitBtn">تسجيل الحركة</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-                <div class="nzk-subjects-card">
-                    <div class="nzk-section-heading">
-                        <span>تفاصيل الدرجات</span>
-                        <h2>درجات المواد مع النسب</h2>
-                        <p>التقدير والشريط النسبي حسب الدرجة الفعلية.</p>
-                    </div>
-                    <div class="nzk-subjects-list">
-                        <div class="nzk-subject-row header">
-                            <span>المادة</span><span>الدرجة</span><span>التقدير</span><span>المستوى</span>
-                        </div>
-                        ${subjectsHtml}
-                    </div>
-                </div>
+<!-- ================= نافذة: تأكيد الحذف ================= -->
+<div class="modal-wrap" id="confirmModal" role="dialog" aria-modal="true">
+  <div class="modal modal-sm">
+    <div class="modal-head"><h3>تأكيد الحذف</h3></div>
+    <div class="modal-body"><p id="confirmText"></p></div>
+    <div class="modal-foot">
+      <button class="btn btn-line" data-close>إلغاء</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">حذف نهائي</button>
+    </div>
+  </div>
+</div>
 
-                <div class="summary-boxes">
-                    <div class="summary-box"><h4>${data.totalEarned}</h4><small>المجموع الكلي</small></div>
-                    <div class="summary-box"><h4>${data.totalMax}</h4><small>المجموع الكلي الكلي</small></div>
-                    <div class="summary-box"><h4 style="color:${data.totalPercent >= 90 ? '#2e7d32' : data.totalPercent >= 80 ? '#1976d2' : data.totalPercent >= 65 ? '#f9a825' : data.totalPercent >= 50 ? '#ef6c00' : '#c62828'};">${data.totalPercent}%</h4><small>النسبة المئوية</small></div>
-                    <div class="summary-box"><h4>${data.finalGrade.text}</h4><small>التقدير النهائي</small></div>
-                </div>
-            `;
-        }
+<div class="toasts" id="toasts" aria-live="polite"></div>
 
-        // ===== دالة البحث الرئيسية =====
-        async function fetchResult() {
-            const seat = document.getElementById('seatInput').value.trim();
-            const container = document.getElementById('resultContainer');
-            const loader = document.getElementById('loader');
-            const loaderText = document.getElementById('loaderText');
-            
-            container.innerHTML = '';
-            loader.style.display = 'block';
+<script>
+'use strict';
+/* ============================================================
+   مخزني — تطبيق إدارة المخازن (نسخة داكنة)
+   تم إصلاح جميع المشاكل وإضافة التحسينات
+============================================================ */
 
-            if (!seat || !/^\d+$/.test(seat)) {
-                loader.style.display = 'none';
-                container.innerHTML = `<div class="alert alert-danger">⚠️ برجاء إدخال رقم جلوس صحيح (أرقام فقط)</div>`;
-                return;
-            }
+/* ---------------- الإعدادات ---------------- */
+const CONFIG = Object.freeze({
+  CURRENCY: 'ج.م',
+  STORAGE_KEYS: { products: 'wm_products', operations: 'wm_operations' },
+  CHART_COLORS: ['#2fd6a3', '#5aa2ff', '#ffb224', '#ff6b5e', '#b48cff', '#4dd0e1'],
+});
 
-            const targetUrl = TARGET_BASE + seat;
-            let lastError = '';
+/* ---------------- أدوات مساعدة ---------------- */
+const $  = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const icon = name => `<svg fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><use href="#i-${name}"/></svg>`;
 
-            for (let i = 0; i < PROXIES.length; i++) {
-                loaderText.textContent = `جاري المحاولة ${i+1}/${PROXIES.length} (مع إعادة المحاولة 3 مرات)...`;
-                try {
-                    const html = await fetchWithRetry(PROXIES[i], targetUrl, 3, 8000);
-                    const data = parseStudentData(html, seat);
-                    renderResult(data);
-                    loader.style.display = 'none';
-                    return;
-                } catch (err) {
-                    lastError = err.message;
-                    console.warn(`Proxy ${i+1} فشل:`, err);
-                }
-            }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 
-            loader.style.display = 'none';
-            container.innerHTML = `
-                <div class="alert alert-danger">
-                    ❌ فشل الجلب من جميع البروكسيات. آخر خطأ: ${lastError}<br>
-                    <span style="font-size:14px;">تأكد من اتصال الإنترنت أو حاول لاحقاً.</span>
-                </div>
-            `;
-        }
+const formatNumber = n => {
+  const num = Number(n);
+  return isNaN(num) ? '0' : new Intl.NumberFormat('en-US').format(num);
+};
+const formatMoney  = n => {
+  const num = Number(n);
+  return isNaN(num) ? `0 ${CONFIG.CURRENCY}` : `${formatNumber(num)} ${CONFIG.CURRENCY}`;
+};
+const pad2 = n => String(n).padStart(2, '0');
+const formatDate = ts => {
+  const d = new Date(ts);
+  return `${d.getFullYear()}/${pad2(d.getMonth() + 1)}/${pad2(d.getDate())} • ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+};
+const escapeHtml = s => {
+  if (!s) return '';
+  return String(s).replace(/[&<>"']/g, m =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+};
+const debounce = (fn, ms = 220) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
 
-        document.getElementById('seatInput').addEventListener('keypress', e => {
-            if (e.key === 'Enter') fetchResult();
-        });
+/* ============================================================
+   طبقة البيانات — StorageAdapter
+============================================================ */
+const StorageAdapter = {
+  read(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return fallback;
+      const parsed = JSON.parse(raw);
+      return parsed !== null && parsed !== undefined ? parsed : fallback;
+    } catch (e) {
+      console.warn(`فشل قراءة ${key}:`, e);
+      return fallback;
+    }
+  },
+  write(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (e) {
+      console.warn(`فشل كتابة ${key}:`, e);
+      return false;
+    }
+  },
+};
 
-        window.onload = fetchResult;
-    </script>
+/* ---------------- حالة التطبيق ---------------- */
+const Store = { products: [], operations: [] };
+const persistProducts   = () => StorageAdapter.write(CONFIG.STORAGE_KEYS.products, Store.products);
+const persistOperations = () => StorageAdapter.write(CONFIG.STORAGE_KEYS.operations, Store.operations);
+
+/* ---------------- بيانات تجريبية (أول تشغيل فقط) ---------------- */
+function seedIfFirstRun() {
+  if (StorageAdapter.read(CONFIG.STORAGE_KEYS.products, null) !== null) return;
+  const now = Date.now(), H = 36e5, D = 864e5;
+  const defs = [
+    ['ماوس لاسلكي لوجيتك',       'MS-1001', 'إلكترونيات',      180,  260,  42, 10],
+    ['كيبورد ميكانيكي RGB',      'KB-1002', 'إلكترونيات',      520,  750,   6,  8],
+    ['حامل لاب توب ألومنيوم',    'AC-1003', 'إكسسوارات',       140,  220,  25,  5],
+    ['خرطوشة حبر HP-85A',        'PR-1004', 'مستلزمات طباعة',  380,  520,   3,  6],
+    ['ورق A4 — عبوة 500 ورقة',   'PP-1005', 'مكتبيات',          95,  140, 120, 30],
+    ['مقابس كهربائية 5 فتحات',   'EL-1006', 'كهربائيات',       210,  310,   0,  4],
+    ['شاشة LED 24 بوصة',         'SC-1007', 'إلكترونيات',     2400, 3150,  9,  3],
+    ['كرسي مكتب دوار',           'FN-1008', 'أثاث',            950, 1400,  14,  2],
+  ];
+  const products = defs.map(d => ({
+    id: uid(), name: d[0], sku: d[1], category: d[2],
+    purchasePrice: d[3], salePrice: d[4], quantity: d[5], minStock: d[6],
+    createdAt: now - 9 * D,
+  }));
+  const bySku = sku => products.find(p => p.sku === sku);
+  const ops = [
+    ['MS-1001', 'in',  42, 42, 'توريد افتتاحي',              now - 8 * D],
+    ['PP-1005', 'in', 120, 120, 'توريد — شركة النور للورق',  now - 6 * D],
+    ['KB-1002', 'in',  10, 10, '',                            now - 5 * D],
+    ['KB-1002', 'out',  4,  6, 'طلب عميل رقم #342',          now - 2 * D - 3 * H],
+    ['PR-1004', 'out',  2,  3, 'قسم الصيانة',                now - 1 * D],
+    ['EL-1006', 'out',  8,  0, 'شحنة الفرع الجديد',          now - 5 * H],
+  ].map(o => {
+    const p = bySku(o[0]);
+    if (!p) return null;
+    const qty = o[2], after = o[3];
+    return {
+      id: uid(), productId: p.id, productName: p.name, sku: p.sku,
+      type: o[1], qty, beforeQty: o[1] === 'in' ? after - qty : after + qty,
+      afterQty: after, note: o[4], createdAt: o[5],
+    };
+  }).filter(Boolean);
+  StorageAdapter.write(CONFIG.STORAGE_KEYS.products, products);
+  StorageAdapter.write(CONFIG.STORAGE_KEYS.operations, ops);
+}
+
+/* ============================================================
+   الخدمات — منطق الأعمال
+============================================================ */
+function stockStatus(p) {
+  if (p.quantity <= 0) return 'out';
+  if (p.quantity <= p.minStock) return 'low';
+  return 'ok';
+}
+const STATUS_META = {
+  ok:  { label: 'متوفر', cls: 'ok'  },
+  low: { label: 'منخفض', cls: 'low' },
+  out: { label: 'نفد',   cls: 'out' },
+};
+
+const ProductService = {
+  getAll:  () => Store.products,
+  getById: id => Store.products.find(p => p.id === id),
+  skuExists(sku, exceptId = null) {
+    return Store.products.some(p => p.sku.toLowerCase() === sku.toLowerCase() && p.id !== exceptId);
+  },
+  categories() { return [...new Set(Store.products.map(p => p.category))].sort((a, b) => a.localeCompare(b, 'ar')); },
+  create(data) {
+    const p = { id: uid(), createdAt: Date.now(), ...data };
+    Store.products.unshift(p); persistProducts(); return p;
+  },
+  update(id, data) {
+    const p = this.getById(id); if (!p) return null;
+    Object.assign(p, data); persistProducts(); return p;
+  },
+  remove(id) {
+    Store.products = Store.products.filter(p => p.id !== id); persistProducts();
+  },
+};
+
+const OperationService = {
+  record({ productId, type, qty, note = '' }) {
+    const product = ProductService.getById(productId);
+    if (!product) return { ok: false, error: 'المنتج غير موجود' };
+    qty = Math.floor(Number(qty));
+    if (!Number.isFinite(qty) || qty <= 0) return { ok: false, error: 'أدخل كمية صحيحة أكبر من صفر' };
+    if (type === 'out' && qty > product.quantity)
+      return { ok: false, error: `لا يمكن صرف ${qty} — المتوفر ${product.quantity} فقط` };
+
+    const before = product.quantity;
+    product.quantity = type === 'in' ? before + qty : before - qty;
+    const operation = {
+      id: uid(), productId, productName: product.name, sku: product.sku,
+      type, qty, beforeQty: before, afterQty: product.quantity,
+      note: note.trim(), createdAt: Date.now(),
+    };
+    Store.operations.push(operation);
+    persistProducts(); persistOperations();
+    return { ok: true, operation, product };
+  },
+  log: () => [...Store.operations].sort((a, b) => b.createdAt - a.createdAt),
+};
+
+const StatsService = {
+  summary() {
+    const list = Store.products;
+    const stockCost = list.reduce((s, p) => s + p.purchasePrice * p.quantity, 0);
+    const stockSale = list.reduce((s, p) => s + p.salePrice * p.quantity, 0);
+    return {
+      total: list.length,
+      units: list.reduce((s, p) => s + p.quantity, 0),
+      categories: new Set(list.map(p => p.category)).size,
+      stockCost, stockSale,
+      expectedProfit: stockSale - stockCost,
+      alerts: list.filter(p => stockStatus(p) !== 'ok').length,
+    };
+  },
+  valueByCategory() {
+    const map = new Map();
+    Store.products.forEach(p => {
+      map.set(p.category, (map.get(p.category) || 0) + p.purchasePrice * p.quantity);
+    });
+    return [...map.entries()]
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
+  },
+};
+
+/* ============================================================
+   حالة الواجهة والفلاتر
+============================================================ */
+let currentPage = 'dashboard';
+let editingProductId = null;
+let pendingDeleteId  = null;
+let lastSavedId      = null;
+let opType = 'in';
+
+const ProductFilters = { query: '', category: 'all', status: 'all', sortKey: 'name', sortDir: 1 };
+const LogFilters     = { type: 'all', query: '' };
+
+const PAGE_TITLES = {
+  dashboard:  'لوحة التحكم',
+  products:   'إدارة المنتجات',
+  operations: 'حركات المخزون والسجل',
+};
+
+/* ============================================================
+   واجهة المستخدم — أدوات عامة
+============================================================ */
+function toast(message, kind = 'success') {
+  const el = document.createElement('div');
+  el.className = `toast toast-${kind}`;
+  el.innerHTML = `${icon(kind === 'success' ? 'check' : 'alert')}<span>${escapeHtml(message)}</span>`;
+  $('#toasts').appendChild(el);
+  setTimeout(() => { el.classList.add('hide'); setTimeout(() => el.remove(), 320); }, 3800);
+}
+
+function openModal(sel) {
+  $(sel).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => $(sel).querySelector('input:not([disabled]),select')?.focus(), 160);
+}
+function closeModal(sel) {
+  $(sel).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeAllModals() { $$('.modal-wrap.open').forEach(w => closeModal('#' + w.id)); }
+
+function setFieldError(input, msg) {
+  const field = input.closest('.field');
+  field.classList.toggle('invalid', !!msg);
+  const err = field.querySelector('.err');
+  if (err) err.textContent = msg || '';
+}
+
+function countUp(el, target, money = false) {
+  const from = Number(el.dataset.value || 0);
+  el.dataset.value = target;
+  if (from === target) { el.textContent = money ? formatMoney(target) : formatNumber(target); return; }
+  const t0 = performance.now(), dur = 650;
+  (function tick(now) {
+    const t = Math.min(1, (now - t0) / dur);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const val = Math.round(from + (target - from) * eased);
+    el.textContent = money ? formatMoney(val) : formatNumber(val);
+    if (t < 1) requestAnimationFrame(tick);
+  })(t0);
+}
+
+/* ============================================================
+   العرض — لوحة التحكم
+============================================================ */
+function renderDashboard() {
+  const s = StatsService.summary();
+  countUp($('#statProducts'), s.total);
+  countUp($('#statCost'), Math.round(s.stockCost), true);
+  countUp($('#statSale'), Math.round(s.stockSale), true);
+  countUp($('#statAlerts'), s.alerts);
+  $('#subProducts').textContent = `${formatNumber(s.units)} وحدة في ${formatNumber(s.categories)} تصنيف`;
+  $('#subSale').textContent     = `الربح المتوقع: ${formatMoney(Math.round(s.expectedProfit))}`;
+  $('#subAlerts').textContent   = s.alerts ? 'منتجات تحت الحد الأدنى — راجعها' : 'كل المنتجات فوق الحد الأدنى';
+
+  renderCategoryChart();
+
+  const lows = Store.products.filter(p => stockStatus(p) !== 'ok')
+    .sort((a, b) => (a.quantity / Math.max(1, a.minStock)) - (b.quantity / Math.max(1, b.minStock)));
+  $('#lowCount').textContent = formatNumber(lows.length);
+  $('#lowEmpty').classList.toggle('show', lows.length === 0);
+  $('#lowStockList').innerHTML = lows.map(p => {
+    const st = STATUS_META[stockStatus(p)];
+    return `
+    <li class="low-item">
+      <div class="low-info">
+        <strong>${escapeHtml(p.name)}</strong>
+        <span class="low-meta">${escapeHtml(p.sku)} • الحد الأدنى ${formatNumber(p.minStock)}</span>
+      </div>
+      <div class="low-qty ${st.cls}"><b>${formatNumber(p.quantity)}</b>متبقي</div>
+      <button class="btn btn-primary btn-sm restock-btn" data-restock="${p.id}">${icon('up')} تعبئة</button>
+    </li>`;
+  }).join('');
+
+  const recent = OperationService.log().slice(0, 8);
+  $('#recentEmpty').classList.toggle('show', recent.length === 0);
+  $('#opsStrip').style.display = recent.length ? '' : 'none';
+  $('#opsStrip').innerHTML = recent.map(op => `
+    <div class="op-card ${op.type}">
+      <div class="oc-top">
+        <span class="oc-icon">${icon(op.type === 'in' ? 'up' : 'down')}</span>
+        <time>${formatDate(op.createdAt)}</time>
+      </div>
+      <strong>${escapeHtml(op.productName)}</strong>
+      <div class="oc-num">${op.type === 'in' ? '+' : '−'}${formatNumber(op.qty)} <small>• المتوفر ${formatNumber(op.afterQty)}</small></div>
+    </div>`).join('');
+}
+
+function renderCategoryChart() {
+  const data = StatsService.valueByCategory();
+  const max = Math.max(1, ...data.map(d => d.value));
+  const box = $('#categoryChart');
+  box.innerHTML = data.length ? data.map((d, i) => `
+    <div class="bar-row">
+      <span class="bar-label">${escapeHtml(d.name)}</span>
+      <div class="bar-track"><i style="background:${CONFIG.CHART_COLORS[i % CONFIG.CHART_COLORS.length]}"></i></div>
+      <span class="bar-val">${formatMoney(Math.round(d.value))}</span>
+    </div>`).join('')
+    : '<div class="empty show" style="padding:1.5rem">لا توجد بيانات بعد</div>';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $$('.bar-track i', box).forEach((bar, i) => { bar.style.width = (data[i].value / max * 100) + '%'; });
+  }));
+}
+
+/* ============================================================
+   العرض — جدول المنتجات
+============================================================ */
+function getVisibleProducts() {
+  let list = [...Store.products];
+  const q = ProductFilters.query.trim().toLowerCase();
+  if (q) list = list.filter(p =>
+    p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+  if (ProductFilters.category !== 'all') list = list.filter(p => p.category === ProductFilters.category);
+  if (ProductFilters.status   !== 'all') list = list.filter(p => stockStatus(p) === ProductFilters.status);
+
+  const { sortKey, sortDir } = ProductFilters;
+  list.sort((a, b) => {
+    const va = sortKey === 'value' ? a.salePrice * a.quantity : a[sortKey];
+    const vb = sortKey === 'value' ? b.salePrice * b.quantity : b[sortKey];
+    if (typeof va === 'string' && typeof vb === 'string') {
+      return va.localeCompare(vb, 'ar') * sortDir;
+    }
+    return (Number(va) - Number(vb)) * sortDir;
+  });
+  return list;
+}
+
+function renderProducts() {
+  const list = getVisibleProducts();
+  $('#productsCount').textContent = formatNumber(list.length);
+  $('#productsEmpty').classList.toggle('show', list.length === 0);
+
+  $('#productsBody').innerHTML = list.map(p => {
+    const st = STATUS_META[stockStatus(p)];
+    return `
+    <tr data-id="${p.id}">
+      <td data-label="المنتج"><div class="prod-cell"><strong>${escapeHtml(p.name)}</strong><span class="sku">${escapeHtml(p.sku)}</span></div></td>
+      <td data-label="التصنيف"><span class="cat-tag">${escapeHtml(p.category)}</span></td>
+      <td data-label="الشراء">${formatMoney(p.purchasePrice)}</td>
+      <td data-label="البيع">${formatMoney(p.salePrice)}</td>
+      <td data-label="الكمية"><span class="qty-badge ${st.cls}">${formatNumber(p.quantity)}</span></td>
+      <td data-label="القيمة">${formatMoney(p.salePrice * p.quantity)}</td>
+      <td data-label="الحالة"><span class="pill ${st.cls}">${st.label}</span></td>
+      <td data-label="إجراءات">
+        <div class="row-actions">
+          <button class="icon-action in"   data-action="in"     title="إضافة للمخزون">${icon('up')}</button>
+          <button class="icon-action out"  data-action="out"    title="صرف من المخزون">${icon('down')}</button>
+          <button class="icon-action edit" data-action="edit"   title="تعديل">${icon('edit')}</button>
+          <button class="icon-action del"  data-action="delete" title="حذف">${icon('trash')}</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  $$('#productsTable th.sortable').forEach(th => {
+    th.classList.toggle('asc',  th.dataset.sort === ProductFilters.sortKey && ProductFilters.sortDir === 1);
+    th.classList.toggle('desc', th.dataset.sort === ProductFilters.sortKey && ProductFilters.sortDir === -1);
+  });
+
+  if (lastSavedId) {
+    const row = $(`#productsBody tr[data-id="${lastSavedId}"]`);
+    if (row) row.classList.add('flash');
+    lastSavedId = null;
+  }
+}
+
+function updateCategoryFilterOptions() {
+  const sel = $('#categoryFilter');
+  const current = ProductFilters.category;
+  sel.innerHTML = '<option value="all">كل التصنيفات</option>' +
+    ProductService.categories().map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  sel.value = [...sel.options].some(o => o.value === current) ? current : 'all';
+  ProductFilters.category = sel.value;
+}
+
+/* ============================================================
+   العرض — سجل العمليات
+============================================================ */
+function opItemHtml(op) {
+  const isIn = op.type === 'in';
+  return `
+  <li class="log-item">
+    <span class="log-icon ${op.type}">${icon(isIn ? 'up' : 'down')}</span>
+    <div class="log-body"><strong>${escapeHtml(op.productName)}</strong></div>
+    <div class="log-qty ${op.type}">${isIn ? '+' : '−'}${formatNumber(op.qty)}<small>أصبح ${formatNumber(op.afterQty)}</small></div>
+    <span class="log-meta">${escapeHtml(op.sku)}${op.note ? ' • ' + escapeHtml(op.note) : ''}</span>
+    <time class="log-time">${formatDate(op.createdAt)}</time>
+  </li>`;
+}
+
+function renderLog() {
+  let list = OperationService.log();
+  if (LogFilters.type !== 'all') list = list.filter(o => o.type === LogFilters.type);
+  const q = LogFilters.query.trim().toLowerCase();
+  if (q) list = list.filter(o => o.productName.toLowerCase().includes(q) || o.sku.toLowerCase().includes(q) || (o.note || '').toLowerCase().includes(q));
+  $('#logCount').textContent = formatNumber(list.length);
+  $('#logEmpty').classList.toggle('show', list.length === 0);
+  $('#logList').innerHTML = list.map(opItemHtml).join('');
+}
+
+function updateBell() {
+  const n = StatsService.summary().alerts;
+  const badge = $('#alertCount');
+  badge.hidden = n === 0;
+  badge.textContent = formatNumber(n);
+  $('#alertBell').classList.toggle('has-alerts', n > 0);
+}
+
+function updateStorageMeter() {
+  const keys = CONFIG.STORAGE_KEYS;
+  const bytes = (localStorage.getItem(keys.products) || '').length + (localStorage.getItem(keys.operations) || '').length;
+  $('#storageSize').textContent = `${(bytes / 1024).toFixed(1)} KB`;
+  $('#storageCount').textContent = `${formatNumber(Store.products.length)} منتج • ${formatNumber(Store.operations.length)} حركة`;
+  $('#storageMeterFill').style.width = Math.min(100, (bytes / (5 * 1024 * 1024)) * 100 + 4) + '%';
+}
+
+function renderAll() {
+  renderDashboard();
+  updateCategoryFilterOptions();
+  renderProducts();
+  renderLog();
+  updateBell();
+  updateStorageMeter();
+}
+
+/* ============================================================
+   التنقل بين الصفحات
+============================================================ */
+function navigate(page) {
+  currentPage = page;
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  $$('[data-page]').forEach(b => b.classList.toggle('active', b.dataset.page === page));
+  $('#pageTitle').textContent = PAGE_TITLES[page];
+  if (page === 'dashboard') renderDashboard();
+}
+
+/* ============================================================
+   نوافذ المنتجات والحركات
+============================================================ */
+function openProductModal(id = null) {
+  editingProductId = id;
+  const form = $('#productForm');
+  form.reset();
+  $$('#productForm .field').forEach(f => { f.classList.remove('invalid'); const e = f.querySelector('.err'); if (e) e.textContent = ''; });
+  $('#categoryList').innerHTML = ProductService.categories()
+    .map(c => `<option value="${escapeHtml(c)}">`).join('');
+
+  const qtyInput = $('#pQty');
+  if (id) {
+    const p = ProductService.getById(id);
+    if (!p) { toast('المنتج غير موجود', 'error'); return; }
+    $('#productModalTitle').textContent = 'تعديل المنتج';
+    $('#pName').value = p.name;
+    $('#pSku').value = p.sku;
+    $('#pCategory').value = p.category;
+    $('#pPurchase').value = p.purchasePrice;
+    $('#pSale').value = p.salePrice;
+    qtyInput.value = p.quantity;
+    qtyInput.disabled = true;
+    $('#qtyHint').hidden = false;
+    $('#pMin').value = p.minStock;
+  } else {
+    $('#productModalTitle').textContent = 'إضافة منتج جديد';
+    qtyInput.disabled = false;
+    qtyInput.value = 0;
+    $('#qtyHint').hidden = true;
+    $('#pMin').value = 5;
+  }
+  openModal('#productModal');
+}
+
+function openOperationModal(productId = '', type = 'in') {
+  if (!Store.products.length) { toast('أضف منتجًا أولًا قبل تسجيل حركة', 'error'); return; }
+  const sel = $('#opProduct');
+  sel.innerHTML = Store.products
+    .map(p => `<option value="${p.id}">${escapeHtml(p.name)} (${escapeHtml(p.sku)})</option>`).join('');
+  if (productId && ProductService.getById(productId)) {
+    sel.value = productId;
+  }
+  setOpType(type);
+  $('#opQty').value = '';
+  $('#opNote').value = '';
+  setFieldError($('#opQty'), '');
+  updateOpInfo();
+  openModal('#operationModal');
+}
+
+function setOpType(t) {
+  opType = t;
+  $$('#opSegment button').forEach(b => b.classList.toggle('active', b.dataset.type === t));
+  $('#opModalTitle').textContent = t === 'in' ? 'إضافة إلى المخزون' : 'صرف من المخزون';
+  $('#opSubmitBtn').textContent  = t === 'in' ? 'تسجيل الإضافة' : 'تسجيل الصرف';
+  $('#opSubmitBtn').className    = `btn ${t === 'in' ? 'btn-primary' : 'btn-danger'}`;
+}
+
+function updateOpInfo() {
+  const p = ProductService.getById($('#opProduct').value);
+  if (!p) { $('#opInfo').innerHTML = ''; return; }
+  const st = STATUS_META[stockStatus(p)];
+  $('#opInfo').innerHTML = `
+    <div><span>المتوفر الآن</span><b>${formatNumber(p.quantity)}</b></div>
+    <div><span>الحد الأدنى</span><b>${formatNumber(p.minStock)}</b></div>
+    <div><span>الحالة</span><b><span class="pill ${st.cls}">${st.label}</span></b></div>`;
+}
+
+/* ============================================================
+   ربط الأحداث
+============================================================ */
+function bindEvents() {
+  /* التنقل */
+  $$('[data-page]').forEach(btn => btn.addEventListener('click', () => navigate(btn.dataset.page)));
+
+  /* الشريط العلوي */
+  $('#quickAddBtn').addEventListener('click', () => openProductModal());
+  $('#addProductBtn').addEventListener('click', () => openProductModal());
+  
+  $('#alertBell').addEventListener('click', () => {
+    navigate('dashboard');
+    const panel = $('#lowPanel');
+    panel.classList.remove('attention');
+    void panel.offsetWidth;
+    panel.classList.add('attention');
+  });
+
+  /* فلاتر المنتجات */
+  $('#productSearch').addEventListener('input', debounce(e => { ProductFilters.query = e.target.value; renderProducts(); }));
+  $('#categoryFilter').addEventListener('change', e => { ProductFilters.category = e.target.value; renderProducts(); });
+  $('#statusChips').addEventListener('click', e => {
+    const chip = e.target.closest('.chip'); if (!chip) return;
+    $$('#statusChips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    ProductFilters.status = chip.dataset.status;
+    renderProducts();
+  });
+  $$('#productsTable th.sortable').forEach(th => th.addEventListener('click', () => {
+    const key = th.dataset.sort;
+    if (ProductFilters.sortKey === key) ProductFilters.sortDir *= -1;
+    else { ProductFilters.sortKey = key; ProductFilters.sortDir = 1; }
+    renderProducts();
+  }));
+
+  /* أزرار الجدول — تفويض أحداث */
+  $('#productsBody').addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]'); if (!btn) return;
+    const tr = btn.closest('tr');
+    if (!tr) return;
+    const id = tr.dataset.id;
+    const p = ProductService.getById(id); if (!p) return;
+    if (btn.dataset.action === 'in')     openOperationModal(id, 'in');
+    if (btn.dataset.action === 'out')    openOperationModal(id, 'out');
+    if (btn.dataset.action === 'edit')   openProductModal(id);
+    if (btn.dataset.action === 'delete') {
+      pendingDeleteId = id;
+      $('#confirmText').innerHTML = `هل تريد حذف <b>«${escapeHtml(p.name)}»</b> نهائيًا؟<br><small style="color:var(--muted)">ستبقى عملياته في السجل للأرشفة.</small>`;
+      openModal('#confirmModal');
+    }
+  });
+
+  /* زر التعبئة في لوحة التحكم */
+  $('#lowStockList').addEventListener('click', e => {
+    const btn = e.target.closest('.restock-btn');
+    if (btn) openOperationModal(btn.dataset.restock, 'in');
+  });
+
+  /* حفظ المنتج */
+  $('#productForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = $('#pName').value.trim();
+    const sku  = $('#pSku').value.trim();
+    const category = $('#pCategory').value.trim() || 'عام';
+    const purchase = Number($('#pPurchase').value);
+    const sale     = Number($('#pSale').value);
+    const min      = Number($('#pMin').value);
+
+    let valid = true;
+    const check = (input, cond, msg) => { setFieldError(input, cond ? '' : msg); if (!cond) valid = false; };
+    check($('#pName'), name.length >= 2, 'اسم المنتج مطلوب (حرفان على الأقل)');
+    check($('#pSku'),  sku.length >= 2,  'كود المنتج مطلوب');
+    if (sku.length >= 2 && ProductService.skuExists(sku, editingProductId)) {
+      setFieldError($('#pSku'), 'هذا الكود مستخدم لمنتج آخر'); valid = false;
+    }
+    check($('#pPurchase'), Number.isFinite(purchase) && purchase >= 0, 'أدخل سعر شراء صحيح');
+    check($('#pSale'),     Number.isFinite(sale) && sale >= 0,         'أدخل سعر بيع صحيح');
+    check($('#pMin'),      Number.isInteger(min) && min >= 0,          'الحد الأدنى رقم صفر أو أكثر');
+    if (!editingProductId) {
+      const qty = Number($('#pQty').value);
+      check($('#pQty'), Number.isInteger(qty) && qty >= 0, 'الكمية رقم صفر أو أكثر');
+    }
+    if (!valid) return;
+
+    const data = { name, sku, category, purchasePrice: purchase, salePrice: sale, minStock: min };
+    let saved;
+    if (editingProductId) {
+      saved = ProductService.update(editingProductId, data);
+      if (saved) toast('تم تحديث المنتج بنجاح');
+      else { toast('حدث خطأ أثناء التحديث', 'error'); return; }
+    } else {
+      data.quantity = Number($('#pQty').value);
+      saved = ProductService.create(data);
+      toast('تمت إضافة المنتج بنجاح');
+      if (stockStatus(saved) !== 'ok')
+        toast(`تنبيه: «${saved.name}» بدأ تحت الحد الأدنى للمخزون`, 'warning');
+    }
+    lastSavedId = saved.id;
+    closeModal('#productModal');
+    renderAll();
+  });
+
+  /* تسجيل حركة مخزون */
+  $('#opProduct').addEventListener('change', updateOpInfo);
+  $('#opSegment').addEventListener('click', e => {
+    const btn = e.target.closest('[data-type]'); if (!btn) return;
+    setOpType(btn.dataset.type);
+  });
+  $('#newOpBtn').addEventListener('click', () => openOperationModal('', 'in'));
+  $('#opForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const res = OperationService.record({
+      productId: $('#opProduct').value,
+      type: opType,
+      qty: $('#opQty').value,
+      note: $('#opNote').value,
+    });
+    if (!res.ok) {
+      setFieldError($('#opQty'), ' ');
+      toast(res.error, 'error');
+      return;
+    }
+    setFieldError($('#opQty'), '');
+    closeModal('#operationModal');
+    toast(opType === 'in'
+      ? `تمت إضافة ${formatNumber(res.operation.qty)} إلى «${res.product.name}»`
+      : `تم صرف ${formatNumber(res.operation.qty)} من «${res.product.name}»`);
+    const st = stockStatus(res.product);
+    if (st !== 'ok')
+      toast(`⚠ «${res.product.name}» أصبح ${st === 'low' ? 'تحت الحد الأدنى' : 'نفادًا تامًا'} — يلزم التوريد`, 'warning');
+    renderAll();
+  });
+
+  /* تأكيد الحذف */
+  $('#confirmDeleteBtn').addEventListener('click', () => {
+    if (!pendingDeleteId) return;
+    const p = ProductService.getById(pendingDeleteId);
+    if (p) {
+      ProductService.remove(pendingDeleteId);
+      toast(`تم حذف «${p.name}»`);
+    }
+    pendingDeleteId = null;
+    closeModal('#confirmModal');
+    renderAll();
+  });
+
+  /* إغلاق النوافذ */
+  $$('[data-close]').forEach(b => b.addEventListener('click', () => {
+    const wrap = b.closest('.modal-wrap');
+    if (wrap) closeModal('#' + wrap.id);
+  }));
+  $$('.modal-wrap').forEach(w => w.addEventListener('mousedown', e => { if (e.target === w) closeModal('#' + w.id); }));
+
+  /* فلاتر السجل */
+  $('#logChips').addEventListener('click', e => {
+    const chip = e.target.closest('.chip'); if (!chip) return;
+    $$('#logChips .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    LogFilters.type = chip.dataset.type;
+    renderLog();
+  });
+  $('#logSearch').addEventListener('input', debounce(e => { LogFilters.query = e.target.value; renderLog(); }));
+
+  /* تصدير نسخة احتياطية */
+  $('#exportBtn').addEventListener('click', exportData);
+
+  /* اختصارات لوحة المفاتيح */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAllModals();
+    const typing = /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName);
+    if (e.key === '/' && !typing && currentPage === 'products') { e.preventDefault(); $('#productSearch').focus(); }
+  });
+}
+
+/* ---------------- تصدير البيانات ---------------- */
+function exportData() {
+  try {
+    const payload = { exportedAt: new Date().toISOString(), products: Store.products, operations: Store.operations };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `makhzeni-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('تم تنزيل النسخة الاحتياطية');
+  } catch (e) {
+    toast('حدث خطأ أثناء التصدير', 'error');
+  }
+}
+
+/* ---------------- الساعة الحية ---------------- */
+function startClock() {
+  const el = $('#clock');
+  const tick = () => {
+    const d = new Date();
+    el.textContent = `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+  };
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ============================================================
+   الإقلاع
+============================================================ */
+function init() {
+  seedIfFirstRun();
+  Store.products   = StorageAdapter.read(CONFIG.STORAGE_KEYS.products, []);
+  Store.operations = StorageAdapter.read(CONFIG.STORAGE_KEYS.operations, []);
+
+  $('#todayDate').textContent =
+    new Intl.DateTimeFormat('ar', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+
+  bindEvents();
+  renderAll();
+  navigate('dashboard');
+  startClock();
+}
+
+// بدء التطبيق
+init();
+</script>
 </body>
 </html>
