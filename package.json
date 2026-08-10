@@ -1,0 +1,27 @@
+{
+  "name": "makhzeni-pro",
+  "version": "2.0.0",
+  "description": "مخزني Pro — نظام إدارة المخازن والمبيعات",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "postinstall": "electron-builder install-app-deps",
+    "build:win": "electron-builder --win nsis"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^12.4.1"
+  },
+  "devDependencies": {
+    "electron": "^37.2.6",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.makhzeni.pro",
+    "productName": "مخزني Pro",
+    "files": ["index.html", "main.js", "preload.js", "database.js", "README.md"],
+    "win": { "target": ["nsis", "portable"] },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true }
+  }
+}
