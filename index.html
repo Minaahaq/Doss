@@ -275,12 +275,16 @@
   import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
   import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs, query, where, orderBy, Timestamp, onSnapshot, addDoc, arrayUnion, serverTimestamp, writeBatch, limit } from "firebase/firestore";
 
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    appId: "YOUR_APP_ID"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyDsJXNa6EYenn2f5mfoNQVEDxHhCH-XGAo",
+  authDomain: "alzahady-6e615.firebaseapp.com",
+  databaseURL: "https://alzahady-6e615-default-rtdb.firebaseio.com",
+  projectId: "alzahady-6e615",
+  storageBucket: "alzahady-6e615.firebasestorage.app",
+  messagingSenderId: "377804257010",
+  appId: "1:377804257010:web:9516e9ecbbc8b22ab0c26b",
+  measurementId: "G-4XPCD5L40F"
+};
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
