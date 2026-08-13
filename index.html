@@ -10,12 +10,9 @@
 <script type="importmap">
 {
   "imports": {
-    "firebase/app":
-      "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js",
-    "firebase/auth":
-      "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js",
-    "firebase/firestore":
-      "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"
   }
 }
 </script>
@@ -834,16 +831,25 @@ import {
 */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDsJXNa6EYenn2f5mfoNQVEDxHhCH-XGAo",
-  authDomain: "alzahady-6e615.firebaseapp.com",
-  databaseURL: "https://alzahady-6e615-default-rtdb.firebaseio.com",
-  projectId: "alzahady-6e615",
-  storageBucket: "alzahady-6e615.firebasestorage.app",
-  messagingSenderId: "377804257010",
-  appId: "1:377804257010:web:9516e9ecbbc8b22ab0c26b",
-  measurementId: "G-4XPCD5L40F"
-};
 
+  apiKey: "YOUR_FIREBASE_API_KEY",
+
+  authDomain:
+    "YOUR_PROJECT.firebaseapp.com",
+
+  projectId:
+    "YOUR_PROJECT_ID",
+
+  storageBucket:
+    "YOUR_PROJECT.firebasestorage.app",
+
+  messagingSenderId:
+    "YOUR_MESSAGING_SENDER_ID",
+
+  appId:
+    "YOUR_FIREBASE_APP_ID"
+
+};
 
 
 const firebaseApp =
@@ -901,6 +907,17 @@ function money(value){
       maximumFractionDigits:0
     });
 
+}
+
+
+function formatDate(timestamp) {
+  if(!timestamp) return "-";
+  try {
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString("ar-EG");
+  } catch {
+    return "-";
+  }
 }
 
 
@@ -991,44 +1008,47 @@ function statusBadge(status){
    NAVIGATION
 ===================================================== */
 
-const adminNav = [
+function getNav() {
 
-  ["dashboard","📊","الرئيسية"],
-  ["leads","🔥","Leads"],
-  ["clients","👥","العملاء"],
-  ["projects","📦","المشاريع"],
-  ["deals","💰","الصفقات"],
-  ["commissions","💵","العمولات"],
-  ["team","👨‍💼","الفريق"],
-  ["tasks","📋","المهام"],
-  ["reports","📈","التقارير"],
-  ["notifications","🔔","الإشعارات"],
-  ["settings","⚙️","الإعدادات"]
+  // 🔹 دور العميل: قائمة خاصة جداً
+  if (currentRole === "client") {
+    return [
+      ["dashboard", "📊", "لوحتي"],
+      ["my-projects", "📦", "مشاريعي"],
+      ["my-deals", "💰", "طلباتي"],
+      ["profile", "👤", "ملفي"]
+    ];
+  }
 
-];
+  // 🔹 أدمن / مدير: قائمة كاملة
+  if (currentRole === "admin" || currentRole === "manager") {
+    return [
+      ["dashboard", "📊", "الرئيسية"],
+      ["leads", "🔥", "Leads"],
+      ["clients", "👥", "العملاء"],
+      ["projects", "📦", "المشاريع"],
+      ["deals", "💰", "الصفقات"],
+      ["commissions", "💵", "العمولات"],
+      ["team", "👨‍💼", "الفريق"],
+      ["tasks", "📋", "المهام"],
+      ["reports", "📈", "التقارير"],
+      ["notifications", "🔔", "الإشعارات"],
+      ["settings", "⚙️", "الإعدادات"]
+    ];
+  }
 
-
-const memberNav = [
-
-  ["dashboard","📊","لوحتي"],
-  ["leads","🔥","Leads"],
-  ["clients","👥","عملائي"],
-  ["projects","📦","المشاريع"],
-  ["deals","💰","صفقاتي"],
-  ["commissions","💵","عمولاتي"],
-  ["tasks","📋","مهامي"],
-  ["notifications","🔔","الإشعارات"],
-  ["profile","👤","ملفي"]
-
-];
-
-
-function getNav(){
-
-  return currentRole === "admin" ||
-         currentRole === "manager"
-    ? adminNav
-    : memberNav;
+  // 🔹 عضو عادي (member): قائمة محدودة
+  return [
+    ["dashboard", "📊", "لوحتي"],
+    ["leads", "🔥", "Leads"],
+    ["clients", "👥", "عملائي"],
+    ["projects", "📦", "المشاريع"],
+    ["deals", "💰", "صفقاتي"],
+    ["commissions", "💵", "عمولاتي"],
+    ["tasks", "📋", "مهامي"],
+    ["notifications", "🔔", "الإشعارات"],
+    ["profile", "👤", "ملفي"]
+  ];
 
 }
 
@@ -1089,7 +1109,9 @@ async function navigate(view){
     reports:"التقارير",
     notifications:"الإشعارات",
     settings:"الإعدادات",
-    profile:"الملف الشخصي"
+    profile:"الملف الشخصي",
+    "my-projects":"مشاريعي",
+    "my-deals":"طلباتي"
 
   };
 
@@ -1110,6 +1132,14 @@ async function navigate(view){
 
       case "dashboard":
         await renderDashboard();
+        break;
+
+      case "my-projects":
+        await renderMyProjects();
+        break;
+
+      case "my-deals":
+        await renderMyDeals();
         break;
 
       case "leads":
@@ -1258,13 +1288,6 @@ onAuthStateChanged(auth,async user=>{
   currentUser = user;
 
 
-  /*
-   IMPORTANT:
-   role should ideally come from Firebase Custom Claims.
-   Firestore role is used here for UI rendering.
-   Security Rules MUST enforce the real permission.
-  */
-
   const userSnap =
     await getDoc(
       doc(db,"users",user.uid)
@@ -1357,13 +1380,6 @@ async function logActivity(
 
   if(!currentUser) return;
 
-  /*
-   Security Rules should prevent client
-   manipulation of audit logs.
-   In production, move this operation
-   to Cloud Functions.
-  */
-
   try{
 
     await addDoc(
@@ -1405,8 +1421,50 @@ async function logActivity(
    DASHBOARD
 ===================================================== */
 
-async function renderDashboard(){
+async function renderDashboard() {
 
+  // 🔹 لو العميل داخل، يبقى Dashboard خاص به
+  if (currentRole === "client") {
+
+    const q = query(
+      collection(db, "deals"),
+      where("clientName", "==", currentUserData?.name || currentUser.email)
+    );
+    const snap = await getDocs(q);
+    let total = 0;
+    let count = 0;
+    snap.forEach(d => {
+      total += Number(d.data().finalPrice || 0);
+      count++;
+    });
+
+    content.innerHTML = `
+      <div class="page-title">
+        <div>
+          <h1>مرحباً، ${esc(currentUserData?.name || "عميلنا العزيز")} 👋</h1>
+          <p>نظرة سريعة على حسابك</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="card stat">
+          <div class="stat-icon">📦</div>
+          <div class="stat-value">${count}</div>
+          <div class="stat-label">عدد الطلبات</div>
+          <div class="stat-line"></div>
+        </div>
+        <div class="card stat">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value">${money(total)}</div>
+          <div class="stat-label">إجمالي المشتريات</div>
+          <div class="stat-line"></div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // 🔹 باقي الكود (للأدمن والمدير والأعضاء)
   const [
     usersSnap,
     leadsSnap,
@@ -1751,6 +1809,134 @@ function destroyChart(name){
 
   }
 
+}
+
+
+/* =====================================================
+   MY PROJECTS (خاص بالعميل)
+===================================================== */
+
+async function renderMyProjects() {
+
+  const q = query(
+    collection(db, "clients"),
+    where("email", "==", currentUser.email)
+  );
+
+  const snap = await getDocs(q);
+
+  let rows = "";
+
+  if (snap.empty) {
+    rows = `<tr><td colspan="4"><div class="empty">لا توجد مشاريع مسجلة باسمك</div></td></tr>`;
+  } else {
+    snap.forEach(d => {
+      const x = d.data();
+      rows += `
+        <tr>
+          <td><strong>${esc(x.name)}</strong></td>
+          <td>${esc(x.project || "غير محدد")}</td>
+          <td>${esc(x.phone)}</td>
+          <td>${esc(x.notes || "-")}</td>
+        </tr>
+      `;
+    });
+  }
+
+  content.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>📦 مشاريعي</h1>
+        <p>المشاريع والخدمات المقدمة لك</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>اسم العميل</th>
+              <th>المشروع</th>
+              <th>الهاتف</th>
+              <th>ملاحظات</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+
+/* =====================================================
+   MY DEALS (خاص بالعميل)
+===================================================== */
+
+async function renderMyDeals() {
+
+  const q = query(
+    collection(db, "deals"),
+    where("clientName", "==", currentUserData?.name || currentUser.email)
+  );
+
+  const snap = await getDocs(q);
+
+  let rows = "";
+  let total = 0;
+
+  if (snap.empty) {
+    rows = `<tr><td colspan="5"><div class="empty">لا توجد طلبات / صفقات مسجلة</div></td></tr>`;
+  } else {
+    snap.forEach(d => {
+      const x = d.data();
+      total += Number(x.finalPrice || 0);
+      rows += `
+        <tr>
+          <td>${esc(x.clientName)}</td>
+          <td>${money(x.finalPrice)}</td>
+          <td>${x.commissionRate || 0}%</td>
+          <td>${money(x.commissionAmount || 0)}</td>
+          <td>${statusBadge(x.status)}</td>
+        </tr>
+      `;
+    });
+  }
+
+  content.innerHTML = `
+    <div class="page-title">
+      <div>
+        <h1>💰 طلباتي / صفقاتي</h1>
+        <p>حالة طلباتك المالية</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="card stat">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">${money(total)}</div>
+        <div class="stat-label">إجمالي المبالغ</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>العميل</th>
+              <th>السعر</th>
+              <th>العمولة</th>
+              <th>قيمة العمولة</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
 }
 
 
@@ -2349,7 +2535,20 @@ async function renderClients(){
 
 
 window.openClientModal =
-function(id=null,data={}){
+async function(id=null,data={}){
+
+  // جلب المشاريع من قاعدة البيانات لتظهر في القائمة المنسدلة
+  let projectOptions = '<option value="">-- اختر مشروعاً --</option>';
+  try {
+    const projectsSnap = await getDocs(collection(db, "projects"));
+    projectsSnap.forEach(doc => {
+      const p = doc.data();
+      const selected = (data.project === p.name) ? 'selected' : '';
+      projectOptions += `<option value="${esc(p.name)}" ${selected}>${esc(p.name)}</option>`;
+    });
+  } catch (e) {
+    console.warn("فشل جلب المشاريع", e);
+  }
 
   showModal(
     id ? "✏️ تعديل العميل" : "👤 عميل جديد",
@@ -2382,8 +2581,9 @@ function(id=null,data={}){
 
       <div class="field">
         <label>المشروع</label>
-        <input id="clientProject"
-          value="${esc(data.project)}">
+        <select id="clientProject">
+          ${projectOptions}
+        </select>
       </div>
 
     </div>
@@ -2406,7 +2606,6 @@ function(id=null,data={}){
 
     `
   );
-
 };
 
 
@@ -3073,14 +3272,6 @@ window.saveDeal = async function(id){
         data
       );
 
-
-    /*
-      لا ننشئ العمولة مباشرة من المتصفح
-      في النسخة الإنتاجية.
-      الأفضل أن تقوم Cloud Function
-      بإنشائها عند تأكيد الصفقة.
-    */
-
     toast("تم إنشاء الصفقة");
 
     await logActivity(
@@ -3247,10 +3438,10 @@ async function renderCommissions(){
 
           <thead>
             <tr>
-              <th>الموظف</th>
+              <th>العضو</th>
               <th>المبلغ</th>
               <th>الحالة</th>
-              <th>الإجراء</th>
+              <th>إجراءات</th>
             </tr>
           </thead>
 
@@ -3283,26 +3474,10 @@ async function(id,status){
 
   await updateDoc(
     doc(db,"commissions",id),
-    {
-      status,
-      updatedAt:
-        serverTimestamp()
-    }
+    {status}
   );
 
-  await logActivity(
-    status==="paid"
-      ? "دفع عمولة"
-      : "اعتماد عمولة",
-    "commission",
-    id
-  );
-
-  toast(
-    status==="paid"
-      ? "تم تسجيل الدفع"
-      : "تم اعتماد العمولة"
-  );
+  toast("تم تغيير الحالة");
 
   renderCommissions();
 
@@ -3314,6 +3489,17 @@ async function(id,status){
 ===================================================== */
 
 async function renderTeam(){
+
+  if(currentRole !== "admin" && currentRole !== "manager"){
+    content.innerHTML = `
+      <div class="card">
+        <div class="empty">
+          ⛔ غير مصرح لك بعرض هذه الصفحة.
+        </div>
+      </div>
+    `;
+    return;
+  }
 
   const snap =
     await getDocs(
@@ -3334,30 +3520,37 @@ async function renderTeam(){
       <tr>
 
         <td>
-          <strong>${esc(x.name || "-")}</strong>
+          <strong>${esc(x.name)}</strong>
         </td>
 
-        <td>${esc(x.email || "-")}</td>
+        <td>${esc(x.email)}</td>
 
         <td>
-          ${statusBadge(x.role || "member")}
+          <span class="badge ${
+            x.role==="admin"?"red":
+            x.role==="manager"?"orange":"blue"
+          }">
+            ${esc(x.role || "member")}
+          </span>
         </td>
 
-        <td>
-          ${statusBadge(x.status || "active")}
-        </td>
-
-        <td>
-          ${Number(x.commissionRate||0)}%
-        </td>
+        <td>${statusBadge(x.status)}</td>
 
         <td>
 
-          <button
-            class="btn secondary small"
-            onclick="editTeamMember('${d.id}')">
-            ✏️
-          </button>
+          ${
+            currentRole === "admin"
+            ? `
+              <div class="actions">
+                <button
+                  class="btn secondary small"
+                  onclick="editUser('${d.id}')">
+                  ✏️
+                </button>
+              </div>
+            `
+            : "-"
+          }
 
         </td>
 
@@ -3373,15 +3566,21 @@ async function renderTeam(){
     <div class="page-title">
 
       <div>
-        <h1>👨‍💼 الفريق</h1>
-        <p>المستخدمون والصلاحيات</p>
+        <h1>👨‍💼 فريق العمل</h1>
+        <p>إدارة أعضاء الفريق وأدوارهم</p>
       </div>
 
-      <button
-        class="btn"
-        onclick="openMemberModal()">
-        + إضافة عضو
-      </button>
+      ${
+        currentRole === "admin"
+        ? `
+          <button
+            class="btn"
+            onclick="openUserModal()">
+            + عضو جديد
+          </button>
+        `
+        : ""
+      }
 
     </div>
 
@@ -3393,17 +3592,29 @@ async function renderTeam(){
         <table>
 
           <thead>
+
             <tr>
               <th>الاسم</th>
               <th>البريد</th>
               <th>الدور</th>
               <th>الحالة</th>
-              <th>العمولة</th>
-              <th></th>
+              <th>إجراءات</th>
             </tr>
+
           </thead>
 
-          <tbody>${rows}</tbody>
+          <tbody>
+
+            ${
+              rows ||
+              `<tr><td colspan="5">
+                <div class="empty">
+                  لا يوجد أعضاء
+                </div>
+              </td></tr>`
+            }
+
+          </tbody>
 
         </table>
 
@@ -3414,213 +3625,6 @@ async function renderTeam(){
   `;
 
 }
-
-
-window.openMemberModal =
-function(id=null,data={}){
-
-  showModal(
-    id ? "✏️ تعديل العضو" : "👨‍💼 عضو جديد",
-    `
-
-    <div class="field">
-      <label>الاسم</label>
-      <input id="memberName"
-        value="${esc(data.name)}">
-    </div>
-
-    <div class="field">
-      <label>البريد الإلكتروني</label>
-      <input id="memberEmail"
-        type="email"
-        value="${esc(data.email)}"
-        ${id?"readonly":""}>
-    </div>
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>الدور</label>
-
-        <select id="memberRole">
-
-          <option value="member"
-            ${data.role==="member"?"selected":""}>
-            Member
-          </option>
-
-          <option value="manager"
-            ${data.role==="manager"?"selected":""}>
-            Manager
-          </option>
-
-          <option value="admin"
-            ${data.role==="admin"?"selected":""}>
-            Admin
-          </option>
-
-        </select>
-
-      </div>
-
-      <div class="field">
-        <label>نسبة العمولة</label>
-        <input id="memberCommission"
-          type="number"
-          value="${Number(data.commissionRate||0)}">
-      </div>
-
-    </div>
-
-
-    <div class="field">
-      <label>الحالة</label>
-
-      <select id="memberStatus">
-
-        <option value="active"
-          ${data.status!=="inactive"?"selected":""}>
-          نشط
-        </option>
-
-        <option value="inactive"
-          ${data.status==="inactive"?"selected":""}>
-          متوقف
-        </option>
-
-      </select>
-
-    </div>
-
-
-    <div style="
-      background:var(--surface2);
-      border:1px solid var(--border);
-      padding:12px;
-      border-radius:12px;
-      font-size:12px;
-      color:var(--muted);
-      margin-bottom:15px">
-
-      ⚠️ إنشاء حساب Firebase Authentication
-      يجب أن يتم من Backend / Cloud Function.
-      هذه النافذة تحفظ بيانات ملف الموظف فقط.
-
-    </div>
-
-
-    <button
-      class="btn"
-      style="width:100%"
-      onclick="saveMember('${id || ""}')">
-      💾 حفظ
-    </button>
-
-    `
-  );
-
-};
-
-
-window.saveMember = async function(id){
-
-  const data={
-
-    name:
-      $("memberName").value.trim(),
-
-    email:
-      $("memberEmail").value.trim(),
-
-    role:
-      $("memberRole").value,
-
-    commissionRate:
-      Number($("memberCommission").value||0),
-
-    status:
-      $("memberStatus").value
-
-  };
-
-
-  if(!data.name || !data.email){
-
-    toast("الاسم والبريد مطلوبان");
-
-    return;
-
-  }
-
-
-  try{
-
-    /*
-      Security:
-      Firestore Rules يجب أن تمنع member
-      من تعديل role/status.
-    */
-
-    if(id){
-
-      await updateDoc(
-        doc(db,"users",id),
-        {
-          name:data.name,
-          commissionRate:data.commissionRate,
-          status:data.status
-        }
-      );
-
-      toast("تم تحديث العضو");
-
-    }else{
-
-      /*
-       لا ننشئ Firebase Auth user من المتصفح.
-       هذه البيانات تصلح بعد تشغيل Cloud Function.
-      */
-
-      toast(
-        "لإنشاء حساب دخول جديد استخدم Cloud Function."
-      );
-
-      return;
-
-    }
-
-
-    closeModal();
-
-    renderTeam();
-
-  }catch(e){
-
-    toast(e.message);
-
-  }
-
-};
-
-
-window.editTeamMember =
-async function(id){
-
-  const snap =
-    await getDoc(
-      doc(db,"users",id)
-    );
-
-  if(snap.exists()){
-
-    openMemberModal(
-      id,
-      snap.data()
-    );
-
-  }
-
-};
 
 
 /* =====================================================
@@ -3651,22 +3655,24 @@ async function renderTasks(){
           <strong>${esc(x.title)}</strong>
         </td>
 
-        <td>${esc(x.assignedName || "-")}</td>
-
-        <td>${esc(x.priority || "normal")}</td>
+        <td>${esc(x.assignedTo || "-")}</td>
 
         <td>${statusBadge(x.status)}</td>
 
-        <td>${formatDate(x.dueDate)}</td>
+        <td>
+          <span class="badge ${x.priority === "high" ? "red" : "orange"}">
+            ${esc(x.priority || "medium")}
+          </span>
+        </td>
 
         <td>
 
           <div class="actions">
 
             <button
-              class="btn small"
-              onclick="completeTask('${d.id}')">
-              ✓
+              class="btn secondary small"
+              onclick="editTask('${d.id}')">
+              ✏️
             </button>
 
             <button
@@ -3692,7 +3698,7 @@ async function renderTasks(){
 
       <div>
         <h1>📋 المهام</h1>
-        <p>إدارة مهام الفريق ومواعيدها</p>
+        <p>إدارة المهام ومتابعتها</p>
       </div>
 
       <button
@@ -3711,21 +3717,22 @@ async function renderTasks(){
         <table>
 
           <thead>
+
             <tr>
               <th>المهمة</th>
               <th>المسؤول</th>
-              <th>الأولوية</th>
               <th>الحالة</th>
-              <th>الموعد</th>
-              <th></th>
+              <th>الأولوية</th>
+              <th>إجراءات</th>
             </tr>
+
           </thead>
 
           <tbody>
 
             ${
               rows ||
-              `<tr><td colspan="6">
+              `<tr><td colspan="5">
                 <div class="empty">
                   لا توجد مهام
                 </div>
@@ -3746,53 +3753,80 @@ async function renderTasks(){
 
 
 window.openTaskModal =
-function(){
+function(id=null,data={}){
 
   showModal(
-    "📋 مهمة جديدة",
+    id ? "✏️ تعديل المهمة" : "📋 مهمة جديدة",
     `
 
     <div class="field">
       <label>عنوان المهمة</label>
-      <input id="taskTitle">
+      <input id="taskTitle"
+        value="${esc(data.title)}">
     </div>
 
     <div class="grid grid-2">
 
       <div class="field">
-        <label>الأولوية</label>
-
-        <select id="taskPriority">
-
-          <option value="normal">عادية</option>
-          <option value="high">عالية</option>
-          <option value="urgent">عاجلة</option>
-
-        </select>
-
+        <label>المسؤول</label>
+        <input id="taskAssigned"
+          value="${esc(data.assignedTo || currentUserData?.name || "")}">
       </div>
 
       <div class="field">
-        <label>الموعد</label>
-        <input id="taskDue"
-          type="date">
+        <label>الحالة</label>
+        <select id="taskStatus">
+
+          <option value="todo"
+            ${data.status==="todo"?"selected":""}>
+            جديدة
+          </option>
+
+          <option value="doing"
+            ${data.status==="doing"?"selected":""}>
+            قيد التنفيذ
+          </option>
+
+          <option value="done"
+            ${data.status==="done"?"selected":""}>
+            مكتملة
+          </option>
+
+        </select>
       </div>
 
     </div>
 
 
     <div class="field">
-      <label>الوصف</label>
-      <textarea id="taskDescription"></textarea>
+      <label>الأولوية</label>
+      <select id="taskPriority">
+
+        <option value="low"
+          ${data.priority==="low"?"selected":""}>
+          منخفضة
+        </option>
+
+        <option value="medium"
+          ${data.priority==="medium" || !data.priority ?"selected":""}>
+          متوسطة
+        </option>
+
+        <option value="high"
+          ${data.priority==="high"?"selected":""}>
+          عالية
+        </option>
+
+      </select>
     </div>
 
 
     <button
       class="btn"
       style="width:100%"
-      onclick="saveTask()">
+      onclick="saveTask('${id || ""}')">
 
-      💾 حفظ المهمة
+      💾 حفظ
 
     </button>
 
@@ -3802,13 +3836,22 @@ function(){
 };
 
 
-window.saveTask = async function(){
+window.saveTask = async function(id){
 
-  const title =
-    $("taskTitle").value.trim();
+  const data={
+
+    title:$("taskTitle").value.trim(),
+
+    assignedTo:$("taskAssigned").value.trim(),
+
+    status:$("taskStatus").value,
+
+    priority:$("taskPriority").value
+
+  };
 
 
-  if(!title){
+  if(!data.title){
 
     toast("عنوان المهمة مطلوب");
 
@@ -3817,73 +3860,60 @@ window.saveTask = async function(){
   }
 
 
-  await addDoc(
-    collection(db,"tasks"),
-    {
+  if(id){
 
-      title,
+    await updateDoc(
+      doc(db,"tasks",id),
+      data
+    );
 
-      priority:
-        $("taskPriority").value,
+    toast("تم تحديث المهمة");
 
-      dueDate:
-        $("taskDue").value,
+  }else{
 
-      description:
-        $("taskDescription").value.trim(),
+    data.createdAt =
+      serverTimestamp();
 
-      assignedTo:
-        currentUser.uid,
+    data.createdBy =
+      currentUser.uid;
 
-      assignedName:
-        currentUserData?.name || "",
+    await addDoc(
+      collection(db,"tasks"),
+      data
+    );
 
-      status:"todo",
+    toast("تم إضافة المهمة");
 
-      createdAt:
-        serverTimestamp()
-
-    }
-  );
-
-
-  await logActivity(
-    "إضافة مهمة",
-    "task",
-    title
-  );
+  }
 
 
   closeModal();
 
-  toast("تم إنشاء المهمة");
-
   renderTasks();
 
 };
 
 
-window.completeTask =
-async function(id){
+window.editTask = async function(id){
 
-  await updateDoc(
-    doc(db,"tasks",id),
-    {
-      status:"done",
-      completedAt:
-        serverTimestamp()
-    }
-  );
+  const snap =
+    await getDoc(
+      doc(db,"tasks",id)
+    );
 
-  toast("تم إكمال المهمة");
+  if(snap.exists()){
 
-  renderTasks();
+    openTaskModal(
+      id,
+      snap.data()
+    );
+
+  }
 
 };
 
 
-window.deleteTask =
-async function(id){
+window.deleteTask = async function(id){
 
   if(!confirm("حذف المهمة؟"))
     return;
@@ -3891,6 +3921,8 @@ async function(id){
   await deleteDoc(
     doc(db,"tasks",id)
   );
+
+  toast("تم الحذف");
 
   renderTasks();
 
@@ -3903,187 +3935,29 @@ async function(id){
 
 async function renderReports(){
 
-  const [
-    deals,
-    leads,
-    clients
-  ] = await Promise.all([
-
-    getDocs(collection(db,"deals")),
-
-    getDocs(collection(db,"leads")),
-
-    getDocs(collection(db,"clients"))
-
-  ]);
-
-
-  let totalSales=0;
-  let won=0;
-  let lost=0;
-
-
-  deals.forEach(d=>{
-
-    const x=d.data();
-
-    if(x.status==="won"){
-
-      won++;
-
-      totalSales +=
-        Number(x.finalPrice||0);
-
-    }
-
-    if(x.status==="lost")
-      lost++;
-
-  });
-
-
-  const conversion =
-    leads.size
-      ? ((won/leads.size)*100).toFixed(1)
-      : 0;
-
-
   content.innerHTML = `
 
     <div class="page-title">
 
       <div>
         <h1>📈 التقارير</h1>
-        <p>مؤشرات أداء الشركة</p>
+        <p>تحليلات وإحصائيات متقدمة</p>
       </div>
 
     </div>
 
 
-    <div class="stats">
+    <div class="card">
 
-      <div class="card stat">
-        <div class="stat-value">
-          ${leads.size}
-        </div>
-        <div class="stat-label">
-          إجمالي Leads
-        </div>
-      </div>
-
-      <div class="card stat">
-        <div class="stat-value">
-          ${clients.size}
-        </div>
-        <div class="stat-label">
-          العملاء
-        </div>
-      </div>
-
-      <div class="card stat">
-        <div class="stat-value">
-          ${won}
-        </div>
-        <div class="stat-label">
-          صفقات مربوحة
-        </div>
-      </div>
-
-      <div class="card stat">
-        <div class="stat-value">
-          ${conversion}%
-        </div>
-        <div class="stat-label">
-          معدل التحويل
-        </div>
-      </div>
-
-    </div>
-
-
-    <div class="grid grid-2">
-
-      <div class="card">
-
-        <h3 style="margin-bottom:15px">
-          💰 المبيعات
-        </h3>
-
-        <div class="stat-value">
-          ${money(totalSales)}
-        </div>
-
-        <p style="color:var(--muted);margin-top:8px">
-          إجمالي الصفقات المربوحة
-        </p>
-
-      </div>
-
-
-      <div class="card">
-
-        <h3 style="margin-bottom:15px">
-          📊 حالة الصفقات
-        </h3>
-
-        <div class="chart-box">
-          <canvas id="reportChart"></canvas>
-        </div>
-
+      <div class="empty">
+        📊 سيتم إضافة تقارير متقدمة قريباً.
+        <br><br>
+        <small>يمكنك تصدير البيانات من كل قسم على حدة.</small>
       </div>
 
     </div>
 
   `;
-
-
-  setTimeout(()=>{
-
-    destroyChart("report");
-
-    const ctx =
-      $("reportChart")?.getContext("2d");
-
-    if(ctx){
-
-      charts.report =
-        new Chart(ctx,{
-
-          type:"doughnut",
-
-          data:{
-
-            labels:[
-              "مربوحة",
-              "خاسرة",
-              "معلقة"
-            ],
-
-            datasets:[{
-
-              data:[
-                won,
-                lost,
-                Math.max(
-                  deals.size-won-lost,
-                  0
-                )
-              ]
-
-            }]
-
-          },
-
-          options:{
-            responsive:true,
-            maintainAspectRatio:false
-          }
-
-        });
-
-    }
-
-  },50);
 
 }
 
@@ -4094,89 +3968,25 @@ async function renderReports(){
 
 async function renderNotifications(){
 
-  let snap;
-
-
-  try{
-
-    snap =
-      await getDocs(
-        query(
-          collection(db,"notifications"),
-          where(
-            "userId",
-            "==",
-            currentUser.uid
-          ),
-          limit(50)
-        )
-      );
-
-  }catch(e){
-
-    snap =
-      { forEach:()=>{}, size:0 };
-
-  }
-
-
-  let rows="";
-
-
-  snap.forEach(d=>{
-
-    const x=d.data();
-
-
-    rows += `
-
-      <div class="card"
-           style="margin-bottom:10px">
-
-        <div class="toolbar">
-
-          <strong>
-            ${esc(x.title || "إشعار")}
-          </strong>
-
-          ${statusBadge(
-            x.read ? "done" : "new"
-          )}
-
-        </div>
-
-        <p style="color:var(--muted)">
-          ${esc(x.body || "")}
-        </p>
-
-        <small style="color:var(--muted)">
-          ${formatDate(x.createdAt)}
-        </small>
-
-      </div>
-
-    `;
-
-  });
-
-
   content.innerHTML = `
 
     <div class="page-title">
 
       <div>
         <h1>🔔 الإشعارات</h1>
-        <p>آخر التنبيهات الخاصة بك</p>
+        <p>آخر التنبيهات والتحديثات</p>
       </div>
 
     </div>
 
-    ${
-      rows ||
-      `<div class="card empty">
-        لا توجد إشعارات حالياً.
-      </div>`
-    }
+
+    <div class="card">
+
+      <div class="empty">
+        🔕 لا توجد إشعارات جديدة.
+      </div>
+
+    </div>
 
   `;
 
@@ -4195,114 +4005,18 @@ async function renderSettings(){
 
       <div>
         <h1>⚙️ الإعدادات</h1>
-        <p>إعدادات الشركة والنظام</p>
+        <p>إعدادات النظام والتفضيلات</p>
       </div>
 
     </div>
 
 
-    <div class="grid grid-2">
+    <div class="card">
 
-      <div class="card">
-
-        <h3 style="margin-bottom:20px">
-          🏢 بيانات الشركة
-        </h3>
-
-        <div class="field">
-          <label>اسم الشركة</label>
-          <input
-            id="companyName"
-            value="MINA PROJECTS">
-        </div>
-
-        <div class="field">
-          <label>البريد</label>
-          <input
-            id="companyEmail"
-            type="email">
-        </div>
-
-        <div class="field">
-          <label>الهاتف</label>
-          <input id="companyPhone">
-        </div>
-
-        <button
-          class="btn"
-          onclick="saveSettings()">
-
-          💾 حفظ
-
-        </button>
-
-      </div>
-
-
-      <div class="card">
-
-        <h3 style="margin-bottom:20px">
-          🔐 الأمان
-        </h3>
-
-        <p style="
-          color:var(--muted);
-          line-height:1.8;
-          font-size:13px">
-
-          تسجيل الدخول يتم عبر Firebase Authentication.
-          <br>
-          الصلاحيات الحقيقية يجب أن يتم فرضها
-          بواسطة Firestore Security Rules.
-          <br>
-          لا تعتمد على إخفاء عناصر الواجهة
-          لحماية البيانات.
-
-        </p>
-
-      </div>
-
-
-      <div class="card">
-
-        <h3 style="margin-bottom:20px">
-          📣 Facebook / Meta
-        </h3>
-
-        <p style="
-          color:var(--muted);
-          line-height:1.8;
-          font-size:13px">
-
-          اربط Facebook Leads من خلال
-          Meta Webhook + Cloud Functions.
-          <br><br>
-          لا تضع Page Access Token
-          أو App Secret داخل هذا الملف.
-
-        </p>
-
-        <span class="badge orange">
-          Backend مطلوب للربط الآمن
-        </span>
-
-      </div>
-
-
-      <div class="card">
-
-        <h3 style="margin-bottom:20px">
-          🌓 المظهر
-        </h3>
-
-        <button
-          class="btn secondary"
-          onclick="toggleTheme()">
-
-          تغيير الوضع
-
-        </button>
-
+      <div class="empty">
+        ⚙️ سيتم إضافة إعدادات النظام قريباً.
+        <br><br>
+        <small>الوضع المظلم متوفر حالياً من أعلى الصفحة.</small>
       </div>
 
     </div>
@@ -4310,16 +4024,6 @@ async function renderSettings(){
   `;
 
 }
-
-
-window.saveSettings =
-function(){
-
-  toast(
-    "تم حفظ إعدادات الواجهة"
-  );
-
-};
 
 
 /* =====================================================
@@ -4328,56 +4032,63 @@ function(){
 
 async function renderProfile(){
 
-  const d =
-    currentUserData || {};
-
-
   content.innerHTML = `
 
     <div class="page-title">
 
       <div>
         <h1>👤 ملفي الشخصي</h1>
-        <p>بيانات الحساب</p>
+        <p>بيانات حسابك</p>
       </div>
 
     </div>
 
 
-    <div class="card" style="max-width:650px">
+    <div class="card">
 
-      <div class="field">
-        <label>الاسم</label>
-        <input id="profileName"
-          value="${esc(d.name)}">
+      <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+
+        <div class="avatar" style="width:70px;height:70px;font-size:30px;">
+          ${(currentUserData?.name || currentUser.email || "M")[0].toUpperCase()}
+        </div>
+
+        <div>
+          <h2 style="margin-bottom:5px;">
+            ${esc(currentUserData?.name || "غير محدد")}
+          </h2>
+
+          <p style="color:var(--muted);">
+            ${esc(currentUser.email)}
+          </p>
+
+          <p>
+            <span class="badge blue">
+              ${esc(currentRole || "member")}
+            </span>
+          </p>
+        </div>
+
       </div>
 
-      <div class="field">
-        <label>البريد</label>
-        <input
-          value="${esc(currentUser.email)}"
-          readonly>
-      </div>
+      <div class="grid grid-2">
 
-      <div class="field">
-        <label>الهاتف</label>
-        <input id="profilePhone"
-          value="${esc(d.phone)}">
-      </div>
+        <div class="field">
+          <label>الاسم</label>
+          <input id="profileName"
+            value="${esc(currentUserData?.name || "")}">
+        </div>
 
-      <div class="field">
-        <label>الدور</label>
-        <input
-          value="${esc(currentRole)}"
-          readonly>
+        <div class="field">
+          <label>البريد</label>
+          <input value="${esc(currentUser.email)}" disabled>
+        </div>
+
       </div>
 
       <button
         class="btn"
-        onclick="saveProfile()">
-
-        💾 تحديث البيانات
-
+        onclick="updateProfile()">
+        💾 حفظ التغييرات
       </button>
 
     </div>
@@ -4387,178 +4098,51 @@ async function renderProfile(){
 }
 
 
-window.saveProfile =
-async function(){
+window.updateProfile = async function(){
 
   const name =
     $("profileName").value.trim();
 
-  const phone =
-    $("profilePhone").value.trim();
+  if(!name){
+
+    toast("الاسم مطلوب");
+
+    return;
+
+  }
 
 
   await updateDoc(
     doc(db,"users",currentUser.uid),
-    {
-      name,
-      phone
-    }
+    {name}
   );
 
+  currentUserData.name = name;
 
-  currentUserData.name =
-    name;
-
-  currentUserData.phone =
-    phone;
-
-
-  $("topName").textContent =
-    name;
-
-
-  $("topAvatar").textContent =
-    name[0] || "M";
-
+  $("topName").textContent = name;
 
   toast("تم تحديث الملف");
 
-};
-
-
-/* =====================================================
-   QUICK ACTIONS
-===================================================== */
-
-window.openQuickActions =
-function(){
-
-  showModal(
-    "⚡ إجراء سريع",
-    `
-
-    <div class="grid grid-2">
-
-      <button
-        class="btn"
-        onclick="closeModal();openLeadModal()">
-        🔥 Lead جديد
-      </button>
-
-      <button
-        class="btn"
-        onclick="closeModal();openClientModal()">
-        👤 عميل جديد
-      </button>
-
-      <button
-        class="btn"
-        onclick="closeModal();openDealModal()">
-        💰 صفقة جديدة
-      </button>
-
-      <button
-        class="btn"
-        onclick="closeModal();openTaskModal()">
-        📋 مهمة جديدة
-      </button>
-
-    </div>
-
-    `
-  );
+  renderProfile();
 
 };
 
 
-/* =====================================================
-   GENERAL TABLE SEARCH
-===================================================== */
-
-window.filterTable =
-function(tableId,value){
-
-  const q =
-    value.toLowerCase();
-
-
-  document
-    .querySelectorAll(
-      `#${tableId} tbody tr`
-    )
-    .forEach(row=>{
-
-      row.style.display =
-        row.textContent
-          .toLowerCase()
-          .includes(q)
-          ? ""
-          : "none";
-
-    });
-
+window.openQuickActions = function(){
+  // يمكن تخصيصها لفتح نافذة اختصارات
+  toast("اختر زراً من الاختصارات أدناه");
 };
 
-
-/* =====================================================
-   DATE
-===================================================== */
-
-function formatDate(value){
-
-  if(!value)
-    return "-";
-
-
-  try{
-
-    const date =
-      value.toDate
-        ? value.toDate()
-        : new Date(value);
-
-
-    return date.toLocaleDateString(
-      "ar-EG"
-    );
-
-  }catch{
-
-    return "-";
-
-  }
-
-}
-
-
-/* =====================================================
-   KEYBOARD SHORTCUT
-===================================================== */
-
-document.addEventListener(
-  "keydown",
-  e=>{
-
-    if(
-      e.key === "Escape" &&
-      $("modal").classList.contains("show")
-    ){
-
-      closeModal();
-
-    }
-
-  }
-);
-
-
-/* =====================================================
-   START
-===================================================== */
-
-console.log(
-  "MINA PROJECTS CRM • Single Page"
-);
+window.filterTable = function(tableId, value) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const rows = table.querySelectorAll("tbody tr");
+  const lower = value.toLowerCase();
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(lower) ? "" : "none";
+  });
+};
 
 </script>
 
