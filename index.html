@@ -1,4150 +1,1751 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MINA PROJECTS • CRM</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-
-<script type="importmap">
-{
-  "imports": {
-    "firebase/app": "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js",
-    "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js",
-    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"
-  }
-}
-</script>
-
-<style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Inter,"Segoe UI",Tahoma,sans-serif
-}
-
-:root{
-  --bg:#f4f7fb;
-  --surface:#fff;
-  --surface2:#f8fafc;
-  --text:#0f172a;
-  --muted:#64748b;
-  --border:#e2e8f0;
-  --primary:#2563eb;
-  --primary2:#1d4ed8;
-  --purple:#7c3aed;
-  --green:#10b981;
-  --orange:#f59e0b;
-  --red:#ef4444;
-  --shadow:0 15px 45px rgba(15,23,42,.08);
-  --radius:20px;
-}
-
-body.dark{
-  --bg:#07111f;
-  --surface:#0e1a2b;
-  --surface2:#132238;
-  --text:#f1f5f9;
-  --muted:#94a3b8;
-  --border:#213451;
-  --shadow:0 20px 50px rgba(0,0,0,.35);
-}
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  transition:.25s;
-}
-
-button,input,select,textarea{
-  font:inherit
-}
-
-button{
-  cursor:pointer
-}
-
-.hidden{
-  display:none!important
-}
-
-/* LOGIN */
-
-#loginScreen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.login-card{
-  width:100%;
-  max-width:440px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:30px;
-  padding:42px;
-  box-shadow:var(--shadow);
-}
-
-.logo{
-  font-size:30px;
-  font-weight:900;
-  text-align:center;
-  margin-bottom:8px;
-  background:linear-gradient(135deg,#0f172a,#2563eb,#7c3aed);
-  -webkit-background-clip:text;
-  color:transparent;
-}
-
-.logo span{
-  color:var(--purple)
-}
-
-.login-sub{
-  text-align:center;
-  color:var(--muted);
-  margin-bottom:30px;
-}
-
-/* APP */
-
-#app{
-  min-height:100vh;
-}
-
-.layout{
-  display:flex;
-  min-height:100vh;
-}
-
-.sidebar{
-  width:250px;
-  background:var(--surface);
-  border-left:1px solid var(--border);
-  padding:20px 14px;
-  position:fixed;
-  right:0;
-  top:0;
-  bottom:0;
-  z-index:20;
-}
-
-.brand{
-  font-size:22px;
-  font-weight:900;
-  padding:12px;
-  margin-bottom:18px;
-}
-
-.nav{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-}
-
-.nav button{
-  width:100%;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  text-align:right;
-  padding:13px 15px;
-  border-radius:13px;
-  font-weight:700;
-  transition:.2s;
-}
-
-.nav button:hover{
-  background:var(--surface2);
-  color:var(--text);
-}
-
-.nav button.active{
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  color:white;
-  box-shadow:0 8px 20px rgba(37,99,235,.25);
-}
-
-.main{
-  margin-right:250px;
-  width:calc(100% - 250px);
-  padding:22px;
-}
-
-.topbar{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:13px 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:22px;
-  box-shadow:var(--shadow);
-}
-
-.top-actions{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.icon-btn{
-  width:42px;
-  height:42px;
-  border:1px solid var(--border);
-  background:var(--surface2);
-  color:var(--text);
-  border-radius:12px;
-}
-
-.user-box{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.avatar{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  background:linear-gradient(135deg,var(--primary),var(--purple));
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-}
-
-/* COMPONENTS */
-
-.page-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
-  margin-bottom:20px;
-}
-
-.page-title h1{
-  font-size:25px;
-}
-
-.page-title p{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:4px;
-}
-
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:20px;
-  box-shadow:0 5px 25px rgba(15,23,42,.03);
-}
-
-.grid{
-  display:grid;
-  gap:16px;
-}
-
-.grid-2{
-  grid-template-columns:repeat(2,1fr)
-}
-
-.grid-3{
-  grid-template-columns:repeat(3,1fr)
-}
-
-.grid-4{
-  grid-template-columns:repeat(4,1fr)
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:18px;
-}
-
-.stat{
-  position:relative;
-  overflow:hidden;
-}
-
-.stat-icon{
-  font-size:25px;
-  margin-bottom:12px;
-}
-
-.stat-value{
-  font-size:30px;
-  font-weight:900;
-}
-
-.stat-label{
-  color:var(--muted);
-  font-size:13px;
-  margin-top:5px;
-}
-
-.stat-line{
-  height:4px;
-  background:linear-gradient(90deg,var(--primary),var(--purple));
-  border-radius:10px;
-  margin-top:15px;
-}
-
-.btn{
-  border:0;
-  border-radius:12px;
-  padding:11px 18px;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  color:#fff;
-  font-weight:800;
-  transition:.2s;
-}
-
-.btn:hover{
-  transform:translateY(-1px);
-  filter:brightness(1.05)
-}
-
-.btn.secondary{
-  background:var(--surface2);
-  color:var(--text);
-  border:1px solid var(--border);
-}
-
-.btn.green{
-  background:var(--green)
-}
-
-.btn.red{
-  background:var(--red)
-}
-
-.btn.orange{
-  background:var(--orange)
-}
-
-.btn.small{
-  padding:7px 11px;
-  font-size:12px;
-}
-
-.field{
-  margin-bottom:15px;
-}
-
-.field label{
-  display:block;
-  color:var(--muted);
-  font-size:13px;
-  font-weight:700;
-  margin-bottom:7px;
-}
-
-.field input,
-.field select,
-.field textarea,
-.search{
-  width:100%;
-  background:var(--surface2);
-  color:var(--text);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 14px;
-  outline:none;
-}
-
-.field textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 3px rgba(37,99,235,.12);
-}
-
-.toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:15px;
-  flex-wrap:wrap;
-}
-
-.search-wrap{
-  flex:1;
-  min-width:220px;
-}
-
-.table-wrap{
-  overflow:auto;
-  border:1px solid var(--border);
-  border-radius:16px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:700px;
-}
-
-th{
-  background:var(--surface2);
-  color:var(--muted);
-  font-size:12px;
-  text-align:right;
-  padding:14px;
-  white-space:nowrap;
-}
-
-td{
-  padding:13px 14px;
-  border-top:1px solid var(--border);
-  font-size:13px;
-}
-
-tr:hover td{
-  background:var(--surface2);
-}
-
-.badge{
-  display:inline-flex;
-  padding:5px 10px;
-  border-radius:30px;
-  font-size:11px;
-  font-weight:800;
-}
-
-.badge.blue{
-  background:#dbeafe;
-  color:#1d4ed8;
-}
-
-.badge.green{
-  background:#d1fae5;
-  color:#047857;
-}
-
-.badge.orange{
-  background:#fef3c7;
-  color:#b45309;
-}
-
-.badge.red{
-  background:#fee2e2;
-  color:#b91c1c;
-}
-
-body.dark .badge.blue{
-  background:#172d52;
-  color:#93c5fd;
-}
-
-body.dark .badge.green{
-  background:#103d31;
-  color:#6ee7b7;
-}
-
-body.dark .badge.orange{
-  background:#493614;
-  color:#fcd34d;
-}
-
-body.dark .badge.red{
-  background:#491d23;
-  color:#fca5a5;
-}
-
-.actions{
-  display:flex;
-  gap:5px;
-}
-
-.chart-box{
-  height:300px;
-}
-
-.empty{
-  padding:40px;
-  text-align:center;
-  color:var(--muted);
-}
-
-/* MODAL */
-
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(2,6,23,.65);
-  backdrop-filter:blur(5px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  z-index:100;
-}
-
-.modal.show{
-  display:flex
-}
-
-.modal-card{
-  width:100%;
-  max-width:650px;
-  max-height:90vh;
-  overflow:auto;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:24px;
-  padding:25px;
-}
-
-.modal-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-}
-
-.close{
-  border:0;
-  background:var(--surface2);
-  color:var(--text);
-  width:35px;
-  height:35px;
-  border-radius:10px;
-}
-
-/* TOAST */
-
-.toast{
-  position:fixed;
-  bottom:25px;
-  left:50%;
-  transform:translateX(-50%) translateY(30px);
-  opacity:0;
-  pointer-events:none;
-  z-index:200;
-  background:var(--surface);
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:13px 22px;
-  border-radius:40px;
-  box-shadow:var(--shadow);
-  transition:.25s;
-}
-
-.toast.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-
-/* MOBILE */
-
-.mobile-nav{
-  display:none;
-}
-
-@media(max-width:900px){
-
-  .sidebar{
-    display:none;
-  }
-
-  .main{
-    margin-right:0;
-    width:100%;
-    padding:12px;
-  }
-
-  .mobile-nav{
-    display:flex;
-    overflow:auto;
-    gap:7px;
-    margin-bottom:15px;
-  }
-
-  .mobile-nav button{
-    white-space:nowrap;
-    border:1px solid var(--border);
-    background:var(--surface);
-    color:var(--muted);
-    padding:9px 13px;
-    border-radius:30px;
-    font-size:12px;
-    font-weight:700;
-  }
-
-  .mobile-nav button.active{
-    background:var(--primary);
-    color:#fff;
-  }
-
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .grid-2,
-  .grid-3{
-    grid-template-columns:1fr;
-  }
-
-}
-
-@media(max-width:500px){
-
-  .login-card{
-    padding:28px 20px;
-  }
-
-  .stats{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .stat-value{
-    font-size:23px;
-  }
-
-  .topbar{
-    padding:10px;
-  }
-
-  .topbar-title{
-    display:none;
-  }
-
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MINA PROJECTS • CRM</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js",
+                "firebase/functions": "https://www.gstatic.com/firebasejs/10.12.4/firebase-functions.js"
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Inter, 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        :root {
+            --bg: #f4f7fb;
+            --surface: #fff;
+            --surface2: #f8fafc;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --primary2: #1d4ed8;
+            --purple: #7c3aed;
+            --green: #10b981;
+            --orange: #f59e0b;
+            --red: #ef4444;
+            --shadow: 0 15px 45px rgba(15, 23, 42, .08);
+            --radius: 20px;
+        }
+
+        body.dark {
+            --bg: #07111f;
+            --surface: #0e1a2b;
+            --surface2: #132238;
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+            --border: #213451;
+            --shadow: 0 20px 50px rgba(0, 0, 0, .35);
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: .25s;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* LOGIN */
+        #loginScreen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 42px;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #0f172a, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .logo span {
+            color: var(--purple);
+        }
+
+        .login-sub {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 30px;
+        }
+
+        /* APP */
+        #app {
+            min-height: 100vh;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            padding: 20px 14px;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 20;
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: 900;
+            padding: 12px;
+            margin-bottom: 18px;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav button {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: var(--muted);
+            text-align: right;
+            padding: 13px 15px;
+            border-radius: 13px;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .nav button:hover {
+            background: var(--surface2);
+            color: var(--text);
+        }
+
+        .nav button.active {
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            color: white;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, .25);
+        }
+
+        .main {
+            margin-right: 250px;
+            width: calc(100% - 250px);
+            padding: 22px;
+        }
+
+        .topbar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 13px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            border-radius: 12px;
+        }
+
+        .user-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+        }
+
+        /* COMPONENTS */
+        .page-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .page-title h1 {
+            font-size: 25px;
+        }
+
+        .page-title p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 5px 25px rgba(15, 23, 42, .03);
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-icon {
+            font-size: 25px;
+            margin-bottom: 12px;
+        }
+
+        .stat-value {
+            font-size: 30px;
+            font-weight: 900;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .stat-line {
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--purple));
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 12px;
+            padding: 11px 18px;
+            background: linear-gradient(135deg, var(--primary), var(--primary2));
+            color: #fff;
+            font-weight: 800;
+            transition: .2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        .btn.secondary {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn.green {
+            background: var(--green);
+        }
+
+        .btn.red {
+            background: var(--red);
+        }
+
+        .btn.orange {
+            background: var(--orange);
+        }
+
+        .btn.small {
+            padding: 7px 11px;
+            font-size: 12px;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .field label {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .field input,
+        .field select,
+        .field textarea,
+        .search {
+            width: 100%;
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            outline: none;
+        }
+
+        .field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-wrap {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            background: var(--surface2);
+            color: var(--muted);
+            font-size: 12px;
+            text-align: right;
+            padding: 14px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 13px 14px;
+            border-top: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        tr:hover td {
+            background: var(--surface2);
+        }
+
+        .badge {
+            display: inline-flex;
+            padding: 5px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .badge.blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .badge.green {
+            background: #d1fae5;
+            color: #047857;
+        }
+
+        .badge.orange {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .badge.red {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        body.dark .badge.blue {
+            background: #172d52;
+            color: #93c5fd;
+        }
+
+        body.dark .badge.green {
+            background: #103d31;
+            color: #6ee7b7;
+        }
+
+        body.dark .badge.orange {
+            background: #493614;
+            color: #fcd34d;
+        }
+
+        body.dark .badge.red {
+            background: #491d23;
+            color: #fca5a5;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .chart-box {
+            height: 300px;
+        }
+
+        .empty {
+            padding: 40px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        /* MODAL */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, .65);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow: auto;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 25px;
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close {
+            border: 0;
+            background: var(--surface2);
+            color: var(--text);
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+        }
+
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 200;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 13px 22px;
+            border-radius: 40px;
+            box-shadow: var(--shadow);
+            transition: .25s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* MOBILE */
+        .mobile-nav {
+            display: none;
+        }
+
+        @media(max-width:900px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-right: 0;
+                width: 100%;
+                padding: 12px;
+            }
+            .mobile-nav {
+                display: flex;
+                overflow: auto;
+                gap: 7px;
+                margin-bottom: 15px;
+            }
+            .mobile-nav button {
+                white-space: nowrap;
+                border: 1px solid var(--border);
+                background: var(--surface);
+                color: var(--muted);
+                padding: 9px 13px;
+                border-radius: 30px;
+                font-size: 12px;
+                font-weight: 700;
+            }
+            .mobile-nav button.active {
+                background: var(--primary);
+                color: #fff;
+            }
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width:500px) {
+            .login-card {
+                padding: 28px 20px;
+            }
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stat-value {
+                font-size: 23px;
+            }
+            .topbar {
+                padding: 10px;
+            }
+            .topbar-title {
+                display: none;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- =====================================================
-     LOGIN
-===================================================== -->
-
-<section id="loginScreen">
-
-  <div class="login-card">
-
-    <div class="logo">
-      MINA <span>PROJECTS</span>
-    </div>
-
-    <div class="login-sub">
-      نظام إدارة الشركة و CRM
-    </div>
-
-    <div class="field">
-      <label>البريد الإلكتروني</label>
-      <input id="loginEmail"
-             type="email"
-             autocomplete="email"
-             placeholder="admin@company.com">
-    </div>
-
-    <div class="field">
-      <label>كلمة المرور</label>
-      <input id="loginPassword"
-             type="password"
-             autocomplete="current-password"
-             placeholder="••••••••">
-    </div>
-
-    <button class="btn" style="width:100%" id="loginBtn">
-      تسجيل الدخول
-    </button>
-
-    <div id="loginError"
-         style="color:var(--red);font-size:13px;text-align:center;margin-top:15px">
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =====================================================
-     APPLICATION
-===================================================== -->
-
-<section id="app" class="hidden">
-
-<div class="layout">
-
-  <!-- SIDEBAR -->
-
-  <aside class="sidebar">
-
-    <div class="brand">
-      MINA <span style="color:var(--purple)">PROJECTS</span>
-    </div>
-
-    <nav id="sidebarNav" class="nav"></nav>
-
-    <div style="position:absolute;bottom:20px;right:14px;left:14px">
-
-      <button
-        class="btn secondary"
-        style="width:100%"
-        onclick="logout()">
-        🚪 تسجيل الخروج
-      </button>
-
-    </div>
-
-  </aside>
-
-
-  <!-- MAIN -->
-
-  <main class="main">
-
-    <div class="topbar">
-
-      <div class="topbar-title">
-        <strong id="pageHeading">لوحة التحكم</strong>
-      </div>
-
-      <div class="top-actions">
-
-        <button class="icon-btn"
-                onclick="toggleTheme()">
-          🌓
-        </button>
-
-        <button class="icon-btn"
-                onclick="navigate('notifications')">
-          🔔
-        </button>
-
-        <div class="user-box">
-          <div class="avatar" id="topAvatar">M</div>
-          <div>
-            <strong id="topName">Admin</strong>
-            <div style="font-size:11px;color:var(--muted)" id="topRole">
-              Admin
+    <!-- LOGIN -->
+    <section id="loginScreen">
+        <div class="login-card">
+            <div class="logo">MINA <span>PROJECTS</span></div>
+            <div class="login-sub">نظام إدارة الشركة و CRM</div>
+            <div class="field">
+                <label>البريد الإلكتروني</label>
+                <input id="loginEmail" type="email" autocomplete="email" placeholder="admin@company.com">
             </div>
-          </div>
+            <div class="field">
+                <label>كلمة المرور</label>
+                <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
+            </div>
+            <button class="btn" style="width:100%" id="loginBtn">تسجيل الدخول</button>
+            <div id="loginError" style="color:var(--red);font-size:13px;text-align:center;margin-top:15px"></div>
         </div>
+    </section>
 
-      </div>
+    <!-- APPLICATION -->
+    <section id="app" class="hidden">
+        <div class="layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="brand">MINA <span style="color:var(--purple)">PROJECTS</span></div>
+                <nav id="sidebarNav" class="nav"></nav>
+                <div style="position:absolute;bottom:20px;right:14px;left:14px">
+                    <button class="btn secondary" style="width:100%" onclick="logout()">🚪 تسجيل الخروج</button>
+                </div>
+            </aside>
 
+            <!-- MAIN -->
+            <main class="main">
+                <div class="topbar">
+                    <div class="topbar-title"><strong id="pageHeading">لوحة التحكم</strong></div>
+                    <div class="top-actions">
+                        <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+                        <button class="icon-btn" onclick="navigate('notifications')">🔔</button>
+                        <div class="user-box">
+                            <div class="avatar" id="topAvatar">M</div>
+                            <div>
+                                <strong id="topName">Admin</strong>
+                                <div style="font-size:11px;color:var(--muted)" id="topRole">Admin</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="mobileNav" class="mobile-nav"></div>
+                <div id="content"></div>
+            </main>
+        </div>
+    </section>
+
+    <!-- MODAL -->
+    <div id="modal" class="modal">
+        <div class="modal-card">
+            <div class="modal-head">
+                <strong id="modalTitle">نافذة</strong>
+                <button class="close" onclick="closeModal()">✕</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
     </div>
 
+    <div id="toast" class="toast"></div>
 
-    <!-- MOBILE NAV -->
+    <script type="module">
+        // ============================================================
+        // IMPORTS
+        // ============================================================
+        import { initializeApp } from "firebase/app";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from "firebase/firestore";
+        import { getFunctions, httpsCallable } from "firebase/functions";
 
-    <div id="mobileNav" class="mobile-nav"></div>
-
-
-    <!-- CONTENT -->
-
-    <div id="content"></div>
-
-  </main>
-
-</div>
-</section>
-
-
-<!-- =====================================================
-     MODAL
-===================================================== -->
-
-<div id="modal" class="modal">
-
-  <div class="modal-card">
-
-    <div class="modal-head">
-      <strong id="modalTitle">نافذة</strong>
-
-      <button class="close"
-              onclick="closeModal()">
-        ✕
-      </button>
-    </div>
-
-    <div id="modalBody"></div>
-
-  </div>
-
-</div>
-
-
-<div id="toast" class="toast"></div>
-
-
-<script type="module">
-
-/* =====================================================
-   FIREBASE
-===================================================== */
-
-import {
-  initializeApp
-} from "firebase/app";
-
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-} from "firebase/auth";
-
-import {
-  getFirestore,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  addDoc,
-  setDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  orderBy,
-  limit,
-  serverTimestamp
-} from "firebase/firestore";
-
-
-/*
- IMPORTANT:
- ضع بيانات Firebase الخاصة بمشروعك هنا.
-*/
-
+        // ============================================================
+        // FIREBASE CONFIG (استبدل بالقيم الخاصة بك)
+        // ============================================================
 const firebaseConfig = {
-
-  apiKey: "YOUR_FIREBASE_API_KEY",
-
-  authDomain:
-    "YOUR_PROJECT.firebaseapp.com",
-
-  projectId:
-    "YOUR_PROJECT_ID",
-
-  storageBucket:
-    "YOUR_PROJECT.firebasestorage.app",
-
-  messagingSenderId:
-    "YOUR_MESSAGING_SENDER_ID",
-
-  appId:
-    "YOUR_FIREBASE_APP_ID"
-
+  apiKey: "AIzaSyDsJXNa6EYenn2f5mfoNQVEDxHhCH-XGAo",
+  authDomain: "alzahady-6e615.firebaseapp.com",
+  databaseURL: "https://alzahady-6e615-default-rtdb.firebaseio.com",
+  projectId: "alzahady-6e615",
+  storageBucket: "alzahady-6e615.firebasestorage.app",
+  messagingSenderId: "377804257010",
+  appId: "1:377804257010:web:9516e9ecbbc8b22ab0c26b",
+  measurementId: "G-4XPCD5L40F"
 };
 
-
-const firebaseApp =
-  initializeApp(firebaseConfig);
-
-const auth =
-  getAuth(firebaseApp);
-
-const db =
-  getFirestore(firebaseApp);
-
-
-/* =====================================================
-   STATE
-===================================================== */
-
-let currentUser = null;
-let currentUserData = null;
-let currentRole = "member";
-
-let activeView = "dashboard";
-
-let charts = {};
-
-const content =
-  document.getElementById("content");
-
-
-/* =====================================================
-   HELPERS
-===================================================== */
-
-const $ = id =>
-  document.getElementById(id);
-
-
-function esc(value){
-
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
-
-
-function money(value){
-
-  return Number(value || 0)
-    .toLocaleString("en-US",{
-      style:"currency",
-      currency:"USD",
-      maximumFractionDigits:0
-    });
-
-}
-
-
-function formatDate(timestamp) {
-  if(!timestamp) return "-";
-  try {
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleDateString("ar-EG");
-  } catch {
-    return "-";
-  }
-}
-
-
-function toast(message){
-
-  const el = $("toast");
-
-  el.textContent = message;
-
-  el.classList.add("show");
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer =
-    setTimeout(
-      () => el.classList.remove("show"),
-      3000
-    );
-
-}
-
-
-function showModal(title, html){
-
-  $("modalTitle").textContent = title;
-
-  $("modalBody").innerHTML = html;
-
-  $("modal").classList.add("show");
-
-}
-
-
-function closeModal(){
-
-  $("modal").classList.remove("show");
-
-}
-
-
-window.closeModal = closeModal;
-
-
-$("modal").addEventListener("click",e=>{
-
-  if(e.target.id === "modal"){
-    closeModal();
-  }
-
-});
-
-
-function statusBadge(status){
-
-  const map = {
-
-    new:["جديد","blue"],
-    contacted:["تم التواصل","orange"],
-    qualified:["مؤهل","blue"],
-    negotiation:["تفاوض","orange"],
-    won:["مربوحة","green"],
-    lost:["خاسرة","red"],
-    pending:["معلقة","orange"],
-    approved:["معتمدة","blue"],
-    paid:["مدفوعة","green"],
-    active:["نشط","green"],
-    inactive:["متوقف","red"],
-    todo:["جديدة","blue"],
-    doing:["قيد التنفيذ","orange"],
-    done:["مكتملة","green"]
-
-  };
-
-  const x =
-    map[status] ||
-    [status || "غير محدد","blue"];
-
-  return `
-    <span class="badge ${x[1]}">
-      ${esc(x[0])}
-    </span>
-  `;
-
-}
-
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
-
-function getNav() {
-
-  // 🔹 دور العميل: قائمة خاصة جداً
-  if (currentRole === "client") {
-    return [
-      ["dashboard", "📊", "لوحتي"],
-      ["my-projects", "📦", "مشاريعي"],
-      ["my-deals", "💰", "طلباتي"],
-      ["profile", "👤", "ملفي"]
-    ];
-  }
-
-  // 🔹 أدمن / مدير: قائمة كاملة
-  if (currentRole === "admin" || currentRole === "manager") {
-    return [
-      ["dashboard", "📊", "الرئيسية"],
-      ["leads", "🔥", "Leads"],
-      ["clients", "👥", "العملاء"],
-      ["projects", "📦", "المشاريع"],
-      ["deals", "💰", "الصفقات"],
-      ["commissions", "💵", "العمولات"],
-      ["team", "👨‍💼", "الفريق"],
-      ["tasks", "📋", "المهام"],
-      ["reports", "📈", "التقارير"],
-      ["notifications", "🔔", "الإشعارات"],
-      ["settings", "⚙️", "الإعدادات"]
-    ];
-  }
-
-  // 🔹 عضو عادي (member): قائمة محدودة
-  return [
-    ["dashboard", "📊", "لوحتي"],
-    ["leads", "🔥", "Leads"],
-    ["clients", "👥", "عملائي"],
-    ["projects", "📦", "المشاريع"],
-    ["deals", "💰", "صفقاتي"],
-    ["commissions", "💵", "عمولاتي"],
-    ["tasks", "📋", "مهامي"],
-    ["notifications", "🔔", "الإشعارات"],
-    ["profile", "👤", "ملفي"]
-  ];
-
-}
-
-
-function buildNavigation(){
-
-  const nav = getNav();
-
-  $("sidebarNav").innerHTML =
-    nav.map(item=>`
-
-      <button
-        class="${item[0] === activeView ? "active":""}"
-        onclick="navigate('${item[0]}')">
-
-        ${item[1]} ${item[2]}
-
-      </button>
-
-    `).join("");
-
-
-  $("mobileNav").innerHTML =
-    nav.map(item=>`
-
-      <button
-        class="${item[0] === activeView ? "active":""}"
-        onclick="navigate('${item[0]}')">
-
-        ${item[1]} ${item[2]}
-
-      </button>
-
-    `).join("");
-
-}
-
-
-window.navigate = navigate;
-
-
-async function navigate(view){
-
-  activeView = view;
-
-  buildNavigation();
-
-  const titles = {
-
-    dashboard:"لوحة التحكم",
-    leads:"إدارة Leads",
-    clients:"العملاء",
-    projects:"المشاريع",
-    deals:"الصفقات",
-    commissions:"العمولات",
-    team:"فريق العمل",
-    tasks:"المهام",
-    reports:"التقارير",
-    notifications:"الإشعارات",
-    settings:"الإعدادات",
-    profile:"الملف الشخصي",
-    "my-projects":"مشاريعي",
-    "my-deals":"طلباتي"
-
-  };
-
-  $("pageHeading").textContent =
-    titles[view] || "MINA PROJECTS";
-
-
-  content.innerHTML = `
-    <div class="empty">
-      جاري التحميل...
-    </div>
-  `;
-
-
-  try{
-
-    switch(view){
-
-      case "dashboard":
-        await renderDashboard();
-        break;
-
-      case "my-projects":
-        await renderMyProjects();
-        break;
-
-      case "my-deals":
-        await renderMyDeals();
-        break;
-
-      case "leads":
-        await renderLeads();
-        break;
-
-      case "clients":
-        await renderClients();
-        break;
-
-      case "projects":
-        await renderProjects();
-        break;
-
-      case "deals":
-        await renderDeals();
-        break;
-
-      case "commissions":
-        await renderCommissions();
-        break;
-
-      case "team":
-        await renderTeam();
-        break;
-
-      case "tasks":
-        await renderTasks();
-        break;
-
-      case "reports":
-        await renderReports();
-        break;
-
-      case "notifications":
-        await renderNotifications();
-        break;
-
-      case "settings":
-        await renderSettings();
-        break;
-
-      case "profile":
-        await renderProfile();
-        break;
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    content.innerHTML = `
-      <div class="card">
-        ❌ حدث خطأ أثناء تحميل القسم.
-        <br><br>
-        <small>${esc(error.message)}</small>
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* =====================================================
-   AUTH
-===================================================== */
-
-$("loginBtn").addEventListener("click",login);
-
-
-$("loginPassword").addEventListener("keydown",e=>{
-
-  if(e.key === "Enter"){
-    login();
-  }
-
-});
-
-
-async function login(){
-
-  const email =
-    $("loginEmail").value.trim();
-
-  const password =
-    $("loginPassword").value;
-
-
-  $("loginError").textContent = "";
-
-
-  if(!email || !password){
-
-    $("loginError").textContent =
-      "اكتب البريد وكلمة المرور.";
-
-    return;
-
-  }
-
-
-  try{
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    $("loginError").textContent =
-      "بيانات الدخول غير صحيحة أو الحساب غير متاح.";
-
-  }
-
-}
-
-
-window.logout = async function(){
-
-  await signOut(auth);
-
-};
-
-
-onAuthStateChanged(auth,async user=>{
-
-  if(!user){
-
-    $("loginScreen").classList.remove("hidden");
-
-    $("app").classList.add("hidden");
-
-    currentUser = null;
-
-    return;
-
-  }
-
-
-  currentUser = user;
-
-
-  const userSnap =
-    await getDoc(
-      doc(db,"users",user.uid)
-    );
-
-
-  if(!userSnap.exists()){
-
-    toast("هذا الحساب غير مضاف للشركة.");
-
-    await signOut(auth);
-
-    return;
-
-  }
-
-
-  currentUserData =
-    userSnap.data();
-
-  currentRole =
-    currentUserData.role || "member";
-
-
-  $("topName").textContent =
-    currentUserData.name ||
-    user.displayName ||
-    user.email;
-
-
-  $("topRole").textContent =
-    currentRole.toUpperCase();
-
-
-  $("topAvatar").textContent =
-    (
-      currentUserData.name ||
-      user.email ||
-      "M"
-    )[0].toUpperCase();
-
-
-  $("loginScreen").classList.add("hidden");
-
-  $("app").classList.remove("hidden");
-
-
-  buildNavigation();
-
-  await navigate("dashboard");
-
-});
-
-
-/* =====================================================
-   THEME
-===================================================== */
-
-window.toggleTheme = function(){
-
-  document.body.classList.toggle("dark");
-
-  localStorage.setItem(
-    "mina-theme",
-    document.body.classList.contains("dark")
-      ? "dark"
-      : "light"
-  );
-
-};
-
-
-if(localStorage.getItem("mina-theme")==="dark"){
-
-  document.body.classList.add("dark");
-
-}
-
-
-/* =====================================================
-   ACTIVITY
-===================================================== */
-
-async function logActivity(
-  action,
-  entityType,
-  entityId="",
-  details=""
-){
-
-  if(!currentUser) return;
-
-  try{
-
-    await addDoc(
-      collection(db,"activityLogs"),
-      {
-
-        userId:currentUser.uid,
-
-        userEmail:currentUser.email,
-
-        userName:
-          currentUserData?.name ||
-          currentUser.email,
-
-        action,
-
-        entityType,
-
-        entityId,
-
-        details,
-
-        createdAt:
-          serverTimestamp()
-
-      }
-    );
-
-  }catch(e){
-
-    console.warn("Activity log:",e);
-
-  }
-
-}
-
-
-/* =====================================================
-   DASHBOARD
-===================================================== */
-
-async function renderDashboard() {
-
-  // 🔹 لو العميل داخل، يبقى Dashboard خاص به
-  if (currentRole === "client") {
-
-    const q = query(
-      collection(db, "deals"),
-      where("clientName", "==", currentUserData?.name || currentUser.email)
-    );
-    const snap = await getDocs(q);
-    let total = 0;
-    let count = 0;
-    snap.forEach(d => {
-      total += Number(d.data().finalPrice || 0);
-      count++;
-    });
-
-    content.innerHTML = `
-      <div class="page-title">
-        <div>
-          <h1>مرحباً، ${esc(currentUserData?.name || "عميلنا العزيز")} 👋</h1>
-          <p>نظرة سريعة على حسابك</p>
-        </div>
-      </div>
-
-      <div class="stats">
-        <div class="card stat">
-          <div class="stat-icon">📦</div>
-          <div class="stat-value">${count}</div>
-          <div class="stat-label">عدد الطلبات</div>
-          <div class="stat-line"></div>
-        </div>
-        <div class="card stat">
-          <div class="stat-icon">💰</div>
-          <div class="stat-value">${money(total)}</div>
-          <div class="stat-label">إجمالي المشتريات</div>
-          <div class="stat-line"></div>
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  // 🔹 باقي الكود (للأدمن والمدير والأعضاء)
-  const [
-    usersSnap,
-    leadsSnap,
-    clientsSnap,
-    dealsSnap,
-    commSnap
-  ] = await Promise.all([
-
-    getDocs(collection(db,"users")),
-
-    getDocs(collection(db,"leads")),
-
-    getDocs(collection(db,"clients")),
-
-    getDocs(collection(db,"deals")),
-
-    getDocs(collection(db,"commissions"))
-
-  ]);
-
-
-  let revenue = 0;
-  let commissions = 0;
-  let won = 0;
-
-
-  dealsSnap.forEach(d=>{
-
-    const x = d.data();
-
-    if(x.status === "won"){
-
-      won++;
-
-      revenue +=
-        Number(x.finalPrice || 0);
-
-    }
-
-  });
-
-
-  commSnap.forEach(d=>{
-
-    commissions +=
-      Number(d.data().amount || 0);
-
-  });
-
-
-  const totalUsers =
-    currentRole === "member"
-      ? 1
-      : usersSnap.size;
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>مرحباً، ${esc(
-          currentUserData?.name || "بك"
-        )} 👋</h1>
-
-        <p>
-          نظرة عامة على أداء الشركة اليوم
-        </p>
-      </div>
-
-      <button
-        class="btn"
-        onclick="openQuickActions()">
-
-        + إجراء سريع
-
-      </button>
-
-    </div>
-
-
-    <div class="stats">
-
-      <div class="card stat">
-        <div class="stat-icon">👥</div>
-        <div class="stat-value">
-          ${currentRole==="member"
-            ? clientsSnap.size
-            : clientsSnap.size}
-        </div>
-        <div class="stat-label">
-          إجمالي العملاء
-        </div>
-        <div class="stat-line"></div>
-      </div>
-
-
-      <div class="card stat">
-        <div class="stat-icon">🔥</div>
-        <div class="stat-value">
-          ${leadsSnap.size}
-        </div>
-        <div class="stat-label">
-          Leads
-        </div>
-        <div class="stat-line"></div>
-      </div>
-
-
-      <div class="card stat">
-        <div class="stat-icon">💰</div>
-        <div class="stat-value">
-          ${money(revenue)}
-        </div>
-        <div class="stat-label">
-          المبيعات المربوحة
-        </div>
-        <div class="stat-line"></div>
-      </div>
-
-
-      <div class="card stat">
-        <div class="stat-icon">💵</div>
-        <div class="stat-value">
-          ${money(commissions)}
-        </div>
-        <div class="stat-label">
-          العمولات
-        </div>
-        <div class="stat-line"></div>
-      </div>
-
-    </div>
-
-
-    <div class="grid grid-2">
-
-      <div class="card">
-
-        <div class="toolbar">
-          <strong>📈 أداء المبيعات</strong>
-          <span class="badge green">
-            ${won} صفقة مربوحة
-          </span>
-        </div>
-
-        <div class="chart-box">
-          <canvas id="salesChart"></canvas>
-        </div>
-
-      </div>
-
-
-      <div class="card">
-
-        <div class="toolbar">
-          <strong>🔥 مراحل العملاء المحتملين</strong>
-        </div>
-
-        <div class="chart-box">
-          <canvas id="leadChart"></canvas>
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="card" style="margin-top:16px">
-
-      <div class="toolbar">
-        <strong>⚡ اختصارات</strong>
-      </div>
-
-      <div class="grid grid-4">
-
-        <button
-          class="btn"
-          onclick="openLeadModal()">
-          🔥 Lead جديد
-        </button>
-
-        <button
-          class="btn secondary"
-          onclick="openClientModal()">
-          👤 عميل جديد
-        </button>
-
-        <button
-          class="btn secondary"
-          onclick="openDealModal()">
-          💰 صفقة جديدة
-        </button>
-
-        <button
-          class="btn secondary"
-          onclick="openTaskModal()">
-          📋 مهمة جديدة
-        </button>
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  setTimeout(()=>{
-
-    destroyChart("sales");
-
-    const ctx =
-      $("salesChart")?.getContext("2d");
-
-    if(ctx){
-
-      charts.sales =
-        new Chart(ctx,{
-
-          type:"bar",
-
-          data:{
-
-            labels:[
-              "يناير",
-              "فبراير",
-              "مارس",
-              "أبريل",
-              "مايو",
-              "يونيو"
-            ],
-
-            datasets:[{
-
-              label:"المبيعات",
-
-              data:[
-                12000,
-                18500,
-                15000,
-                27000,
-                23000,
-                revenue
-              ],
-
-              borderRadius:8
-
-            }]
-
-          },
-
-          options:{
-            responsive:true,
-            maintainAspectRatio:false
-          }
-
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const functions = getFunctions(app);
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentUser = null;
+        let currentUserData = null;
+        let currentRole = "member";
+        let activeView = "dashboard";
+        let charts = {};
+        const content = document.getElementById("content");
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        const $ = id => document.getElementById(id);
+
+        function esc(value) {
+            return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+        }
+
+        function money(value) {
+            return Number(value || 0).toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return "-";
+            try {
+                const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+                return date.toLocaleDateString("ar-EG");
+            } catch {
+                return "-";
+            }
+        }
+
+        function toast(message) {
+            const el = $("toast");
+            el.textContent = message;
+            el.classList.add("show");
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
+        }
+
+        function showModal(title, html) {
+            $("modalTitle").textContent = title;
+            $("modalBody").innerHTML = html;
+            $("modal").classList.add("show");
+        }
+
+        function closeModal() {
+            $("modal").classList.remove("show");
+        }
+        window.closeModal = closeModal;
+
+        $("modal").addEventListener("click", e => {
+            if (e.target.id === "modal") closeModal();
         });
 
-    }
+        function statusBadge(status) {
+            const map = {
+                new: ["جديد", "blue"],
+                contacted: ["تم التواصل", "orange"],
+                qualified: ["مؤهل", "blue"],
+                negotiation: ["تفاوض", "orange"],
+                won: ["مربوحة", "green"],
+                lost: ["خاسرة", "red"],
+                pending: ["معلقة", "orange"],
+                approved: ["معتمدة", "blue"],
+                paid: ["مدفوعة", "green"],
+                active: ["نشط", "green"],
+                inactive: ["متوقف", "red"],
+                todo: ["جديدة", "blue"],
+                doing: ["قيد التنفيذ", "orange"],
+                done: ["مكتملة", "green"]
+            };
+            const x = map[status] || [status || "غير محدد", "blue"];
+            return `<span class="badge ${x[1]}">${esc(x[0])}</span>`;
+        }
 
+        window.filterTable = function(tableId, value) {
+            const table = document.getElementById(tableId);
+            if (!table) return;
+            const rows = table.querySelectorAll("tbody tr");
+            const lower = value.toLowerCase();
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(lower) ? "" : "none";
+            });
+        };
 
-    destroyChart("leads");
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        function getNav() {
+            if (currentRole === "client") {
+                return [
+                    ["dashboard", "📊", "لوحتي"],
+                    ["my-projects", "📦", "مشاريعي"],
+                    ["my-deals", "💰", "طلباتي"],
+                    ["profile", "👤", "ملفي"]
+                ];
+            }
+            if (currentRole === "admin" || currentRole === "manager") {
+                return [
+                    ["dashboard", "📊", "الرئيسية"],
+                    ["leads", "🔥", "Leads"],
+                    ["clients", "👥", "العملاء"],
+                    ["projects", "📦", "المشاريع"],
+                    ["deals", "💰", "الصفقات"],
+                    ["commissions", "💵", "العمولات"],
+                    ["team", "👨‍💼", "الفريق"],
+                    ["tasks", "📋", "المهام"],
+                    ["reports", "📈", "التقارير"],
+                    ["notifications", "🔔", "الإشعارات"],
+                    ["settings", "⚙️", "الإعدادات"]
+                ];
+            }
+            return [
+                ["dashboard", "📊", "لوحتي"],
+                ["leads", "🔥", "Leads"],
+                ["clients", "👥", "عملائي"],
+                ["projects", "📦", "المشاريع"],
+                ["deals", "💰", "صفقاتي"],
+                ["commissions", "💵", "عمولاتي"],
+                ["tasks", "📋", "مهامي"],
+                ["notifications", "🔔", "الإشعارات"],
+                ["profile", "👤", "ملفي"]
+            ];
+        }
 
-    const lctx =
-      $("leadChart")?.getContext("2d");
+        function buildNavigation() {
+            const nav = getNav();
+            $("sidebarNav").innerHTML = nav.map(item =>
+                `<button class="${item[0] === activeView ? 'active' : ''}" onclick="navigate('${item[0]}')">${item[1]} ${item[2]}</button>`
+            ).join("");
+            $("mobileNav").innerHTML = nav.map(item =>
+                `<button class="${item[0] === activeView ? 'active' : ''}" onclick="navigate('${item[0]}')">${item[1]} ${item[2]}</button>`
+            ).join("");
+        }
 
-    if(lctx){
+        window.navigate = navigate;
 
-      const stages = {
-        new:0,
-        contacted:0,
-        qualified:0,
-        negotiation:0,
-        won:0,
-        lost:0
-      };
+        async function navigate(view) {
+            activeView = view;
+            buildNavigation();
+            const titles = {
+                dashboard: "لوحة التحكم",
+                leads: "إدارة Leads",
+                clients: "العملاء",
+                projects: "المشاريع",
+                deals: "الصفقات",
+                commissions: "العمولات",
+                team: "فريق العمل",
+                tasks: "المهام",
+                reports: "التقارير",
+                notifications: "الإشعارات",
+                settings: "الإعدادات",
+                profile: "الملف الشخصي",
+                "my-projects": "مشاريعي",
+                "my-deals": "طلباتي"
+            };
+            $("pageHeading").textContent = titles[view] || "MINA PROJECTS";
 
+            content.innerHTML = `<div class="empty">جاري التحميل...</div>`;
 
-      leadsSnap.forEach(d=>{
+            try {
+                switch (view) {
+                    case "dashboard":
+                        await renderDashboard();
+                        break;
+                    case "my-projects":
+                        await renderMyProjects();
+                        break;
+                    case "my-deals":
+                        await renderMyDeals();
+                        break;
+                    case "leads":
+                        await renderLeads();
+                        break;
+                    case "clients":
+                        await renderClients();
+                        break;
+                    case "projects":
+                        await renderProjects();
+                        break;
+                    case "deals":
+                        await renderDeals();
+                        break;
+                    case "commissions":
+                        await renderCommissions();
+                        break;
+                    case "team":
+                        await renderTeam();
+                        break;
+                    case "tasks":
+                        await renderTasks();
+                        break;
+                    case "reports":
+                        await renderReports();
+                        break;
+                    case "notifications":
+                        await renderNotifications();
+                        break;
+                    case "settings":
+                        await renderSettings();
+                        break;
+                    case "profile":
+                        await renderProfile();
+                        break;
+                    default:
+                        content.innerHTML = `<div class="card"><div class="empty">هذه الصفحة قيد التطوير</div></div>`;
+                }
+            } catch (error) {
+                console.error(error);
+                content.innerHTML =
+                    `<div class="card">❌ حدث خطأ أثناء تحميل القسم.<br><br><small>${esc(error.message)}</small></div>`;
+            }
+        }
 
-        const s =
-          d.data().status || "new";
+        // ============================================================
+        // AUTH
+        // ============================================================
+        $("loginBtn").addEventListener("click", login);
+        $("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
 
-        if(stages[s] !== undefined)
-          stages[s]++;
+        async function login() {
+            const email = $("loginEmail").value.trim();
+            const password = $("loginPassword").value;
+            $("loginError").textContent = "";
+            if (!email || !password) {
+                $("loginError").textContent = "اكتب البريد وكلمة المرور.";
+                return;
+            }
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                console.error(error);
+                $("loginError").textContent = "بيانات الدخول غير صحيحة أو الحساب غير متاح.";
+            }
+        }
 
-      });
+        window.logout = async function() {
+            await signOut(auth);
+        };
 
+        onAuthStateChanged(auth, async user => {
+            if (!user) {
+                $("loginScreen").classList.remove("hidden");
+                $("app").classList.add("hidden");
+                currentUser = null;
+                return;
+            }
+            currentUser = user;
+            const userSnap = await getDoc(doc(db, "users", user.uid));
+            if (!userSnap.exists()) {
+                toast("هذا الحساب غير مضاف للشركة.");
+                await signOut(auth);
+                return;
+            }
+            currentUserData = userSnap.data();
+            currentRole = currentUserData.role || "member";
+            $("topName").textContent = currentUserData.name || user.displayName || user.email;
+            $("topRole").textContent = currentRole.toUpperCase();
+            $("topAvatar").textContent = (currentUserData.name || user.email || "M")[0].toUpperCase();
 
-      charts.leads =
-        new Chart(lctx,{
-
-          type:"doughnut",
-
-          data:{
-
-            labels:[
-              "جديد",
-              "تم التواصل",
-              "مؤهل",
-              "تفاوض",
-              "مربوح",
-              "خاسر"
-            ],
-
-            datasets:[{
-
-              data:[
-                stages.new,
-                stages.contacted,
-                stages.qualified,
-                stages.negotiation,
-                stages.won,
-                stages.lost
-              ]
-
-            }]
-
-          },
-
-          options:{
-            responsive:true,
-            maintainAspectRatio:false
-          }
-
+            $("loginScreen").classList.add("hidden");
+            $("app").classList.remove("hidden");
+            buildNavigation();
+            await navigate("dashboard");
         });
 
-    }
-
-  },50);
-
-}
-
-
-function destroyChart(name){
-
-  if(charts[name]){
-
-    charts[name].destroy();
-
-    charts[name] = null;
-
-  }
-
-}
-
-
-/* =====================================================
-   MY PROJECTS (خاص بالعميل)
-===================================================== */
-
-async function renderMyProjects() {
-
-  const q = query(
-    collection(db, "clients"),
-    where("email", "==", currentUser.email)
-  );
-
-  const snap = await getDocs(q);
-
-  let rows = "";
-
-  if (snap.empty) {
-    rows = `<tr><td colspan="4"><div class="empty">لا توجد مشاريع مسجلة باسمك</div></td></tr>`;
-  } else {
-    snap.forEach(d => {
-      const x = d.data();
-      rows += `
-        <tr>
-          <td><strong>${esc(x.name)}</strong></td>
-          <td>${esc(x.project || "غير محدد")}</td>
-          <td>${esc(x.phone)}</td>
-          <td>${esc(x.notes || "-")}</td>
-        </tr>
-      `;
-    });
-  }
-
-  content.innerHTML = `
-    <div class="page-title">
-      <div>
-        <h1>📦 مشاريعي</h1>
-        <p>المشاريع والخدمات المقدمة لك</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>اسم العميل</th>
-              <th>المشروع</th>
-              <th>الهاتف</th>
-              <th>ملاحظات</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </div>
-  `;
-}
-
-
-/* =====================================================
-   MY DEALS (خاص بالعميل)
-===================================================== */
-
-async function renderMyDeals() {
-
-  const q = query(
-    collection(db, "deals"),
-    where("clientName", "==", currentUserData?.name || currentUser.email)
-  );
-
-  const snap = await getDocs(q);
-
-  let rows = "";
-  let total = 0;
-
-  if (snap.empty) {
-    rows = `<tr><td colspan="5"><div class="empty">لا توجد طلبات / صفقات مسجلة</div></td></tr>`;
-  } else {
-    snap.forEach(d => {
-      const x = d.data();
-      total += Number(x.finalPrice || 0);
-      rows += `
-        <tr>
-          <td>${esc(x.clientName)}</td>
-          <td>${money(x.finalPrice)}</td>
-          <td>${x.commissionRate || 0}%</td>
-          <td>${money(x.commissionAmount || 0)}</td>
-          <td>${statusBadge(x.status)}</td>
-        </tr>
-      `;
-    });
-  }
-
-  content.innerHTML = `
-    <div class="page-title">
-      <div>
-        <h1>💰 طلباتي / صفقاتي</h1>
-        <p>حالة طلباتك المالية</p>
-      </div>
-    </div>
-
-    <div class="stats">
-      <div class="card stat">
-        <div class="stat-icon">💰</div>
-        <div class="stat-value">${money(total)}</div>
-        <div class="stat-label">إجمالي المبالغ</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>العميل</th>
-              <th>السعر</th>
-              <th>العمولة</th>
-              <th>قيمة العمولة</th>
-              <th>الحالة</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </div>
-  `;
-}
-
-
-/* =====================================================
-   LEADS
-===================================================== */
-
-async function renderLeads(){
-
-  const snap =
-    await getDocs(
-      collection(db,"leads")
-    );
-
-
-  let rows = "";
-
-
-  snap.forEach(d=>{
-
-    const x = d.data();
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <strong>${esc(x.name)}</strong>
-        </td>
-
-        <td>${esc(x.phone)}</td>
-
-        <td>
-          ${x.source === "facebook"
-            ? "🔵 Facebook"
-            : esc(x.source || "Website")}
-        </td>
-
-        <td>
-          ${statusBadge(x.status)}
-        </td>
-
-        <td>
-          ${esc(x.assignedName || "-")}
-        </td>
-
-        <td>
-          ${formatDate(x.createdAt)}
-        </td>
-
-        <td>
-
-          <div class="actions">
-
-            <button
-              class="btn secondary small"
-              onclick="editLead('${d.id}')">
-              ✏️
-            </button>
-
-            <button
-              class="btn red small"
-              onclick="deleteLead('${d.id}')">
-              🗑
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>🔥 Leads</h1>
-        <p>
-          إدارة العملاء المحتملين ومصادرهم
-        </p>
-      </div>
-
-      <button
-        class="btn"
-        onclick="openLeadModal()">
-        + Lead جديد
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="toolbar">
-
-        <div class="search-wrap">
-          <input
-            class="search"
-            id="leadSearch"
-            placeholder="🔍 بحث..."
-            oninput="filterTable('leadTable',this.value)">
-        </div>
-
-        <select
-          class="search"
-          style="width:180px"
-          id="leadFilter"
-          onchange="filterLeadStatus(this.value)">
-
-          <option value="">كل الحالات</option>
-          <option value="new">جديد</option>
-          <option value="contacted">تم التواصل</option>
-          <option value="qualified">مؤهل</option>
-          <option value="negotiation">تفاوض</option>
-          <option value="won">مربوحة</option>
-          <option value="lost">خاسرة</option>
-
-        </select>
-
-      </div>
-
-
-      <div class="table-wrap">
-
-        <table id="leadTable">
-
-          <thead>
-
-            <tr>
-              <th>الاسم</th>
-              <th>الهاتف</th>
-              <th>المصدر</th>
-              <th>الحالة</th>
-              <th>المسؤول</th>
-              <th>التاريخ</th>
-              <th>إجراءات</th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${
-              rows ||
-              `<tr>
-                <td colspan="7">
-                  <div class="empty">
-                    لا توجد Leads
-                  </div>
-                </td>
-              </tr>`
+        // ============================================================
+        // THEME
+        // ============================================================
+        window.toggleTheme = function() {
+            document.body.classList.toggle("dark");
+            localStorage.setItem("mina-theme", document.body.classList.contains("dark") ? "dark" : "light");
+        };
+        if (localStorage.getItem("mina-theme") === "dark") {
+            document.body.classList.add("dark");
+        }
+
+        // ============================================================
+        // ACTIVITY LOG (optional)
+        // ============================================================
+        async function logActivity(action, entityType, entityId = "", details = "") {
+            if (!currentUser) return;
+            try {
+                await addDoc(collection(db, "activityLogs"), {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    userName: currentUserData?.name || currentUser.email,
+                    action,
+                    entityType,
+                    entityId,
+                    details,
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) { console.warn("Activity log:", e); }
+        }
+
+        // ============================================================
+        // DASHBOARD
+        // ============================================================
+        async function renderDashboard() {
+            // Client dashboard
+            if (currentRole === "client") {
+                const q = query(collection(db, "deals"), where("clientName", "==", currentUserData?.name || currentUser
+                .email));
+                const snap = await getDocs(q);
+                let total = 0,
+                    count = 0;
+                snap.forEach(d => { total += Number(d.data().finalPrice || 0);
+                    count++; });
+                content.innerHTML = `
+                    <div class="page-title">
+                        <div><h1>مرحباً، ${esc(currentUserData?.name || "عميلنا العزيز")} 👋</h1><p>نظرة سريعة على حسابك</p></div>
+                    </div>
+                    <div class="stats">
+                        <div class="card stat"><div class="stat-icon">📦</div><div class="stat-value">${count}</div><div class="stat-label">عدد الطلبات</div><div class="stat-line"></div></div>
+                        <div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(total)}</div><div class="stat-label">إجمالي المشتريات</div><div class="stat-line"></div></div>
+                    </div>
+                `;
+                return;
             }
 
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-window.filterLeadStatus = function(value){
-
-  document
-    .querySelectorAll("#leadTable tbody tr")
-    .forEach(row=>{
-
-      if(!value){
-
-        row.style.display="";
-
-        return;
-
-      }
-
-      row.style.display =
-        row.textContent.includes(
-          statusText(value)
-        )
-        ? ""
-        : "none";
-
-    });
-
-};
-
-
-function statusText(s){
-
-  const x = {
-    new:"جديد",
-    contacted:"تم التواصل",
-    qualified:"مؤهل",
-    negotiation:"تفاوض",
-    won:"مربوحة",
-    lost:"خاسرة"
-  };
-
-  return x[s] || s;
-
-}
-
-
-window.openLeadModal =
-  function(id=null,data={}){
-
-  showModal(
-    id ? "✏️ تعديل Lead" : "🔥 إضافة Lead",
-    `
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>الاسم</label>
-        <input id="leadName"
-          value="${esc(data.name)}">
-      </div>
-
-      <div class="field">
-        <label>الهاتف *</label>
-        <input id="leadPhone"
-          value="${esc(data.phone)}">
-      </div>
-
-    </div>
-
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>البريد</label>
-        <input id="leadEmail"
-          value="${esc(data.email)}">
-      </div>
-
-      <div class="field">
-        <label>المصدر</label>
-        <select id="leadSource">
-
-          <option value="facebook"
-            ${data.source==="facebook"?"selected":""}>
-            Facebook
-          </option>
-
-          <option value="website"
-            ${data.source==="website"?"selected":""}>
-            Website
-          </option>
-
-          <option value="whatsapp"
-            ${data.source==="whatsapp"?"selected":""}>
-            WhatsApp
-          </option>
-
-          <option value="manual"
-            ${data.source==="manual"?"selected":""}>
-            Manual
-          </option>
-
-        </select>
-      </div>
-
-    </div>
-
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>الحالة</label>
-        <select id="leadStatus">
-
-          ${
-            [
-              ["new","جديد"],
-              ["contacted","تم التواصل"],
-              ["qualified","مؤهل"],
-              ["negotiation","تفاوض"],
-              ["won","مربوحة"],
-              ["lost","خاسرة"]
-            ].map(x=>`
-              <option value="${x[0]}"
-                ${data.status===x[0]?"selected":""}>
-                ${x[1]}
-              </option>
-            `).join("")
-          }
-
-        </select>
-      </div>
-
-      <div class="field">
-        <label>الحملة</label>
-        <input id="leadCampaign"
-          value="${esc(data.campaign)}"
-          placeholder="اسم الحملة">
-      </div>
-
-    </div>
-
-
-    <div class="field">
-      <label>ملاحظات</label>
-      <textarea id="leadNotes">${esc(data.notes)}</textarea>
-    </div>
-
-
-    <button
-      class="btn"
-      style="width:100%"
-      onclick="saveLead('${id || ""}')">
-
-      💾 حفظ
-
-    </button>
-
-    `
-  );
-
-
-};
-
-
-window.saveLead = async function(id){
-
-  const data = {
-
-    name:$("leadName").value.trim(),
-
-    phone:$("leadPhone").value.trim(),
-
-    email:$("leadEmail").value.trim(),
-
-    source:$("leadSource").value,
-
-    status:$("leadStatus").value,
-
-    campaign:$("leadCampaign").value.trim(),
-
-    notes:$("leadNotes").value.trim()
-
-  };
-
-
-  if(!data.phone){
-
-    toast("رقم الهاتف مطلوب");
-
-    return;
-
-  }
-
-
-  try{
-
-    if(id){
-
-      await updateDoc(
-        doc(db,"leads",id),
-        data
-      );
-
-      await logActivity(
-        "تعديل Lead",
-        "lead",
-        id
-      );
-
-      toast("تم تحديث الـ Lead");
-
-    }else{
-
-      data.assignedTo =
-        currentUser.uid;
-
-      data.assignedName =
-        currentUserData?.name || "";
-
-      data.createdAt =
-        serverTimestamp();
-
-      await addDoc(
-        collection(db,"leads"),
-        data
-      );
-
-      await logActivity(
-        "إضافة Lead",
-        "lead",
-        data.phone
-      );
-
-      toast("تمت إضافة الـ Lead");
-
-    }
-
-
-    closeModal();
-
-    renderLeads();
-
-  }catch(e){
-
-    toast("حدث خطأ: "+e.message);
-
-  }
-
-};
-
-
-window.editLead = async function(id){
-
-  const snap =
-    await getDoc(
-      doc(db,"leads",id)
-    );
-
-  if(!snap.exists()) return;
-
-  openLeadModal(
-    id,
-    snap.data()
-  );
-
-};
-
-
-window.deleteLead = async function(id){
-
-  if(!confirm("هل تريد حذف هذا الـ Lead؟"))
-    return;
-
-  await deleteDoc(
-    doc(db,"leads",id)
-  );
-
-  await logActivity(
-    "حذف Lead",
-    "lead",
-    id
-  );
-
-  toast("تم الحذف");
-
-  renderLeads();
-
-};
-
-
-/* =====================================================
-   CLIENTS
-===================================================== */
-
-async function renderClients(){
-
-  const snap =
-    await getDocs(
-      collection(db,"clients")
-    );
-
-
-  let rows = "";
-
-
-  snap.forEach(d=>{
-
-    const x=d.data();
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <strong>${esc(x.name)}</strong>
-        </td>
-
-        <td>${esc(x.phone)}</td>
-
-        <td>${esc(x.email || "-")}</td>
-
-        <td>${esc(x.project || "-")}</td>
-
-        <td>${esc(x.memberName || "-")}</td>
-
-        <td>${formatDate(x.createdAt)}</td>
-
-        <td>
-
-          <div class="actions">
-
-            <button
-              class="btn secondary small"
-              onclick="editClient('${d.id}')">
-              ✏️
-            </button>
-
-            <button
-              class="btn red small"
-              onclick="deleteClient('${d.id}')">
-              🗑
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>👥 العملاء</h1>
-        <p>قاعدة بيانات العملاء</p>
-      </div>
-
-      <button
-        class="btn"
-        onclick="openClientModal()">
-        + عميل جديد
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="toolbar">
-
-        <div class="search-wrap">
-          <input
-            class="search"
-            placeholder="🔍 ابحث بالاسم أو الهاتف..."
-            oninput="filterTable('clientsTable',this.value)">
-        </div>
-
-      </div>
-
-
-      <div class="table-wrap">
-
-        <table id="clientsTable">
-
-          <thead>
-            <tr>
-              <th>الاسم</th>
-              <th>الهاتف</th>
-              <th>البريد</th>
-              <th>المشروع</th>
-              <th>المسؤول</th>
-              <th>التاريخ</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            ${
-              rows ||
-              `<tr><td colspan="7">
-                <div class="empty">
-                  لا يوجد عملاء
+            // Admin/Manager/Member dashboard
+            const [usersSnap, leadsSnap, clientsSnap, dealsSnap, commSnap] = await Promise.all([
+                getDocs(collection(db, "users")),
+                getDocs(collection(db, "leads")),
+                getDocs(collection(db, "clients")),
+                getDocs(collection(db, "deals")),
+                getDocs(collection(db, "commissions"))
+            ]);
+
+            let revenue = 0,
+                commissions = 0,
+                won = 0;
+            dealsSnap.forEach(d => {
+                const x = d.data();
+                if (x.status === "won") { won++;
+                    revenue += Number(x.finalPrice || 0); }
+            });
+            commSnap.forEach(d => { commissions += Number(d.data().amount || 0); });
+
+            content.innerHTML = `
+                <div class="page-title">
+                    <div><h1>مرحباً، ${esc(currentUserData?.name || "بك")} 👋</h1><p>نظرة عامة على أداء الشركة اليوم</p></div>
+                    <button class="btn" onclick="openQuickActions()">+ إجراء سريع</button>
                 </div>
-              </td></tr>`
-            }
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-window.openClientModal =
-async function(id=null,data={}){
-
-  // جلب المشاريع من قاعدة البيانات لتظهر في القائمة المنسدلة
-  let projectOptions = '<option value="">-- اختر مشروعاً --</option>';
-  try {
-    const projectsSnap = await getDocs(collection(db, "projects"));
-    projectsSnap.forEach(doc => {
-      const p = doc.data();
-      const selected = (data.project === p.name) ? 'selected' : '';
-      projectOptions += `<option value="${esc(p.name)}" ${selected}>${esc(p.name)}</option>`;
-    });
-  } catch (e) {
-    console.warn("فشل جلب المشاريع", e);
-  }
-
-  showModal(
-    id ? "✏️ تعديل العميل" : "👤 عميل جديد",
-    `
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>الاسم</label>
-        <input id="clientName"
-          value="${esc(data.name)}">
-      </div>
-
-      <div class="field">
-        <label>الهاتف *</label>
-        <input id="clientPhone"
-          value="${esc(data.phone)}">
-      </div>
-
-    </div>
-
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>البريد</label>
-        <input id="clientEmail"
-          value="${esc(data.email)}">
-      </div>
-
-      <div class="field">
-        <label>المشروع</label>
-        <select id="clientProject">
-          ${projectOptions}
-        </select>
-      </div>
-
-    </div>
-
-
-    <div class="field">
-      <label>ملاحظات</label>
-      <textarea id="clientNotes">${esc(data.notes)}</textarea>
-    </div>
-
-
-    <button
-      class="btn"
-      style="width:100%"
-      onclick="saveClient('${id || ""}')">
-
-      💾 حفظ العميل
-
-    </button>
-
-    `
-  );
-};
-
-
-window.saveClient = async function(id){
-
-  const data={
-
-    name:$("clientName").value.trim(),
-
-    phone:$("clientPhone").value.trim(),
-
-    email:$("clientEmail").value.trim(),
-
-    project:$("clientProject").value.trim(),
-
-    notes:$("clientNotes").value.trim()
-
-  };
-
-
-  if(!data.phone){
-
-    toast("رقم الهاتف مطلوب");
-
-    return;
-
-  }
-
-
-  try{
-
-    if(id){
-
-      await updateDoc(
-        doc(db,"clients",id),
-        data
-      );
-
-      toast("تم تحديث العميل");
-
-    }else{
-
-      data.memberId =
-        currentUser.uid;
-
-      data.memberName =
-        currentUserData?.name || "";
-
-      data.createdAt =
-        serverTimestamp();
-
-      await addDoc(
-        collection(db,"clients"),
-        data
-      );
-
-      await logActivity(
-        "إضافة عميل",
-        "client",
-        data.phone
-      );
-
-      toast("تم إضافة العميل");
-
-    }
-
-
-    closeModal();
-
-    renderClients();
-
-  }catch(e){
-
-    toast(e.message);
-
-  }
-
-};
-
-
-window.editClient = async function(id){
-
-  const snap =
-    await getDoc(
-      doc(db,"clients",id)
-    );
-
-  if(snap.exists()){
-
-    openClientModal(
-      id,
-      snap.data()
-    );
-
-  }
-
-};
-
-
-window.deleteClient = async function(id){
-
-  if(!confirm("حذف العميل؟"))
-    return;
-
-  await deleteDoc(
-    doc(db,"clients",id)
-  );
-
-  toast("تم حذف العميل");
-
-  renderClients();
-
-};
-
-
-/* =====================================================
-   PROJECTS
-===================================================== */
-
-async function renderProjects(){
-
-  const snap =
-    await getDocs(
-      collection(db,"projects")
-    );
-
-
-  let rows="";
-
-
-  snap.forEach(d=>{
-
-    const x=d.data();
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <strong>${esc(x.name)}</strong>
-        </td>
-
-        <td>${esc(x.category || "-")}</td>
-
-        <td>${money(x.price)}</td>
-
-        <td>${Number(x.commissionRate||0)}%</td>
-
-        <td>${statusBadge(x.status)}</td>
-
-        <td>
-
-          <div class="actions">
-
-            <button
-              class="btn secondary small"
-              onclick="editProject('${d.id}')">
-              ✏️
-            </button>
-
-            <button
-              class="btn red small"
-              onclick="deleteProject('${d.id}')">
-              🗑
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>📦 المشاريع</h1>
-        <p>إدارة المنتجات والخدمات والمشاريع</p>
-      </div>
-
-      <button
-        class="btn"
-        onclick="openProjectModal()">
-        + مشروع جديد
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-            <tr>
-              <th>المشروع</th>
-              <th>الفئة</th>
-              <th>السعر</th>
-              <th>العمولة</th>
-              <th>الحالة</th>
-              <th>إجراءات</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            ${
-              rows ||
-              `<tr><td colspan="6">
-                <div class="empty">
-                  لا توجد مشاريع
+                <div class="stats">
+                    <div class="card stat"><div class="stat-icon">👥</div><div class="stat-value">${clientsSnap.size}</div><div class="stat-label">إجمالي العملاء</div><div class="stat-line"></div></div>
+                    <div class="card stat"><div class="stat-icon">🔥</div><div class="stat-value">${leadsSnap.size}</div><div class="stat-label">Leads</div><div class="stat-line"></div></div>
+                    <div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(revenue)}</div><div class="stat-label">المبيعات المربوحة</div><div class="stat-line"></div></div>
+                    <div class="card stat"><div class="stat-icon">💵</div><div class="stat-value">${money(commissions)}</div><div class="stat-label">العمولات</div><div class="stat-line"></div></div>
                 </div>
-              </td></tr>`
-            }
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-window.openProjectModal =
-function(id=null,data={}){
-
-  showModal(
-    id ? "✏️ تعديل المشروع" : "📦 مشروع جديد",
-    `
-
-    <div class="field">
-      <label>اسم المشروع</label>
-      <input id="projectName"
-        value="${esc(data.name)}">
-    </div>
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>الفئة</label>
-        <input id="projectCategory"
-          value="${esc(data.category)}">
-      </div>
-
-      <div class="field">
-        <label>السعر</label>
-        <input id="projectPrice"
-          type="number"
-          value="${Number(data.price||0)}">
-      </div>
-
-    </div>
-
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>نسبة العمولة %</label>
-        <input id="projectCommission"
-          type="number"
-          value="${Number(data.commissionRate||0)}">
-      </div>
-
-      <div class="field">
-        <label>الحالة</label>
-
-        <select id="projectStatus">
-
-          <option value="active"
-            ${data.status==="active"?"selected":""}>
-            نشط
-          </option>
-
-          <option value="inactive"
-            ${data.status==="inactive"?"selected":""}>
-            متوقف
-          </option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-    <button
-      class="btn"
-      style="width:100%"
-      onclick="saveProject('${id || ""}')">
-      💾 حفظ
-    </button>
-
-    `
-  );
-
-};
-
-
-window.saveProject = async function(id){
-
-  const data={
-
-    name:$("projectName").value.trim(),
-
-    category:$("projectCategory").value.trim(),
-
-    price:Number($("projectPrice").value||0),
-
-    commissionRate:
-      Number($("projectCommission").value||0),
-
-    status:$("projectStatus").value
-
-  };
-
-
-  if(!data.name){
-
-    toast("اسم المشروع مطلوب");
-
-    return;
-
-  }
-
-
-  if(id){
-
-    await updateDoc(
-      doc(db,"projects",id),
-      data
-    );
-
-    toast("تم التحديث");
-
-  }else{
-
-    data.createdAt =
-      serverTimestamp();
-
-    await addDoc(
-      collection(db,"projects"),
-      data
-    );
-
-    toast("تم إضافة المشروع");
-
-  }
-
-
-  closeModal();
-
-  renderProjects();
-
-};
-
-
-window.editProject = async function(id){
-
-  const snap =
-    await getDoc(
-      doc(db,"projects",id)
-    );
-
-  if(snap.exists()){
-
-    openProjectModal(
-      id,
-      snap.data()
-    );
-
-  }
-
-};
-
-
-window.deleteProject = async function(id){
-
-  if(!confirm("حذف المشروع؟"))
-    return;
-
-  await deleteDoc(
-    doc(db,"projects",id)
-  );
-
-  toast("تم الحذف");
-
-  renderProjects();
-
-};
-
-
-/* =====================================================
-   DEALS
-===================================================== */
-
-async function renderDeals(){
-
-  const snap =
-    await getDocs(
-      collection(db,"deals")
-    );
-
-
-  let rows="";
-
-
-  snap.forEach(d=>{
-
-    const x=d.data();
-
-
-    rows += `
-
-      <tr>
-
-        <td>${esc(x.clientName || x.clientId || "-")}</td>
-
-        <td>${esc(x.memberName || "-")}</td>
-
-        <td>${money(x.finalPrice)}</td>
-
-        <td>${Number(x.commissionRate||0)}%</td>
-
-        <td>${money(x.commissionAmount)}</td>
-
-        <td>${statusBadge(x.status)}</td>
-
-        <td>
-
-          <button
-            class="btn secondary small"
-            onclick="editDeal('${d.id}')">
-            ✏️
-          </button>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>💰 الصفقات</h1>
-        <p>Sales Pipeline والصفقات</p>
-      </div>
-
-      <button
-        class="btn"
-        onclick="openDealModal()">
-        + صفقة جديدة
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>العميل</th>
-              <th>المسؤول</th>
-              <th>السعر</th>
-              <th>العمولة</th>
-              <th>قيمة العمولة</th>
-              <th>الحالة</th>
-              <th></th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${
-              rows ||
-              `<tr><td colspan="7">
-                <div class="empty">
-                  لا توجد صفقات
+                <div class="grid grid-2">
+                    <div class="card"><div class="toolbar"><strong>📈 أداء المبيعات</strong><span class="badge green">${won} صفقة مربوحة</span></div><div class="chart-box"><canvas id="salesChart"></canvas></div></div>
+                    <div class="card"><div class="toolbar"><strong>🔥 مراحل العملاء المحتملين</strong></div><div class="chart-box"><canvas id="leadChart"></canvas></div></div>
                 </div>
-              </td></tr>`
-            }
-
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-window.openDealModal =
-function(id=null,data={}){
-
-  showModal(
-    id ? "✏️ تعديل الصفقة" : "💰 صفقة جديدة",
-    `
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>اسم العميل</label>
-        <input id="dealClient"
-          value="${esc(data.clientName)}">
-      </div>
-
-      <div class="field">
-        <label>المسؤول</label>
-        <input id="dealMember"
-          value="${esc(
-            data.memberName ||
-            currentUserData?.name
-          )}">
-      </div>
-
-    </div>
-
-
-    <div class="grid grid-3">
-
-      <div class="field">
-        <label>السعر النهائي</label>
-        <input id="dealPrice"
-          type="number"
-          value="${Number(data.finalPrice||0)}">
-      </div>
-
-      <div class="field">
-        <label>نسبة العمولة %</label>
-        <input id="dealCommission"
-          type="number"
-          value="${Number(data.commissionRate||10)}">
-      </div>
-
-      <div class="field">
-        <label>الحالة</label>
-
-        <select id="dealStatus">
-
-          <option value="pending"
-            ${data.status==="pending"?"selected":""}>
-            معلقة
-          </option>
-
-          <option value="won"
-            ${data.status==="won"?"selected":""}>
-            مربوحة
-          </option>
-
-          <option value="lost"
-            ${data.status==="lost"?"selected":""}>
-            خاسرة
-          </option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-
-    <button
-      class="btn"
-      style="width:100%"
-      onclick="saveDeal('${id || ""}')">
-
-      💾 حفظ الصفقة
-
-    </button>
-
-    `
-  );
-
-};
-
-
-window.saveDeal = async function(id){
-
-  const price =
-    Number($("dealPrice").value||0);
-
-  const rate =
-    Number($("dealCommission").value||0);
-
-  const data={
-
-    clientName:
-      $("dealClient").value.trim(),
-
-    memberName:
-      $("dealMember").value.trim(),
-
-    memberId:
-      currentUser.uid,
-
-    finalPrice:price,
-
-    commissionRate:rate,
-
-    commissionAmount:
-      price * rate / 100,
-
-    status:
-      $("dealStatus").value
-
-  };
-
-
-  if(!data.clientName){
-
-    toast("اسم العميل مطلوب");
-
-    return;
-
-  }
-
-
-  if(id){
-
-    await updateDoc(
-      doc(db,"deals",id),
-      data
-    );
-
-    toast("تم تحديث الصفقة");
-
-  }else{
-
-    data.createdAt =
-      serverTimestamp();
-
-    const ref =
-      await addDoc(
-        collection(db,"deals"),
-        data
-      );
-
-    toast("تم إنشاء الصفقة");
-
-    await logActivity(
-      "إنشاء صفقة",
-      "deal",
-      ref.id
-    );
-
-  }
-
-
-  closeModal();
-
-  renderDeals();
-
-};
-
-
-window.editDeal = async function(id){
-
-  const snap =
-    await getDoc(
-      doc(db,"deals",id)
-    );
-
-  if(snap.exists()){
-
-    openDealModal(
-      id,
-      snap.data()
-    );
-
-  }
-
-};
-
-
-/* =====================================================
-   COMMISSIONS
-===================================================== */
-
-async function renderCommissions(){
-
-  const snap =
-    await getDocs(
-      collection(db,"commissions")
-    );
-
-
-  let rows="";
-
-  let pending=0;
-  let paid=0;
-
-
-  snap.forEach(d=>{
-
-    const x=d.data();
-
-    const amount =
-      Number(x.amount||0);
-
-
-    if(x.status==="paid")
-      paid += amount;
-    else
-      pending += amount;
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          ${esc(x.memberName || x.memberId || "-")}
-        </td>
-
-        <td>${money(amount)}</td>
-
-        <td>${statusBadge(x.status)}</td>
-
-        <td>
-
-          <div class="actions">
-
-            ${
-              x.status==="pending"
-              ? `
-                <button
-                  class="btn small"
-                  onclick="changeCommission('${d.id}','approved')">
-                  اعتماد
-                </button>
-              `
-              :""
-            }
-
-
-            ${
-              x.status==="approved"
-              ? `
-                <button
-                  class="btn green small"
-                  onclick="changeCommission('${d.id}','paid')">
-                  دفع
-                </button>
-              `
-              :""
-            }
-
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>💵 العمولات</h1>
-        <p>متابعة العمولات وحالات الدفع</p>
-      </div>
-
-    </div>
-
-
-    <div class="stats">
-
-      <div class="card stat">
-        <div class="stat-icon">⏳</div>
-        <div class="stat-value">
-          ${money(pending)}
-        </div>
-        <div class="stat-label">
-          غير مدفوعة
-        </div>
-      </div>
-
-      <div class="card stat">
-        <div class="stat-icon">✅</div>
-        <div class="stat-value">
-          ${money(paid)}
-        </div>
-        <div class="stat-label">
-          مدفوعة
-        </div>
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-            <tr>
-              <th>العضو</th>
-              <th>المبلغ</th>
-              <th>الحالة</th>
-              <th>إجراءات</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            ${
-              rows ||
-              `<tr><td colspan="4">
-                <div class="empty">
-                  لا توجد عمولات
+                <div class="card" style="margin-top:16px">
+                    <div class="toolbar"><strong>⚡ اختصارات</strong></div>
+                    <div class="grid grid-4">
+                        <button class="btn" onclick="openLeadModal()">🔥 Lead جديد</button>
+                        <button class="btn secondary" onclick="openClientModal()">👤 عميل جديد</button>
+                        <button class="btn secondary" onclick="openDealModal()">💰 صفقة جديدة</button>
+                        <button class="btn secondary" onclick="openTaskModal()">📋 مهمة جديدة</button>
+                    </div>
                 </div>
-              </td></tr>`
+            `;
+
+            setTimeout(() => {
+                // Sales chart
+                destroyChart("sales");
+                const ctx = $("salesChart")?.getContext("2d");
+                if (ctx) {
+                    charts.sales = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو"],
+                            datasets: [{ label: "المبيعات", data: [12000, 18500, 15000, 27000, 23000, revenue],
+                                borderRadius: 8 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                }
+                // Lead chart
+                destroyChart("leads");
+                const lctx = $("leadChart")?.getContext("2d");
+                if (lctx) {
+                    const stages = { new: 0, contacted: 0, qualified: 0, negotiation: 0, won: 0, lost: 0 };
+                    leadsSnap.forEach(d => { const s = d.data().status || "new"; if (stages[s] !== undefined) stages[s]++; });
+                    charts.leads = new Chart(lctx, {
+                        type: "doughnut",
+                        data: {
+                            labels: ["جديد", "تم التواصل", "مؤهل", "تفاوض", "مربوح", "خاسر"],
+                            datasets: [{ data: [stages.new, stages.contacted, stages.qualified, stages.negotiation,
+                                    stages.won, stages.lost
+                                ] }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                }
+            }, 50);
+        }
+
+        function destroyChart(name) {
+            if (charts[name]) { charts[name].destroy();
+                charts[name] = null; }
+        }
+
+        // ============================================================
+        // MY PROJECTS (Client)
+        // ============================================================
+        async function renderMyProjects() {
+            const q = query(collection(db, "clients"), where("email", "==", currentUser.email));
+            const snap = await getDocs(q);
+            let rows = "";
+            if (snap.empty) {
+                rows = `<tr><td colspan="4"><div class="empty">لا توجد مشاريع مسجلة باسمك</div></td></tr>`;
+            } else {
+                snap.forEach(d => {
+                    const x = d.data();
+                    rows +=
+                        `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.project || "غير محدد")}</td><td>${esc(x.phone)}</td><td>${esc(x.notes || "-")}</td></tr>`;
+                });
             }
+            content.innerHTML = `
+                <div class="page-title"><div><h1>📦 مشاريعي</h1><p>المشاريع والخدمات المقدمة لك</p></div></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>اسم العميل</th><th>المشروع</th><th>الهاتف</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+            `;
+        }
 
-          </tbody>
+        // ============================================================
+        // MY DEALS (Client)
+        // ============================================================
+        async function renderMyDeals() {
+            const q = query(collection(db, "deals"), where("clientName", "==", currentUserData?.name || currentUser.email));
+            const snap = await getDocs(q);
+            let rows = "",
+                total = 0;
+            if (snap.empty) {
+                rows = `<tr><td colspan="5"><div class="empty">لا توجد طلبات / صفقات مسجلة</div></td></tr>`;
+            } else {
+                snap.forEach(d => {
+                    const x = d.data();
+                    total += Number(x.finalPrice || 0);
+                    rows +=
+                        `<tr><td>${esc(x.clientName)}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate || 0}%</td><td>${money(x.commissionAmount || 0)}</td><td>${statusBadge(x.status)}</td></tr>`;
+                });
+            }
+            content.innerHTML = `
+                <div class="page-title"><div><h1>💰 طلباتي / صفقاتي</h1><p>حالة طلباتك المالية</p></div></div>
+                <div class="stats"><div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(total)}</div><div class="stat-label">إجمالي المبالغ</div></div></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>السعر</th><th>العمولة</th><th>قيمة العمولة</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+            `;
+        }
 
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-window.changeCommission =
-async function(id,status){
-
-  await updateDoc(
-    doc(db,"commissions",id),
-    {status}
-  );
-
-  toast("تم تغيير الحالة");
-
-  renderCommissions();
-
-};
-
-
-/* =====================================================
-   TEAM
-===================================================== */
-
-async function renderTeam(){
-
-  if(currentRole !== "admin" && currentRole !== "manager"){
-    content.innerHTML = `
-      <div class="card">
-        <div class="empty">
-          ⛔ غير مصرح لك بعرض هذه الصفحة.
-        </div>
-      </div>
-    `;
-    return;
-  }
-
-  const snap =
-    await getDocs(
-      collection(db,"users")
-    );
-
-
-  let rows="";
-
-
-  snap.forEach(d=>{
-
-    const x=d.data();
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <strong>${esc(x.name)}</strong>
-        </td>
-
-        <td>${esc(x.email)}</td>
-
-        <td>
-          <span class="badge ${
-            x.role==="admin"?"red":
-            x.role==="manager"?"orange":"blue"
-          }">
-            ${esc(x.role || "member")}
-          </span>
-        </td>
-
-        <td>${statusBadge(x.status)}</td>
-
-        <td>
-
-          ${
-            currentRole === "admin"
-            ? `
-              <div class="actions">
-                <button
-                  class="btn secondary small"
-                  onclick="editUser('${d.id}')">
-                  ✏️
-                </button>
-              </div>
-            `
-            : "-"
-          }
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>👨‍💼 فريق العمل</h1>
-        <p>إدارة أعضاء الفريق وأدوارهم</p>
-      </div>
-
-      ${
-        currentRole === "admin"
-        ? `
-          <button
-            class="btn"
-            onclick="openUserModal()">
-            + عضو جديد
-          </button>
-        `
-        : ""
-      }
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>الاسم</th>
-              <th>البريد</th>
-              <th>الدور</th>
-              <th>الحالة</th>
-              <th>إجراءات</th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${
-              rows ||
-              `<tr><td colspan="5">
-                <div class="empty">
-                  لا يوجد أعضاء
+        // ============================================================
+        // LEADS
+        // ============================================================
+        async function renderLeads() {
+            const snap = await getDocs(collection(db, "leads"));
+            let rows = "";
+            snap.forEach(d => {
+                const x = d.data();
+                rows += `<tr>
+                    <td><strong>${esc(x.name)}</strong></td>
+                    <td>${esc(x.phone)}</td>
+                    <td>${x.source === "facebook" ? "🔵 Facebook" : esc(x.source || "Website")}</td>
+                    <td>${statusBadge(x.status)}</td>
+                    <td>${esc(x.assignedName || "-")}</td>
+                    <td>${formatDate(x.createdAt)}</td>
+                    <td><div class="actions"><button class="btn secondary small" onclick="editLead('${d.id}')">✏️</button><button class="btn red small" onclick="deleteLead('${d.id}')">🗑</button></div></td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title"><div><h1>🔥 Leads</h1><p>إدارة العملاء المحتملين ومصادرهم</p></div><button class="btn" onclick="openLeadModal()">+ Lead جديد</button></div>
+                <div class="card">
+                    <div class="toolbar">
+                        <div class="search-wrap"><input class="search" id="leadSearch" placeholder="🔍 بحث..." oninput="filterTable('leadTable',this.value)"></div>
+                        <select class="search" style="width:180px" id="leadFilter" onchange="filterLeadStatus(this.value)">
+                            <option value="">كل الحالات</option>
+                            <option value="new">جديد</option>
+                            <option value="contacted">تم التواصل</option>
+                            <option value="qualified">مؤهل</option>
+                            <option value="negotiation">تفاوض</option>
+                            <option value="won">مربوحة</option>
+                            <option value="lost">خاسرة</option>
+                        </select>
+                    </div>
+                    <div class="table-wrap">
+                        <table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
+                        <tbody>${rows || `<tr><td colspan="7"><div class="empty">لا توجد Leads</div></td></tr>`}</tbody></table>
+                    </div>
                 </div>
-              </td></tr>`
-            }
+            `;
+        }
 
-          </tbody>
+        window.filterLeadStatus = function(value) {
+            document.querySelectorAll("#leadTable tbody tr").forEach(row => {
+                if (!value) { row.style.display = ""; return; }
+                row.style.display = row.textContent.includes(statusText(value)) ? "" : "none";
+            });
+        };
 
-        </table>
+        function statusText(s) {
+            const x = { new: "جديد", contacted: "تم التواصل", qualified: "مؤهل", negotiation: "تفاوض", won: "مربوحة",
+                lost: "خاسرة" };
+            return x[s] || s;
+        }
 
-      </div>
+        window.openLeadModal = function(id = null, data = {}) {
+            showModal(id ? "✏️ تعديل Lead" : "🔥 إضافة Lead", `
+                <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="leadName" value="${esc(data.name)}"></div><div class="field"><label>الهاتف *</label><input id="leadPhone" value="${esc(data.phone)}"></div></div>
+                <div class="grid grid-2"><div class="field"><label>البريد</label><input id="leadEmail" value="${esc(data.email)}"></div><div class="field"><label>المصدر</label><select id="leadSource">
+                    <option value="facebook" ${data.source==="facebook"?"selected":""}>Facebook</option>
+                    <option value="website" ${data.source==="website"?"selected":""}>Website</option>
+                    <option value="whatsapp" ${data.source==="whatsapp"?"selected":""}>WhatsApp</option>
+                    <option value="manual" ${data.source==="manual"?"selected":""}>Manual</option>
+                </select></div></div>
+                <div class="grid grid-2"><div class="field"><label>الحالة</label><select id="leadStatus">
+                    ${[["new","جديد"],["contacted","تم التواصل"],["qualified","مؤهل"],["negotiation","تفاوض"],["won","مربوحة"],["lost","خاسرة"]].map(x => `<option value="${x[0]}" ${data.status===x[0]?"selected":""}>${x[1]}</option>`).join("")}
+                </select></div><div class="field"><label>الحملة</label><input id="leadCampaign" value="${esc(data.campaign)}" placeholder="اسم الحملة"></div></div>
+                <div class="field"><label>ملاحظات</label><textarea id="leadNotes">${esc(data.notes)}</textarea></div>
+                <button class="btn" style="width:100%" onclick="saveLead('${id || ""}')">💾 حفظ</button>
+            `);
+        };
 
-    </div>
+        window.saveLead = async function(id) {
+            const data = {
+                name: $("leadName").value.trim(),
+                phone: $("leadPhone").value.trim(),
+                email: $("leadEmail").value.trim(),
+                source: $("leadSource").value,
+                status: $("leadStatus").value,
+                campaign: $("leadCampaign").value.trim(),
+                notes: $("leadNotes").value.trim()
+            };
+            if (!data.phone) { toast("رقم الهاتف مطلوب"); return; }
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "leads", id), data);
+                    await logActivity("تعديل Lead", "lead", id);
+                    toast("تم تحديث الـ Lead");
+                } else {
+                    data.assignedTo = currentUser.uid;
+                    data.assignedName = currentUserData?.name || "";
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "leads"), data);
+                    await logActivity("إضافة Lead", "lead", data.phone);
+                    toast("تمت إضافة الـ Lead");
+                }
+                closeModal();
+                renderLeads();
+            } catch (e) { toast("حدث خطأ: " + e.message); }
+        };
 
-  `;
+        window.editLead = async function(id) {
+            const snap = await getDoc(doc(db, "leads", id));
+            if (!snap.exists()) return;
+            openLeadModal(id, snap.data());
+        };
 
-}
+        window.deleteLead = async function(id) {
+            if (!confirm("هل تريد حذف هذا الـ Lead؟")) return;
+            await deleteDoc(doc(db, "leads", id));
+            await logActivity("حذف Lead", "lead", id);
+            toast("تم الحذف");
+            renderLeads();
+        };
 
-
-/* =====================================================
-   TASKS
-===================================================== */
-
-async function renderTasks(){
-
-  const snap =
-    await getDocs(
-      collection(db,"tasks")
-    );
-
-
-  let rows="";
-
-
-  snap.forEach(d=>{
-
-    const x=d.data();
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <strong>${esc(x.title)}</strong>
-        </td>
-
-        <td>${esc(x.assignedTo || "-")}</td>
-
-        <td>${statusBadge(x.status)}</td>
-
-        <td>
-          <span class="badge ${x.priority === "high" ? "red" : "orange"}">
-            ${esc(x.priority || "medium")}
-          </span>
-        </td>
-
-        <td>
-
-          <div class="actions">
-
-            <button
-              class="btn secondary small"
-              onclick="editTask('${d.id}')">
-              ✏️
-            </button>
-
-            <button
-              class="btn red small"
-              onclick="deleteTask('${d.id}')">
-              🗑
-            </button>
-
-          </div>
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>📋 المهام</h1>
-        <p>إدارة المهام ومتابعتها</p>
-      </div>
-
-      <button
-        class="btn"
-        onclick="openTaskModal()">
-        + مهمة جديدة
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>المهمة</th>
-              <th>المسؤول</th>
-              <th>الحالة</th>
-              <th>الأولوية</th>
-              <th>إجراءات</th>
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            ${
-              rows ||
-              `<tr><td colspan="5">
-                <div class="empty">
-                  لا توجد مهام
+        // ============================================================
+        // CLIENTS
+        // ============================================================
+        async function renderClients() {
+            const snap = await getDocs(collection(db, "clients"));
+            let rows = "";
+            snap.forEach(d => {
+                const x = d.data();
+                rows += `<tr>
+                    <td><strong>${esc(x.name)}</strong></td>
+                    <td>${esc(x.phone)}</td>
+                    <td>${esc(x.email || "-")}</td>
+                    <td>${esc(x.project || "-")}</td>
+                    <td>${esc(x.memberName || "-")}</td>
+                    <td>${formatDate(x.createdAt)}</td>
+                    <td><div class="actions"><button class="btn secondary small" onclick="editClient('${d.id}')">✏️</button><button class="btn red small" onclick="deleteClient('${d.id}')">🗑</button></div></td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title"><div><h1>👥 العملاء</h1><p>قاعدة بيانات العملاء</p></div><button class="btn" onclick="openClientModal()">+ عميل جديد</button></div>
+                <div class="card">
+                    <div class="toolbar"><div class="search-wrap"><input class="search" placeholder="🔍 ابحث بالاسم أو الهاتف..." oninput="filterTable('clientsTable',this.value)"></div></div>
+                    <div class="table-wrap"><table id="clientsTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead>
+                    <tbody>${rows || `<tr><td colspan="7"><div class="empty">لا يوجد عملاء</div></td></tr>`}</tbody></table></div>
                 </div>
-              </td></tr>`
+            `;
+        }
+
+        window.openClientModal = async function(id = null, data = {}) {
+            let projectOptions = '<option value="">-- اختر مشروعاً --</option>';
+            try {
+                const projectsSnap = await getDocs(collection(db, "projects"));
+                projectsSnap.forEach(doc => {
+                    const p = doc.data();
+                    const selected = (data.project === p.name) ? 'selected' : '';
+                    projectOptions += `<option value="${esc(p.name)}" ${selected}>${esc(p.name)}</option>`;
+                });
+            } catch (e) { console.warn("فشل جلب المشاريع", e); }
+
+            showModal(id ? "✏️ تعديل العميل" : "👤 عميل جديد", `
+                <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="clientName" value="${esc(data.name)}"></div><div class="field"><label>الهاتف *</label><input id="clientPhone" value="${esc(data.phone)}"></div></div>
+                <div class="grid grid-2"><div class="field"><label>البريد</label><input id="clientEmail" value="${esc(data.email)}"></div><div class="field"><label>المشروع</label><select id="clientProject">${projectOptions}</select></div></div>
+                <div class="field"><label>ملاحظات</label><textarea id="clientNotes">${esc(data.notes)}</textarea></div>
+                <button class="btn" style="width:100%" onclick="saveClient('${id || ""}')">💾 حفظ العميل</button>
+            `);
+        };
+
+        window.saveClient = async function(id) {
+            const data = {
+                name: $("clientName").value.trim(),
+                phone: $("clientPhone").value.trim(),
+                email: $("clientEmail").value.trim(),
+                project: $("clientProject").value.trim(),
+                notes: $("clientNotes").value.trim()
+            };
+            if (!data.phone) { toast("رقم الهاتف مطلوب"); return; }
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "clients", id), data);
+                    toast("تم تحديث العميل");
+                } else {
+                    data.memberId = currentUser.uid;
+                    data.memberName = currentUserData?.name || "";
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "clients"), data);
+                    await logActivity("إضافة عميل", "client", data.phone);
+                    toast("تم إضافة العميل");
+                }
+                closeModal();
+                renderClients();
+            } catch (e) { toast(e.message); }
+        };
+
+        window.editClient = async function(id) {
+            const snap = await getDoc(doc(db, "clients", id));
+            if (snap.exists()) openClientModal(id, snap.data());
+        };
+
+        window.deleteClient = async function(id) {
+            if (!confirm("حذف العميل؟")) return;
+            await deleteDoc(doc(db, "clients", id));
+            toast("تم حذف العميل");
+            renderClients();
+        };
+
+        // ============================================================
+        // PROJECTS
+        // ============================================================
+        async function renderProjects() {
+            const snap = await getDocs(collection(db, "projects"));
+            let rows = "";
+            snap.forEach(d => {
+                const x = d.data();
+                rows += `<tr>
+                    <td><strong>${esc(x.name)}</strong></td>
+                    <td>${esc(x.category || "-")}</td>
+                    <td>${money(x.price)}</td>
+                    <td>${Number(x.commissionRate||0)}%</td>
+                    <td>${statusBadge(x.status)}</td>
+                    <td><div class="actions"><button class="btn secondary small" onclick="editProject('${d.id}')">✏️</button><button class="btn red small" onclick="deleteProject('${d.id}')">🗑</button></div></td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title"><div><h1>📦 المشاريع</h1><p>إدارة المنتجات والخدمات والمشاريع</p></div><button class="btn" onclick="openProjectModal()">+ مشروع جديد</button></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>المشروع</th><th>الفئة</th><th>السعر</th><th>العمولة</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                <tbody>${rows || `<tr><td colspan="6"><div class="empty">لا توجد مشاريع</div></td></tr>`}</tbody></table></div></div>
+            `;
+        }
+
+        window.openProjectModal = function(id = null, data = {}) {
+            showModal(id ? "✏️ تعديل المشروع" : "📦 مشروع جديد", `
+                <div class="field"><label>اسم المشروع</label><input id="projectName" value="${esc(data.name)}"></div>
+                <div class="grid grid-2"><div class="field"><label>الفئة</label><input id="projectCategory" value="${esc(data.category)}"></div><div class="field"><label>السعر</label><input id="projectPrice" type="number" value="${Number(data.price||0)}"></div></div>
+                <div class="grid grid-2"><div class="field"><label>نسبة العمولة %</label><input id="projectCommission" type="number" value="${Number(data.commissionRate||0)}"></div><div class="field"><label>الحالة</label><select id="projectStatus"><option value="active" ${data.status==="active"?"selected":""}>نشط</option><option value="inactive" ${data.status==="inactive"?"selected":""}>متوقف</option></select></div></div>
+                <button class="btn" style="width:100%" onclick="saveProject('${id || ""}')">💾 حفظ</button>
+            `);
+        };
+
+        window.saveProject = async function(id) {
+            const data = {
+                name: $("projectName").value.trim(),
+                category: $("projectCategory").value.trim(),
+                price: Number($("projectPrice").value || 0),
+                commissionRate: Number($("projectCommission").value || 0),
+                status: $("projectStatus").value
+            };
+            if (!data.name) { toast("اسم المشروع مطلوب"); return; }
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "projects", id), data);
+                    toast("تم التحديث");
+                } else {
+                    data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "projects"), data);
+                    toast("تم إضافة المشروع");
+                }
+                closeModal();
+                renderProjects();
+            } catch (e) { toast(e.message); }
+        };
+
+        window.editProject = async function(id) {
+            const snap = await getDoc(doc(db, "projects", id));
+            if (snap.exists()) openProjectModal(id, snap.data());
+        };
+
+        window.deleteProject = async function(id) {
+            if (!confirm("حذف المشروع؟")) return;
+            await deleteDoc(doc(db, "projects", id));
+            toast("تم الحذف");
+            renderProjects();
+        };
+
+        // ============================================================
+        // DEALS
+        // ============================================================
+        async function renderDeals() {
+            const snap = await getDocs(collection(db, "deals"));
+            let rows = "";
+            snap.forEach(d => {
+                const x = d.data();
+                rows += `<tr>
+                    <td>${esc(x.clientName || x.clientId || "-")}</td>
+                    <td>${esc(x.memberName || "-")}</td>
+                    <td>${money(x.finalPrice)}</td>
+                    <td>${Number(x.commissionRate||0)}%</td>
+                    <td>${money(x.commissionAmount)}</td>
+                    <td>${statusBadge(x.status)}</td>
+                    <td><button class="btn secondary small" onclick="editDeal('${d.id}')">✏️</button></td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title"><div><h1>💰 الصفقات</h1><p>Sales Pipeline والصفقات</p></div><button class="btn" onclick="openDealModal()">+ صفقة جديدة</button></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>المسؤول</th><th>السعر</th><th>العمولة</th><th>قيمة العمولة</th><th>الحالة</th><th></th></tr></thead>
+                <tbody>${rows || `<tr><td colspan="7"><div class="empty">لا توجد صفقات</div></td></tr>`}</tbody></table></div></div>
+            `;
+        }
+
+        window.openDealModal = function(id = null, data = {}) {
+            showModal(id ? "✏️ تعديل الصفقة" : "💰 صفقة جديدة", `
+                <div class="grid grid-2"><div class="field"><label>اسم العميل</label><input id="dealClient" value="${esc(data.clientName)}"></div><div class="field"><label>المسؤول</label><input id="dealMember" value="${esc(data.memberName || currentUserData?.name)}"></div></div>
+                <div class="grid grid-3"><div class="field"><label>السعر النهائي</label><input id="dealPrice" type="number" value="${Number(data.finalPrice||0)}"></div><div class="field"><label>نسبة العمولة %</label><input id="dealCommission" type="number" value="${Number(data.commissionRate||10)}"></div><div class="field"><label>الحالة</label><select id="dealStatus"><option value="pending" ${data.status==="pending"?"selected":""}>معلقة</option><option value="won" ${data.status==="won"?"selected":""}>مربوحة</option><option value="lost" ${data.status==="lost"?"selected":""}>خاسرة</option></select></div></div>
+                <button class="btn" style="width:100%" onclick="saveDeal('${id || ""}')">💾 حفظ الصفقة</button>
+            `);
+        };
+
+        window.saveDeal = async function(id) {
+            const price = Number($("dealPrice").value || 0);
+            const rate = Number($("dealCommission").value || 0);
+            const data = {
+                clientName: $("dealClient").value.trim(),
+                memberName: $("dealMember").value.trim(),
+                memberId: currentUser.uid,
+                finalPrice: price,
+                commissionRate: rate,
+                commissionAmount: price * rate / 100,
+                status: $("dealStatus").value
+            };
+            if (!data.clientName) { toast("اسم العميل مطلوب"); return; }
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "deals", id), data);
+                    toast("تم تحديث الصفقة");
+                } else {
+                    data.createdAt = serverTimestamp();
+                    const ref = await addDoc(collection(db, "deals"), data);
+                    toast("تم إنشاء الصفقة");
+                    await logActivity("إنشاء صفقة", "deal", ref.id);
+                }
+                closeModal();
+                renderDeals();
+            } catch (e) { toast(e.message); }
+        };
+
+        window.editDeal = async function(id) {
+            const snap = await getDoc(doc(db, "deals", id));
+            if (snap.exists()) openDealModal(id, snap.data());
+        };
+
+        // ============================================================
+        // COMMISSIONS
+        // ============================================================
+        async function renderCommissions() {
+            const snap = await getDocs(collection(db, "commissions"));
+            let rows = "",
+                pending = 0,
+                paid = 0;
+            snap.forEach(d => {
+                const x = d.data();
+                const amount = Number(x.amount || 0);
+                if (x.status === "paid") paid += amount;
+                else pending += amount;
+                rows += `<tr>
+                    <td>${esc(x.memberName || x.memberId || "-")}</td>
+                    <td>${money(amount)}</td>
+                    <td>${statusBadge(x.status)}</td>
+                    <td><div class="actions">
+                        ${x.status==="pending" ? `<button class="btn small" onclick="changeCommission('${d.id}','approved')">اعتماد</button>` : ""}
+                        ${x.status==="approved" ? `<button class="btn green small" onclick="changeCommission('${d.id}','paid')">دفع</button>` : ""}
+                    </div></td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title"><div><h1>💵 العمولات</h1><p>متابعة العمولات وحالات الدفع</p></div></div>
+                <div class="stats"><div class="card stat"><div class="stat-icon">⏳</div><div class="stat-value">${money(pending)}</div><div class="stat-label">غير مدفوعة</div></div>
+                <div class="card stat"><div class="stat-icon">✅</div><div class="stat-value">${money(paid)}</div><div class="stat-label">مدفوعة</div></div></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العضو</th><th>المبلغ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                <tbody>${rows || `<tr><td colspan="4"><div class="empty">لا توجد عمولات</div></td></tr>`}</tbody></table></div></div>
+            `;
+        }
+
+        window.changeCommission = async function(id, status) {
+            await updateDoc(doc(db, "commissions", id), { status });
+            toast("تم تغيير الحالة");
+            renderCommissions();
+        };
+
+        // ============================================================
+        // TEAM
+        // ============================================================
+        async function renderTeam() {
+            if (currentRole !== "admin" && currentRole !== "manager") {
+                content.innerHTML =
+                    `<div class="card"><div class="empty">⛔ غير مصرح لك بعرض هذه الصفحة.</div></div>`;
+                return;
+            }
+            const snap = await getDocs(collection(db, "users"));
+            let rows = "";
+            snap.forEach(d => {
+                const x = d.data();
+                rows += `<tr>
+                    <td><strong>${esc(x.name)}</strong></td>
+                    <td>${esc(x.email)}</td>
+                    <td><span class="badge ${x.role==="admin"?"red":x.role==="manager"?"orange":"blue"}">${esc(x.role || "member")}</span></td>
+                    <td>${statusBadge(x.status)}</td>
+                    <td>${currentRole === "admin" ? `<div class="actions"><button class="btn secondary small" onclick="editUser('${d.id}')">✏️</button></div>` : "-"}</td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title"><div><h1>👨‍💼 فريق العمل</h1><p>إدارة أعضاء الفريق وأدوارهم</p></div>
+                ${currentRole === "admin" ? `<button class="btn" onclick="openUserModal()">+ عضو جديد</button>` : ""}</div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+                <tbody>${rows || `<tr><td colspan="5"><div class="empty">لا يوجد أعضاء</div></td></tr>`}</tbody></table></div></div>
+            `;
+        }
+
+        window.openUserModal = function(id = null, data = {}) {
+            showModal(id ? "✏️ تعديل العضو" : "👤 عضو جديد", `
+                <div class="field"><label>الاسم</label><input id="userName" value="${esc(data.name || '')}"></div>
+                <div class="field"><label>البريد الإلكتروني</label><input id="userEmail" type="email" value="${esc(data.email || '')}" ${id ? 'disabled' : ''}>
+                ${!id ? '<small style="color:var(--muted)">سيتم إنشاء حساب دخول لهذا البريد</small>' : ''}</div>
+                <div class="grid grid-2"><div class="field"><label>الدور</label><select id="userRole">
+                    <option value="member" ${data.role === 'member' ? 'selected' : ''}>Member</option>
+                    <option value="manager" ${data.role === 'manager' ? 'selected' : ''}>Manager</option>
+                    <option value="admin" ${data.role === 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="client" ${data.role === 'client' ? 'selected' : ''}>Client</option>
+                </select></div><div class="field"><label>نسبة العمولة (للأعضاء فقط)</label><input id="userCommission" type="number" value="${Number(data.commissionRate || 0)}"></div></div>
+                <div class="field"><label>الحالة</label><select id="userStatus"><option value="active" ${data.status === 'active' ? 'selected' : ''}>نشط</option><option value="inactive" ${data.status === 'inactive' ? 'selected' : ''}>متوقف</option></select></div>
+                ${!id ? `<div class="field"><label>كلمة المرور المؤقتة</label><input id="userPassword" type="password" placeholder="أدخل كلمة مرور قوية"><small style="color:var(--muted)">سيتم إرسالها للمستخدم عبر البريد (اختياري)</small></div>` : ''}
+                <button class="btn" style="width:100%" onclick="saveUser('${id || ''}')">💾 ${id ? 'تحديث' : 'حفظ وإنشاء حساب'}</button>
+                <div id="userSaveResult" style="margin-top:10px;color:var(--green);text-align:center;"></div>
+            `);
+        };
+
+        window.saveUser = async function(id) {
+            const name = document.getElementById('userName').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const role = document.getElementById('userRole').value;
+            const commissionRate = parseFloat(document.getElementById('userCommission').value) || 0;
+            const status = document.getElementById('userStatus').value;
+            const password = document.getElementById('userPassword')?.value || '';
+
+            const resultEl = document.getElementById('userSaveResult');
+            resultEl.textContent = '';
+
+            if (!name || !email) { toast('الاسم والبريد الإلكتروني مطلوبان'); return; }
+
+            if (id) {
+                try {
+                    await updateDoc(doc(db, 'users', id), { name, role, commissionRate, status });
+                    toast('تم تحديث العضو');
+                    closeModal();
+                    renderTeam();
+                } catch (e) { toast('خطأ: ' + e.message); }
+                return;
             }
 
-          </tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-window.openTaskModal =
-function(id=null,data={}){
-
-  showModal(
-    id ? "✏️ تعديل المهمة" : "📋 مهمة جديدة",
-    `
-
-    <div class="field">
-      <label>عنوان المهمة</label>
-      <input id="taskTitle"
-        value="${esc(data.title)}">
-    </div>
-
-    <div class="grid grid-2">
-
-      <div class="field">
-        <label>المسؤول</label>
-        <input id="taskAssigned"
-          value="${esc(data.assignedTo || currentUserData?.name || "")}">
-      </div>
-
-      <div class="field">
-        <label>الحالة</label>
-        <select id="taskStatus">
-
-          <option value="todo"
-            ${data.status==="todo"?"selected":""}>
-            جديدة
-          </option>
-
-          <option value="doing"
-            ${data.status==="doing"?"selected":""}>
-            قيد التنفيذ
-          </option>
-
-          <option value="done"
-            ${data.status==="done"?"selected":""}>
-            مكتملة
-          </option>
-
-        </select>
-      </div>
-
-    </div>
-
-
-    <div class="field">
-      <label>الأولوية</label>
-      <select id="taskPriority">
-
-        <option value="low"
-          ${data.priority==="low"?"selected":""}>
-          منخفضة
-        </option>
-
-        <option value="medium"
-          ${data.priority==="medium" || !data.priority ?"selected":""}>
-          متوسطة
-        </option>
-
-        <option value="high"
-          ${data.priority==="high"?"selected":""}>
-          عالية
-        </option>
-
-      </select>
-    </div>
-
-
-    <button
-      class="btn"
-      style="width:100%"
-      onclick="saveTask('${id || ""}')">
-
-      💾 حفظ
-
-    </button>
-
-    `
-  );
-
-};
-
-
-window.saveTask = async function(id){
-
-  const data={
-
-    title:$("taskTitle").value.trim(),
-
-    assignedTo:$("taskAssigned").value.trim(),
-
-    status:$("taskStatus").value,
-
-    priority:$("taskPriority").value
-
-  };
-
-
-  if(!data.title){
-
-    toast("عنوان المهمة مطلوب");
-
-    return;
-
-  }
-
-
-  if(id){
-
-    await updateDoc(
-      doc(db,"tasks",id),
-      data
-    );
-
-    toast("تم تحديث المهمة");
-
-  }else{
-
-    data.createdAt =
-      serverTimestamp();
-
-    data.createdBy =
-      currentUser.uid;
-
-    await addDoc(
-      collection(db,"tasks"),
-      data
-    );
-
-    toast("تم إضافة المهمة");
-
-  }
-
-
-  closeModal();
-
-  renderTasks();
-
-};
-
-
-window.editTask = async function(id){
-
-  const snap =
-    await getDoc(
-      doc(db,"tasks",id)
-    );
-
-  if(snap.exists()){
-
-    openTaskModal(
-      id,
-      snap.data()
-    );
-
-  }
-
-};
-
-
-window.deleteTask = async function(id){
-
-  if(!confirm("حذف المهمة؟"))
-    return;
-
-  await deleteDoc(
-    doc(db,"tasks",id)
-  );
-
-  toast("تم الحذف");
-
-  renderTasks();
-
-};
-
-
-/* =====================================================
-   REPORTS
-===================================================== */
-
-async function renderReports(){
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>📈 التقارير</h1>
-        <p>تحليلات وإحصائيات متقدمة</p>
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="empty">
-        📊 سيتم إضافة تقارير متقدمة قريباً.
-        <br><br>
-        <small>يمكنك تصدير البيانات من كل قسم على حدة.</small>
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   NOTIFICATIONS
-===================================================== */
-
-async function renderNotifications(){
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>🔔 الإشعارات</h1>
-        <p>آخر التنبيهات والتحديثات</p>
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="empty">
-        🔕 لا توجد إشعارات جديدة.
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   SETTINGS
-===================================================== */
-
-async function renderSettings(){
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>⚙️ الإعدادات</h1>
-        <p>إعدادات النظام والتفضيلات</p>
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="empty">
-        ⚙️ سيتم إضافة إعدادات النظام قريباً.
-        <br><br>
-        <small>الوضع المظلم متوفر حالياً من أعلى الصفحة.</small>
-      </div>
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================================
-   PROFILE
-===================================================== */
-
-async function renderProfile(){
-
-  content.innerHTML = `
-
-    <div class="page-title">
-
-      <div>
-        <h1>👤 ملفي الشخصي</h1>
-        <p>بيانات حسابك</p>
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
-
-        <div class="avatar" style="width:70px;height:70px;font-size:30px;">
-          ${(currentUserData?.name || currentUser.email || "M")[0].toUpperCase()}
-        </div>
-
-        <div>
-          <h2 style="margin-bottom:5px;">
-            ${esc(currentUserData?.name || "غير محدد")}
-          </h2>
-
-          <p style="color:var(--muted);">
-            ${esc(currentUser.email)}
-          </p>
-
-          <p>
-            <span class="badge blue">
-              ${esc(currentRole || "member")}
-            </span>
-          </p>
-        </div>
-
-      </div>
-
-      <div class="grid grid-2">
-
-        <div class="field">
-          <label>الاسم</label>
-          <input id="profileName"
-            value="${esc(currentUserData?.name || "")}">
-        </div>
-
-        <div class="field">
-          <label>البريد</label>
-          <input value="${esc(currentUser.email)}" disabled>
-        </div>
-
-      </div>
-
-      <button
-        class="btn"
-        onclick="updateProfile()">
-        💾 حفظ التغييرات
-      </button>
-
-    </div>
-
-  `;
-
-}
-
-
-window.updateProfile = async function(){
-
-  const name =
-    $("profileName").value.trim();
-
-  if(!name){
-
-    toast("الاسم مطلوب");
-
-    return;
-
-  }
-
-
-  await updateDoc(
-    doc(db,"users",currentUser.uid),
-    {name}
-  );
-
-  currentUserData.name = name;
-
-  $("topName").textContent = name;
-
-  toast("تم تحديث الملف");
-
-  renderProfile();
-
-};
-
-
-window.openQuickActions = function(){
-  // يمكن تخصيصها لفتح نافذة اختصارات
-  toast("اختر زراً من الاختصارات أدناه");
-};
-
-window.filterTable = function(tableId, value) {
-  const table = document.getElementById(tableId);
-  if (!table) return;
-  const rows = table.querySelectorAll("tbody tr");
-  const lower = value.toLowerCase();
-  rows.forEach(row => {
-    const text = row.textContent.toLowerCase();
-    row.style.display = text.includes(lower) ? "" : "none";
-  });
-};
-
-</script>
-
+            if (!password || password.length < 6) { toast('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+
+            try {
+                const createUser = httpsCallable(functions, 'createUser');
+                const result = await createUser({ email, password, name, role, commissionRate, status });
+                resultEl.textContent = '✅ تم إنشاء الحساب بنجاح!';
+                toast('تم إضافة العضو الجديد');
+                closeModal();
+                renderTeam();
+            } catch (error) {
+                console.error(error);
+                toast('فشل الإنشاء: ' + (error.message || error.details));
+                resultEl.textContent = '❌ ' + (error.message || 'خطأ غير معروف');
+            }
+        };
+
+        window.editUser = async function(id) {
+            const snap = await getDoc(doc(db, "users", id));
+            if (snap.exists()) openUserModal(id, snap.data());
+        };
+
+        // ============================================================
+        // TASKS
+        // ============================================================
+        async function renderTasks() {
+            const snap = await getDocs(collection(db, "tasks"));
+            let rows = "";
+            snap.forEach(d => {
+                const x = d.data();
+                rows += `<tr>
+                    <td><strong>${esc(x.title)}</strong></td>
+                    <td>${esc(x.assignedTo || "-")}</td>
+                    <td>${statusBadge(x.status)}</td>
+                    <td><span class="badge ${x.priority === "high" ? "red" : "orange"}">${esc(x.priority || "medium")}</span></td>
+                    <td><div class="actions"><button class="btn secondary small" onclick="editTask('${d.id}')">✏️</button><button class="btn red small" onclick="deleteTask('${d.id}')">🗑</button></div></td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title"><div><h1>📋 المهام</h1><p>إدارة المهام ومتابعتها</p></div><button class="btn" onclick="openTaskModal()">+ مهمة جديدة</button></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th>إجراءات</th></tr></thead>
+                <tbody>${rows || `<tr><td colspan="5"><div class="empty">لا توجد مهام</div></td></tr>`}</tbody></table></div></div>
+            `;
+        }
+
+        window.openTaskModal = function(id = null, data = {}) {
+            showModal(id ? "✏️ تعديل المهمة" : "📋 مهمة جديدة", `
+                <div class="field"><label>عنوان المهمة</label><input id="taskTitle" value="${esc(data.title)}"></div>
+                <div class="grid grid-2"><div class="field"><label>المسؤول</label><input id="taskAssigned" value="${esc(data.assignedTo || currentUserData?.name || "")}"></div><div class="field"><label>الحالة</label><select id="taskStatus"><option value="todo" ${data.status==="todo"?"selected":""}>جديدة</option><option value="doing" ${data.status==="doing"?"selected":""}>قيد التنفيذ</option><option value="done" ${data.status==="done"?"selected":""}>مكتملة</option></select></div></div>
+                <div class="field"><label>الأولوية</label><select id="taskPriority"><option value="low" ${data.priority==="low"?"selected":""}>منخفضة</option><option value="medium" ${data.priority==="medium" || !data.priority ?"selected":""}>متوسطة</option><option value="high" ${data.priority==="high"?"selected":""}>عالية</option></select></div>
+                <button class="btn" style="width:100%" onclick="saveTask('${id || ""}')">💾 حفظ</button>
+            `);
+        };
+
+        window.saveTask = async function(id) {
+            const data = {
+                title: $("taskTitle").value.trim(),
+                assignedTo: $("taskAssigned").value.trim(),
+                status: $("taskStatus").value,
+                priority: $("taskPriority").value
+            };
+            if (!data.title) { toast("عنوان المهمة مطلوب"); return; }
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "tasks", id), data);
+                    toast("تم تحديث المهمة");
+                } else {
+                    data.createdAt = serverTimestamp();
+                    data.createdBy = currentUser.uid;
+                    await addDoc(collection(db, "tasks"), data);
+                    toast("تم إضافة المهمة");
+                }
+                closeModal();
+                renderTasks();
+            } catch (e) { toast(e.message); }
+        };
+
+        window.editTask = async function(id) {
+            const snap = await getDoc(doc(db, "tasks", id));
+            if (snap.exists()) openTaskModal(id, snap.data());
+        };
+
+        window.deleteTask = async function(id) {
+            if (!confirm("حذف المهمة؟")) return;
+            await deleteDoc(doc(db, "tasks", id));
+            toast("تم الحذف");
+            renderTasks();
+        };
+
+        // ============================================================
+        // REPORTS, NOTIFICATIONS, SETTINGS
+        // ============================================================
+        async function renderReports() {
+            content.innerHTML =
+                `<div class="page-title"><div><h1>📈 التقارير</h1><p>تحليلات وإحصائيات متقدمة</p></div></div>
+                <div class="card"><div class="empty">📊 سيتم إضافة تقارير متقدمة قريباً.<br><br><small>يمكنك تصدير البيانات من كل قسم على حدة.</small></div></div>`;
+        }
+
+        async function renderNotifications() {
+            content.innerHTML =
+                `<div class="page-title"><div><h1>🔔 الإشعارات</h1><p>آخر التنبيهات والتحديثات</p></div></div>
+                <div class="card"><div class="empty">🔕 لا توجد إشعارات جديدة.</div></div>`;
+        }
+
+        async function renderSettings() {
+            content.innerHTML =
+                `<div class="page-title"><div><h1>⚙️ الإعدادات</h1><p>إعدادات النظام والتفضيلات</p></div></div>
+                <div class="card"><div class="empty">⚙️ سيتم إضافة إعدادات النظام قريباً.<br><br><small>الوضع المظلم متوفر حالياً من أعلى الصفحة.</small></div></div>`;
+        }
+
+        // ============================================================
+        // PROFILE
+        // ============================================================
+        async function renderProfile() {
+            content.innerHTML = `
+                <div class="page-title"><div><h1>👤 ملفي الشخصي</h1><p>بيانات حسابك</p></div></div>
+                <div class="card">
+                    <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
+                        <div class="avatar" style="width:70px;height:70px;font-size:30px;">${(currentUserData?.name || currentUser.email || "M")[0].toUpperCase()}</div>
+                        <div><h2 style="margin-bottom:5px;">${esc(currentUserData?.name || "غير محدد")}</h2><p style="color:var(--muted);">${esc(currentUser.email)}</p><p><span class="badge blue">${esc(currentRole || "member")}</span></p></div>
+                    </div>
+                    <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name || "")}"></div><div class="field"><label>البريد</label><input value="${esc(currentUser.email)}" disabled></div></div>
+                    <button class="btn" onclick="updateProfile()">💾 حفظ التغييرات</button>
+                </div>
+            `;
+        }
+
+        window.updateProfile = async function() {
+            const name = $("profileName").value.trim();
+            if (!name) { toast("الاسم مطلوب"); return; }
+            await updateDoc(doc(db, "users", currentUser.uid), { name });
+            currentUserData.name = name;
+            $("topName").textContent = name;
+            toast("تم تحديث الملف");
+            renderProfile();
+        };
+
+        window.openQuickActions = function() {
+            toast("اختر زراً من الاختصارات أدناه");
+        };
+
+        console.log("🚀 MINA PROJECTS CRM loaded successfully!");
+    </script>
 </body>
 </html>
