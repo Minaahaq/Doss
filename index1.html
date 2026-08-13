@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>MINA PRO • CRM</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
     </script>
@@ -11,273 +11,179 @@
             "imports": {
                 "firebase/app": "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js",
                 "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js",
-                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js",
-                "firebase/functions": "https://www.gstatic.com/firebasejs/10.12.4/firebase-functions.js"
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"
             }
         }
     </script>
     <style>
-        /* ===== RESET & ROOTS ===== */
+        /* === RESET === */
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-
-        :root {
-            --bg: #f1f5f9;
-            --surface: #ffffff;
-            --surface2: #f8fafc;
-            --surface3: #f1f4f9;
-            --text: #0f172a;
-            --text2: #334155;
-            --muted: #64748b;
-            --border: #e2e8f0;
-            --primary: #2563eb;
-            --primary2: #1d4ed8;
-            --primary-light: #dbeafe;
-            --purple: #7c3aed;
-            --green: #10b981;
-            --orange: #f59e0b;
-            --red: #ef4444;
-            --shadow: 0 10px 40px rgba(15, 23, 42, 0.06);
-            --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.10);
-            --radius: 24px;
-            --radius-sm: 14px;
-            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.dark {
-            --bg: #0b1628;
-            --surface: #12203a;
-            --surface2: #1a2c4a;
-            --surface3: #1f3355;
-            --text: #f1f5f9;
-            --text2: #cbd5e1;
-            --muted: #94a3b8;
-            --border: #1e3355;
-            --primary-light: #1e3a6b;
-            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
-        }
-
         body {
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            transition: var(--transition);
+            background: #f5f7fa;
+            color: #1e293b;
             font-size: 15px;
             line-height: 1.5;
+            transition: background 0.2s, color 0.2s;
+            padding-bottom: 70px;
+            /* space for bottom nav */
         }
-
-        button,
-        input,
-        select,
-        textarea {
-            font: inherit;
+        body.dark {
+            background: #0f172a;
+            color: #e2e8f0;
         }
+        a,
         button {
             cursor: pointer;
-            border: 0;
-            background: none;
         }
         .hidden {
             display: none !important;
         }
 
-        /* ===== SCROLLBAR ===== */
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 10px;
-        }
-
-        /* ===== LOGIN ===== */
+        /* === LOGIN === */
         #loginScreen {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            background: radial-gradient(circle at 20% 30%, var(--primary), var(--purple));
+            background: linear-gradient(145deg, #2563eb, #7c3aed);
         }
         .login-card {
-            width: 100%;
-            max-width: 420px;
-            background: var(--surface);
+            background: #fff;
             border-radius: 40px;
-            padding: 48px 36px;
-            box-shadow: var(--shadow-lg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 28px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
         }
-        .logo {
-            font-size: 34px;
+        body.dark .login-card {
+            background: #1e293b;
+        }
+        .login-logo {
+            font-size: 32px;
             font-weight: 900;
             text-align: center;
-            margin-bottom: 6px;
-            background: linear-gradient(135deg, var(--primary), var(--purple));
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
         }
         .login-sub {
             text-align: center;
-            color: var(--muted);
-            margin-bottom: 30px;
+            color: #94a3b8;
             font-size: 14px;
+            margin-bottom: 28px;
         }
-
-        /* ===== APP LAYOUT ===== */
-        #app {
-            min-height: 100vh;
+        .field {
+            margin-bottom: 18px;
         }
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* ===== SIDEBAR ===== */
-        .sidebar {
-            width: 260px;
-            background: var(--surface);
-            border-left: 1px solid var(--border);
-            padding: 24px 16px;
-            position: fixed;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            z-index: 30;
-            overflow-y: auto;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-        }
-        .brand {
-            font-size: 24px;
-            font-weight: 900;
-            padding: 8px 12px;
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
-        }
-        .brand span {
-            color: var(--purple);
-        }
-        .nav {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        .nav button {
-            width: 100%;
-            text-align: right;
-            padding: 14px 16px;
-            border-radius: 16px;
+        .field label {
+            display: block;
             font-weight: 700;
-            color: var(--muted);
-            transition: var(--transition);
-            display: flex;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #475569;
+        }
+        body.dark .field label {
+            color: #cbd5e1;
+        }
+        .field input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 15px;
+            background: #f8fafc;
+            transition: 0.2s;
+            outline: none;
+        }
+        body.dark .field input {
+            background: #334155;
+            border-color: #475569;
+            color: #f1f5f9;
+        }
+        .field input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        }
+        .btn {
+            display: inline-flex;
             align-items: center;
-            gap: 12px;
-            font-size: 14px;
-        }
-        .nav button:hover {
-            background: var(--surface2);
-            color: var(--text);
-        }
-        .nav button.active {
-            background: linear-gradient(135deg, var(--primary), var(--purple));
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 40px;
+            font-weight: 800;
+            font-size: 15px;
+            border: 0;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
             color: #fff;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.30);
-        }
-        .sidebar-footer {
-            position: absolute;
-            bottom: 24px;
-            right: 16px;
-            left: 16px;
-        }
-        .sidebar-footer button {
+            transition: 0.2s;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
             width: 100%;
         }
-
-        /* ===== MAIN ===== */
-        .main {
-            margin-right: 260px;
-            width: calc(100% - 260px);
-            padding: 20px 28px 40px;
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #1e293b;
+            box-shadow: none;
+        }
+        body.dark .btn-secondary {
+            background: #334155;
+            color: #f1f5f9;
+        }
+        .btn-small {
+            padding: 8px 14px;
+            font-size: 13px;
+            width: auto;
+            border-radius: 30px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            box-shadow: none;
+        }
+        body.dark .btn-outline {
+            border-color: #475569;
+            color: #f1f5f9;
+        }
+        .btn-green {
+            background: #10b981;
+        }
+        .btn-red {
+            background: #ef4444;
+        }
+        .btn-orange {
+            background: #f59e0b;
         }
 
-        /* ===== TOPBAR ===== */
+        /* === APP SHELL === */
+        #app {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 12px 16px 80px;
+        }
+
+        /* === TOP BAR === */
         .topbar {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 28px;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 12px;
-            z-index: 20;
-            backdrop-filter: blur(12px);
-            background: rgba(255, 255, 255, 0.75);
+            padding: 10px 0 16px;
+            border-bottom: 1px solid #e2e8f0;
         }
         body.dark .topbar {
-            background: rgba(18, 32, 58, 0.85);
+            border-bottom-color: #334155;
         }
-        .topbar-title strong {
-            font-size: 18px;
-        }
-        .top-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .icon-btn {
-            width: 44px;
-            height: 44px;
-            border: 1px solid var(--border);
-            background: var(--surface2);
-            color: var(--text);
-            border-radius: 16px;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-            position: relative;
-        }
-        .icon-btn:hover {
-            background: var(--surface3);
-            transform: scale(0.96);
-        }
-        .notif-badge {
-            position: absolute;
-            top: -4px;
-            left: -4px;
-            background: var(--red);
-            color: #fff;
-            font-size: 10px;
-            font-weight: 800;
-            min-width: 20px;
-            height: 20px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 5px;
-            border: 2px solid var(--surface);
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
-            pointer-events: none;
-        }
-        .user-box {
+        .topbar-left {
             display: flex;
             align-items: center;
             gap: 12px;
@@ -286,294 +192,244 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--purple));
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
             color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
             font-size: 18px;
-            flex-shrink: 0;
         }
-        .user-meta strong {
-            display: block;
+        .user-info {
+            line-height: 1.3;
+        }
+        .user-name {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .user-role {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+            transition: 0.2s;
+        }
+        body.dark .icon-btn {
+            background: #1e293b;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        .icon-btn:active {
+            transform: scale(0.92);
+        }
+        .badge-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 18px;
+            height: 18px;
+            background: #ef4444;
+            border-radius: 40px;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #fff;
+        }
+        body.dark .badge-dot {
+            border-color: #1e293b;
+        }
+
+        /* === BOTTOM NAV === */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            z-index: 50;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        body.dark .bottom-nav {
+            background: #1e293b;
+            border-top-color: #334155;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 11px;
+            color: #94a3b8;
+            background: none;
+            border: 0;
+            padding: 4px 10px;
+            border-radius: 20px;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+        .nav-item.active {
+            color: #2563eb;
+        }
+        body.dark .nav-item.active {
+            color: #93c5fd;
+        }
+        .nav-item .nav-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        /* === CARDS & CONTENT === */
+        .page-title {
+            font-size: 22px;
+            font-weight: 800;
+            margin: 16px 0 12px;
+        }
+        .page-sub {
+            color: #94a3b8;
             font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #f1f5f9;
+            margin-bottom: 16px;
+        }
+        body.dark .card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-item {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 14px 16px;
+            text-align: center;
+        }
+        body.dark .stat-item {
+            background: #334155;
+        }
+        .stat-number {
+            font-size: 28px;
+            font-weight: 900;
             line-height: 1.2;
         }
-        .user-meta span {
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        /* ===== MOBILE NAV ===== */
-        .mobile-nav {
-            display: none;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            margin-bottom: 16px;
-            scrollbar-width: none;
-        }
-        .mobile-nav::-webkit-scrollbar {
-            display: none;
-        }
-        .mobile-nav button {
-            white-space: nowrap;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--muted);
-            padding: 10px 18px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: 700;
-            transition: var(--transition);
-        }
-        .mobile-nav button.active {
-            background: var(--primary);
-            color: #fff;
-            border-color: var(--primary);
-        }
-
-        /* ===== COMPONENTS ===== */
-        .page-title {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-        .page-title h1 {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-        }
-        .page-title p {
-            color: var(--muted);
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-        }
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-        }
-
-        .grid {
-            display: grid;
-            gap: 20px;
-        }
-        .grid-2 {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        .grid-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-        .grid-4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin-bottom: 24px;
-        }
-        .stat {
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-        .stat-value {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: -0.5px;
-        }
         .stat-label {
-            color: var(--muted);
             font-size: 13px;
-            margin-top: 4px;
-        }
-        .stat-line {
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--purple));
-            border-radius: 10px;
-            margin-top: 14px;
-            width: 30%;
+            color: #94a3b8;
         }
 
-        .btn {
-            border-radius: 16px;
-            padding: 12px 24px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary), var(--primary2));
-            color: #fff;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border: 0;
-            font-size: 14px;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
-        }
-        .btn.secondary {
-            background: var(--surface2);
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        .btn.secondary:hover {
-            background: var(--surface3);
-            box-shadow: none;
-        }
-        .btn.green {
-            background: var(--green);
-        }
-        .btn.red {
-            background: var(--red);
-        }
-        .btn.orange {
-            background: var(--orange);
-        }
-        .btn.small {
-            padding: 8px 14px;
-            font-size: 12px;
-            border-radius: 12px;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text);
-        }
-
-        .field {
-            margin-bottom: 18px;
-        }
-        .field label {
-            display: block;
-            color: var(--text2);
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .field input,
-        .field select,
-        .field textarea,
-        .search {
-            width: 100%;
-            background: var(--surface2);
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 14px 16px;
-            outline: none;
-            transition: var(--transition);
-            font-size: 14px;
-        }
-        .field textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        .field input:focus,
-        .field select:focus,
-        .field textarea:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
-            background: var(--surface);
-        }
-
-        .toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 18px;
-            flex-wrap: wrap;
-        }
-        .search-wrap {
-            flex: 1;
-            min-width: 200px;
-        }
         .table-wrap {
-            overflow: auto;
+            overflow-x: auto;
             border-radius: 16px;
-            border: 1px solid var(--border);
+            border: 1px solid #f1f5f9;
+        }
+        body.dark .table-wrap {
+            border-color: #334155;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 700px;
             font-size: 14px;
+            min-width: 500px;
         }
         th {
-            background: var(--surface2);
-            color: var(--muted);
-            font-size: 12px;
             text-align: right;
-            padding: 16px 14px;
+            padding: 12px 12px;
+            background: #f8fafc;
+            color: #94a3b8;
             font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
+            font-size: 12px;
+        }
+        body.dark th {
+            background: #334155;
         }
         td {
-            padding: 14px 14px;
-            border-top: 1px solid var(--border);
+            padding: 12px 12px;
+            border-top: 1px solid #f1f5f9;
         }
-        tr:hover td {
-            background: var(--surface2);
+        body.dark td {
+            border-top-color: #334155;
         }
 
         .badge {
-            display: inline-flex;
-            padding: 5px 12px;
+            display: inline-block;
+            padding: 4px 12px;
             border-radius: 30px;
             font-size: 11px;
-            font-weight: 800;
-            align-items: center;
-            gap: 4px;
+            font-weight: 700;
         }
-        .badge.blue {
-            background: var(--primary-light);
-            color: var(--primary);
+        .badge-blue {
+            background: #dbeafe;
+            color: #2563eb;
         }
-        .badge.green {
+        .badge-green {
             background: #d1fae5;
-            color: #047857;
+            color: #10b981;
         }
-        .badge.orange {
+        .badge-orange {
             background: #fef3c7;
-            color: #b45309;
+            color: #f59e0b;
         }
-        .badge.red {
+        .badge-red {
             background: #fee2e2;
-            color: #b91c1c;
+            color: #ef4444;
         }
-        body.dark .badge.blue {
+        body.dark .badge-blue {
             background: #1e3a6b;
             color: #93c5fd;
         }
-        body.dark .badge.green {
+        body.dark .badge-green {
             background: #103d31;
             color: #6ee7b7;
         }
-        body.dark .badge.orange {
+        body.dark .badge-orange {
             background: #493614;
             color: #fcd34d;
         }
-        body.dark .badge.red {
+        body.dark .badge-red {
             background: #491d23;
             color: #fca5a5;
         }
@@ -583,22 +439,19 @@
             gap: 6px;
             flex-wrap: wrap;
         }
-        .chart-box {
-            height: 280px;
-            position: relative;
-        }
-        .empty {
-            padding: 40px 20px;
+
+        .empty-state {
+            padding: 30px 10px;
             text-align: center;
-            color: var(--muted);
+            color: #94a3b8;
         }
 
-        /* ===== MODAL ===== */
+        /* === MODAL === */
         .modal {
             position: fixed;
             inset: 0;
-            background: rgba(2, 6, 23, 0.6);
-            backdrop-filter: blur(8px);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -608,190 +461,112 @@
         .modal.show {
             display: flex;
         }
-        .modal-card {
-            width: 100%;
-            max-width: 620px;
-            max-height: 90vh;
-            overflow: auto;
-            background: var(--surface);
-            border: 1px solid var(--border);
+        .modal-content {
+            background: #fff;
             border-radius: 32px;
-            padding: 32px;
-            box-shadow: var(--shadow-lg);
-            animation: modalFade 0.2s ease;
+            padding: 28px 24px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.25s ease;
         }
-        @keyframes modalFade {
+        body.dark .modal-content {
+            background: #1e293b;
+        }
+        @keyframes slideUp {
             from {
+                transform: translateY(20px);
                 opacity: 0;
-                transform: scale(0.96) translateY(10px);
             }
             to {
+                transform: translateY(0);
                 opacity: 1;
-                transform: scale(1) translateY(0);
             }
         }
-        .modal-head {
+        .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
-        .modal-head strong {
-            font-size: 22px;
+        .modal-title {
+            font-size: 20px;
             font-weight: 800;
         }
-        .close {
+        .modal-close {
             width: 40px;
             height: 40px;
-            border-radius: 14px;
-            background: var(--surface2);
-            color: var(--text);
-            font-size: 20px;
+            border-radius: 40px;
+            border: 1px solid #e2e8f0;
+            background: transparent;
+            font-size: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--border);
         }
-        .close:hover {
-            background: var(--surface3);
+        body.dark .modal-close {
+            border-color: #475569;
+            color: #f1f5f9;
         }
 
-        /* ===== TOAST ===== */
+        /* === TOAST === */
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            z-index: 200;
             opacity: 0;
             pointer-events: none;
-            z-index: 200;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 14px 28px;
-            border-radius: 60px;
-            box-shadow: var(--shadow-lg);
-            transition: var(--transition);
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
+            transition: 0.25s;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            max-width: 90%;
         }
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
 
-        /* ===== RESPONSIVE ===== */
-        @media(max-width:1024px) {
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .grid-3 {
-                grid-template-columns: 1fr 1fr;
-            }
+        /* === TOGGLE === */
+        .toggle-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toggle-label {
+            font-size: 13px;
+            color: #94a3b8;
         }
 
-        @media(max-width:900px) {
-            .sidebar {
-                display: none;
-            }
-            .main {
-                margin-right: 0;
-                width: 100%;
-                padding: 16px;
-            }
-            .mobile-nav {
-                display: flex;
-            }
+        /* === RESPONSIVE FINE-TUNE === */
+        @media (max-width: 480px) {
             .topbar {
-                padding: 8px 14px;
-                border-radius: 20px;
-                top: 8px;
+                padding: 8px 0 12px;
             }
-            .topbar-title strong {
-                font-size: 15px;
-            }
-            .icon-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-            .user-meta {
-                display: none;
-            }
-        }
-
-        @media(max-width:600px) {
-            .login-card {
-                padding: 32px 20px;
-            }
-            .stats {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-            .stat-value {
-                font-size: 24px;
-            }
-            .grid-2,
-            .grid-3,
-            .grid-4 {
-                grid-template-columns: 1fr;
-            }
-            .page-title h1 {
-                font-size: 22px;
+            .page-title {
+                font-size: 20px;
             }
             .card {
-                padding: 16px;
+                padding: 14px;
+            }
+            .stat-number {
+                font-size: 24px;
             }
             .btn {
-                padding: 10px 16px;
-                font-size: 13px;
+                font-size: 14px;
+                padding: 12px 18px;
             }
-            .modal-card {
-                padding: 20px;
+            .modal-content {
+                padding: 20px 16px;
             }
-            .top-actions .icon-btn:not(.notif-btn) {
-                display: none;
-            }
-            .table-wrap {
-                border-radius: 12px;
-            }
-            td,
-            th {
-                padding: 10px 10px;
-                font-size: 12px;
-            }
-        }
-
-        /* notification item */
-        .notif-item {
-            padding: 14px 16px;
-            border-radius: 16px;
-            background: var(--surface2);
-            border-right: 4px solid var(--primary);
-            margin-bottom: 10px;
-            transition: var(--transition);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
-        .notif-item.unread {
-            background: var(--primary-light);
-            border-right-color: var(--purple);
-        }
-        body.dark .notif-item.unread {
-            background: #1a2c4a;
-        }
-        .notif-item .notif-body {
-            flex: 1;
-        }
-        .notif-item .notif-time {
-            font-size: 11px;
-            color: var(--muted);
-            white-space: nowrap;
         }
     </style>
 </head>
@@ -800,80 +575,71 @@
     <!-- LOGIN -->
     <section id="loginScreen">
         <div class="login-card">
-            <div class="logo">MINA <span>PRO</span></div>
-            <div class="login-sub">منصة إدارة الفريق والمبيعات</div>
+            <div class="login-logo">MINA PRO</div>
+            <div class="login-sub">منصة إدارة المبيعات والفريق</div>
             <div class="field">
                 <label>البريد الإلكتروني</label>
-                <input id="loginEmail" type="email" autocomplete="email" placeholder="admin@company.com">
+                <input id="loginEmail" type="email" placeholder="admin@company.com" />
             </div>
             <div class="field">
                 <label>كلمة المرور</label>
-                <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
+                <input id="loginPassword" type="password" placeholder="••••••••" />
             </div>
-            <button class="btn" style="width:100%;justify-content:center" id="loginBtn">تسجيل الدخول</button>
-            <div id="loginError" style="color:var(--red);font-size:13px;text-align:center;margin-top:16px"></div>
+            <button class="btn" id="loginBtn">تسجيل الدخول</button>
+            <div id="loginError" style="color:#ef4444;font-size:13px;text-align:center;margin-top:14px;"></div>
         </div>
     </section>
 
     <!-- APP -->
     <section id="app" class="hidden">
-        <div class="layout">
-            <aside class="sidebar">
-                <div class="brand">MINA <span>PRO</span></div>
-                <nav id="sidebarNav" class="nav"></nav>
-                <div class="sidebar-footer">
-                    <button class="btn secondary" style="width:100%;justify-content:center" onclick="logout()">🚪 تسجيل الخروج</button>
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="avatar" id="topAvatar">M</div>
+                <div class="user-info">
+                    <div class="user-name" id="topName">Admin</div>
+                    <div class="user-role" id="topRole">Admin</div>
                 </div>
-            </aside>
-
-            <main class="main">
-                <div class="topbar">
-                    <div class="topbar-title"><strong id="pageHeading">لوحة التحكم</strong></div>
-                    <div class="top-actions">
-                        <button class="icon-btn notif-btn" onclick="navigate('notifications')" id="notifBtn">
-                            🔔
-                            <span class="notif-badge hidden" id="notifBadge">0</span>
-                        </button>
-                        <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-                        <div class="user-box">
-                            <div class="avatar" id="topAvatar">M</div>
-                            <div class="user-meta">
-                                <strong id="topName">Admin</strong>
-                                <span id="topRole">Admin</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="mobileNav" class="mobile-nav"></div>
-                <div id="content"></div>
-            </main>
+            </div>
+            <div class="topbar-right">
+                <button class="icon-btn" id="notifBtn" onclick="navigate('notifications')">
+                    🔔
+                    <span class="badge-dot hidden" id="notifBadge">0</span>
+                </button>
+                <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+                <button class="icon-btn" onclick="logout()">🚪</button>
+            </div>
         </div>
+
+        <!-- Content -->
+        <div id="content"></div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav" id="bottomNav"></div>
     </section>
 
     <!-- MODAL -->
     <div id="modal" class="modal">
-        <div class="modal-card">
-            <div class="modal-head">
-                <strong id="modalTitle">نافذة</strong>
-                <button class="close" onclick="closeModal()">✕</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">نافذة</span>
+                <button class="modal-close" onclick="closeModal()">✕</button>
             </div>
             <div id="modalBody"></div>
         </div>
     </div>
 
+    <!-- TOAST -->
     <div id="toast" class="toast">✅ تم</div>
 
     <script type="module">
         // ============================================================
-        // IMPORTS
+        // IMPORTS & CONFIG
         // ============================================================
         import { initializeApp } from "firebase/app";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "firebase/auth";
-        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp, orderBy, onSnapshot, setDoc } from "firebase/firestore";
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp, onSnapshot, orderBy } from "firebase/firestore";
 
-        // ============================================================
-        // CONFIG (استبدل بقيمك)
-        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDsJXNa6EYenn2f5mfoNQVEDxHhCH-XGAo",
             authDomain: "alzahady-6e615.firebaseapp.com",
@@ -896,297 +662,195 @@
         // ============================================================
         let currentUser = null;
         let currentUserData = null;
-        let currentRole = "member";
-        let activeView = "dashboard";
+        let currentRole = 'member';
+        let activeView = 'dashboard';
         let charts = {};
-        let usersList = []; // for task assignment
+        let usersList = [];
         let notifUnsubscribe = null;
+        let soundEnabled = true;
+        let audioCtx = null;
 
-        const content = document.getElementById("content");
-        const $ = id => document.getElementById(id);
+        const $ = (id) => document.getElementById(id);
+        const content = $('content');
 
         // ============================================================
         // HELPERS
         // ============================================================
-        function esc(value) {
-            return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"',
-                "&quot;").replaceAll("'", "&#039;");
+        function esc(str) { return String(str ?? '').replace(/[&<>"]/g, function(m) { if (m === '&') return '&amp;'; if (m ===
+                    '<') return '&lt;'; if (m === '>') return '&gt;'; if (m === '"') return '&quot;'; return m; }); }
+
+        function money(val) { return Number(val || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD',
+                maximumFractionDigits: 0 }); }
+
+        function formatDate(ts) {
+            if (!ts) return '-';
+            try { const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('ar-EG', { hour: '2-digit',
+                    minute: '2-digit' }); } catch { return '-'; }
         }
 
-        function money(value) {
-            return Number(value || 0).toLocaleString("en-US", { style: "currency", currency: "USD",
-                maximumFractionDigits: 0 });
-        }
-
-        function formatDate(timestamp) {
-            if (!timestamp) return "-";
-            try {
-                const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-                return date.toLocaleDateString("ar-EG", { hour: '2-digit', minute: '2-digit' });
-            } catch { return "-"; }
-        }
-
-        function toast(msg, icon = "✅") {
-            const el = $("toast");
+        function toast(msg, icon = '✅') {
+            const el = $('toast');
             el.innerHTML = `${icon} ${msg}`;
-            el.classList.add("show");
+            el.classList.add('show');
             clearTimeout(window.toastTimer);
-            window.toastTimer = setTimeout(() => el.classList.remove("show"), 3500);
+            window.toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
         }
 
         function showModal(title, html) {
-            $("modalTitle").textContent = title;
-            $("modalBody").innerHTML = html;
-            $("modal").classList.add("show");
+            $('modalTitle').textContent = title;
+            $('modalBody').innerHTML = html;
+            $('modal').classList.add('show');
         }
 
         function closeModal() {
-            $("modal").classList.remove("show");
+            $('modal').classList.remove('show');
         }
         window.closeModal = closeModal;
-        $("modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
+        $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
 
         function statusBadge(status) {
             const map = {
-                new: ["جديد", "blue"],
-                contacted: ["تم التواصل", "orange"],
-                qualified: ["مؤهل", "blue"],
-                negotiation: ["تفاوض", "orange"],
-                won: ["مربوحة", "green"],
-                lost: ["خاسرة", "red"],
-                pending: ["معلقة", "orange"],
-                approved: ["معتمدة", "blue"],
-                paid: ["مدفوعة", "green"],
-                active: ["نشط", "green"],
-                inactive: ["متوقف", "red"],
-                todo: ["جديدة", "blue"],
-                doing: ["قيد التنفيذ", "orange"],
-                done: ["مكتملة", "green"]
+                new: ['جديد', 'badge-blue'],
+                contacted: ['تم التواصل', 'badge-orange'],
+                qualified: ['مؤهل', 'badge-blue'],
+                negotiation: ['تفاوض', 'badge-orange'],
+                won: ['مربوحة', 'badge-green'],
+                lost: ['خاسرة', 'badge-red'],
+                pending: ['معلقة', 'badge-orange'],
+                approved: ['معتمدة', 'badge-blue'],
+                paid: ['مدفوعة', 'badge-green'],
+                active: ['نشط', 'badge-green'],
+                inactive: ['متوقف', 'badge-red'],
+                todo: ['جديدة', 'badge-blue'],
+                doing: ['قيد التنفيذ', 'badge-orange'],
+                done: ['مكتملة', 'badge-green']
             };
-            const x = map[status] || [status || "غير محدد", "blue"];
+            const x = map[status] || [status || 'غير محدد', 'badge-blue'];
             return `<span class="badge ${x[1]}">${esc(x[0])}</span>`;
         }
 
-        window.filterTable = function(tableId, value) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
-            const rows = table.querySelectorAll("tbody tr");
-            const lower = value.toLowerCase();
+        function filterTable(tableId, value) {
+            const tbl = document.getElementById(tableId);
+            if (!tbl) return;
+            const rows = tbl.querySelectorAll('tbody tr');
+            const v = value.toLowerCase();
             rows.forEach(row => {
-                row.style.display = row.textContent.toLowerCase().includes(lower) ? "" : "none";
+                row.style.display = row.textContent.toLowerCase().includes(v) ? '' : 'none';
             });
-        };
+        }
+        window.filterTable = filterTable;
 
         // ============================================================
-        // NOTIFICATIONS SYSTEM (NEW)
+        // NOTIFICATION SOUND (Web Audio)
         // ============================================================
-        async function createNotification(userId, title, body, link = "#", type = "info") {
+        function playNotificationSound() {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.value = 880;
+                gain1.gain.setValueAtTime(0.25, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.35);
+
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.value = 660;
+                gain2.gain.setValueAtTime(0.2, now + 0.12);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(now + 0.12);
+                osc2.stop(now + 0.5);
+
+                if (navigator.vibrate) navigator.vibrate(60);
+            } catch (e) { /* ignore */ }
+        }
+
+        // ============================================================
+        // NOTIFICATIONS SYSTEM
+        // ============================================================
+        async function createNotification(userId, title, body, link = '#') {
             if (!userId) return;
             try {
-                await addDoc(collection(db, "notifications"), {
+                await addDoc(collection(db, 'notifications'), {
                     userId,
                     title,
                     body,
                     link,
-                    type,
                     read: false,
                     createdAt: serverTimestamp()
                 });
-            } catch (e) { console.warn("Notif error:", e); }
+            } catch (e) { console.warn('Notif error', e); }
         }
 
-        async function markNotifRead(notifId) {
-            await updateDoc(doc(db, "notifications", notifId), { read: true });
+        async function markNotifRead(id) {
+            await updateDoc(doc(db, 'notifications', id), { read: true });
+            if (activeView === 'notifications') renderNotifications();
+            updateNotifBadge();
         }
 
         async function markAllRead(userId) {
-            const q = query(collection(db, "notifications"), where("userId", "==", userId), where("read", "==", false));
+            const q = query(collection(db, 'notifications'), where('userId', '==', userId), where('read', '==', false));
             const snap = await getDocs(q);
-            const batch = [];
-            snap.forEach(d => batch.push(updateDoc(doc(db, "notifications", d.id), { read: true })));
-            await Promise.all(batch);
-            toast("تم تحديد الكل كمقروء");
-            if (activeView === "notifications") renderNotifications();
+            await Promise.all(snap.docs.map(d => updateDoc(doc(db, 'notifications', d.id), { read: true })));
+            toast('تم تحديد الكل كمقروء');
+            if (activeView === 'notifications') renderNotifications();
             updateNotifBadge();
         }
 
         async function updateNotifBadge() {
             if (!currentUser) return;
-            const q = query(collection(db, "notifications"), where("userId", "==", currentUser.uid), where("read", "==",
+            const q = query(collection(db, 'notifications'), where('userId', '==', currentUser.uid), where('read', '==',
                 false));
             const snap = await getDocs(q);
             const count = snap.size;
-            const badge = $("notifBadge");
+            const badge = $('notifBadge');
             if (count > 0) {
-                badge.textContent = count > 9 ? "9+" : count;
-                badge.classList.remove("hidden");
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.classList.remove('hidden');
             } else {
-                badge.classList.add("hidden");
+                badge.classList.add('hidden');
             }
         }
 
-        // Real-time listener for badge
         function listenNotifications() {
             if (notifUnsubscribe) notifUnsubscribe();
             if (!currentUser) return;
-            const q = query(collection(db, "notifications"), where("userId", "==", currentUser.uid));
-            notifUnsubscribe = onSnapshot(q, () => {
+            const q = query(collection(db, 'notifications'), where('userId', '==', currentUser.uid));
+            let lastCount = 0;
+            notifUnsubscribe = onSnapshot(q, (snapshot) => {
+                let unread = 0;
+                snapshot.forEach(d => { if (!d.data().read) unread++; });
+                if (unread > lastCount) playNotificationSound();
+                lastCount = unread;
                 updateNotifBadge();
             });
         }
 
         // ============================================================
-        // NAVIGATION
-        // ============================================================
-        function getNav() {
-            if (currentRole === "client") {
-                return [
-                    ["dashboard", "📊", "لوحتي"],
-                    ["my-projects", "📦", "مشاريعي"],
-                    ["my-deals", "💰", "طلباتي"],
-                    ["profile", "👤", "ملفي"]
-                ];
-            }
-            if (currentRole === "admin" || currentRole === "manager") {
-                return [
-                    ["dashboard", "📊", "الرئيسية"],
-                    ["leads", "🔥", "Leads"],
-                    ["clients", "👥", "العملاء"],
-                    ["projects", "📦", "المشاريع"],
-                    ["deals", "💰", "الصفقات"],
-                    ["commissions", "💵", "العمولات"],
-                    ["team", "👨‍💼", "الفريق"],
-                    ["tasks", "📋", "المهام"],
-                    ["reports", "📈", "التقارير"],
-                    ["notifications", "🔔", "الإشعارات"],
-                    ["settings", "⚙️", "الإعدادات"]
-                ];
-            }
-            return [
-                ["dashboard", "📊", "لوحتي"],
-                ["leads", "🔥", "Leads"],
-                ["clients", "👥", "عملائي"],
-                ["projects", "📦", "المشاريع"],
-                ["deals", "💰", "صفقاتي"],
-                ["commissions", "💵", "عمولاتي"],
-                ["tasks", "📋", "مهامي"],
-                ["notifications", "🔔", "الإشعارات"],
-                ["profile", "👤", "ملفي"]
-            ];
-        }
-
-        function buildNavigation() {
-            const nav = getNav();
-            $("sidebarNav").innerHTML = nav.map(item =>
-                `<button class="${item[0] === activeView ? 'active' : ''}" onclick="navigate('${item[0]}')">${item[1]} ${item[2]}</button>`
-            ).join("");
-            $("mobileNav").innerHTML = nav.map(item =>
-                `<button class="${item[0] === activeView ? 'active' : ''}" onclick="navigate('${item[0]}')">${item[1]} ${item[2]}</button>`
-            ).join("");
-        }
-
-        window.navigate = navigate;
-
-        async function navigate(view) {
-            activeView = view;
-            buildNavigation();
-            const titles = {
-                dashboard: "لوحة التحكم",
-                leads: "إدارة Leads",
-                clients: "العملاء",
-                projects: "المشاريع",
-                deals: "الصفقات",
-                commissions: "العمولات",
-                team: "فريق العمل",
-                tasks: "المهام",
-                reports: "التقارير",
-                notifications: "الإشعارات",
-                settings: "الإعدادات",
-                profile: "الملف الشخصي",
-                "my-projects": "مشاريعي",
-                "my-deals": "طلباتي"
-            };
-            $("pageHeading").textContent = titles[view] || "MINA PRO";
-
-            content.innerHTML = `<div class="empty">⏳ جاري التحميل...</div>`;
-
-            try {
-                // Fetch users for assignment dropdowns
-                const usersSnap = await getDocs(collection(db, "users"));
-                usersList = [];
-                usersSnap.forEach(d => {
-                    const u = d.data();
-                    if (u.uid) usersList.push({ uid: u.uid, name: u.name || u.email, email: u.email });
-                });
-
-                switch (view) {
-                    case "dashboard":
-                        await renderDashboard();
-                        break;
-                    case "my-projects":
-                        await renderMyProjects();
-                        break;
-                    case "my-deals":
-                        await renderMyDeals();
-                        break;
-                    case "leads":
-                        await renderLeads();
-                        break;
-                    case "clients":
-                        await renderClients();
-                        break;
-                    case "projects":
-                        await renderProjects();
-                        break;
-                    case "deals":
-                        await renderDeals();
-                        break;
-                    case "commissions":
-                        await renderCommissions();
-                        break;
-                    case "team":
-                        await renderTeam();
-                        break;
-                    case "tasks":
-                        await renderTasks();
-                        break;
-                    case "reports":
-                        await renderReports();
-                        break;
-                    case "notifications":
-                        await renderNotifications();
-                        break;
-                    case "settings":
-                        await renderSettings();
-                        break;
-                    case "profile":
-                        await renderProfile();
-                        break;
-                    default:
-                        content.innerHTML = `<div class="card"><div class="empty">🚧 هذه الصفحة قيد التطوير</div></div>`;
-                }
-            } catch (error) {
-                console.error(error);
-                content.innerHTML =
-                    `<div class="card">❌ حدث خطأ: <br><small>${esc(error.message)}</small></div>`;
-            }
-        }
-
-        // ============================================================
         // AUTH
         // ============================================================
-        $("loginBtn").addEventListener("click", login);
-        $("loginPassword").addEventListener("keydown", e => { if (e.key === "Enter") login(); });
+        $('loginBtn').addEventListener('click', login);
+        $('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
         async function login() {
-            const email = $("loginEmail").value.trim();
-            const password = $("loginPassword").value;
-            $("loginError").textContent = "";
-            if (!email || !password) { $("loginError").textContent = "املأ البريد وكلمة المرور."; return; }
+            const email = $('loginEmail').value.trim();
+            const pass = $('loginPassword').value;
+            $('loginError').textContent = '';
+            if (!email || !pass) { $('loginError').textContent = 'املأ البريد وكلمة المرور'; return; }
             try {
-                await signInWithEmailAndPassword(auth, email, password);
+                await signInWithEmailAndPassword(auth, email, pass);
             } catch (e) {
-                $("loginError").textContent = "بيانات غير صحيحة أو الحساب غير متاح.";
+                $('loginError').textContent = 'بيانات غير صحيحة';
             }
         }
 
@@ -1197,65 +861,174 @@
 
         onAuthStateChanged(auth, async user => {
             if (!user) {
-                $("loginScreen").classList.remove("hidden");
-                $("app").classList.add("hidden");
+                $('loginScreen').classList.remove('hidden');
+                $('app').classList.add('hidden');
                 currentUser = null;
                 return;
             }
             currentUser = user;
-            const userSnap = await getDoc(doc(db, "users", user.uid));
-            if (!userSnap.exists()) {
-                toast("هذا الحساب غير مسجل في النظام.");
+            const snap = await getDoc(doc(db, 'users', user.uid));
+            if (!snap.exists()) {
+                toast('الحساب غير مسجل');
                 await signOut(auth);
                 return;
             }
-            currentUserData = userSnap.data();
-            currentRole = currentUserData.role || "member";
-            $("topName").textContent = currentUserData.name || user.displayName || user.email;
-            $("topRole").textContent = currentRole.toUpperCase();
-            $("topAvatar").textContent = (currentUserData.name || user.email || "M")[0].toUpperCase();
+            currentUserData = snap.data();
+            currentRole = currentUserData.role || 'member';
+            $('topName').textContent = currentUserData.name || user.displayName || user.email;
+            $('topRole').textContent = currentRole.toUpperCase();
+            $('topAvatar').textContent = (currentUserData.name || user.email || 'M')[0].toUpperCase();
 
-            $("loginScreen").classList.add("hidden");
-            $("app").classList.remove("hidden");
-            buildNavigation();
+            // Fetch users list
+            const uSnap = await getDocs(collection(db, 'users'));
+            usersList = [];
+            uSnap.forEach(d => {
+                const u = d.data();
+                if (u.uid) usersList.push({ uid: u.uid, name: u.name || u.email, email: u.email });
+            });
+
+            $('loginScreen').classList.add('hidden');
+            $('app').classList.remove('hidden');
+            buildBottomNav();
             listenNotifications();
-            await navigate("dashboard");
+            await navigate('dashboard');
         });
 
         // ============================================================
-        // THEME
+        // NAVIGATION
         // ============================================================
-        window.toggleTheme = function() {
-            document.body.classList.toggle("dark");
-            localStorage.setItem("mina-theme", document.body.classList.contains("dark") ? "dark" : "light");
-        };
-        if (localStorage.getItem("mina-theme") === "dark") document.body.classList.add("dark");
+        function getNavItems() {
+            if (currentRole === 'client') {
+                return [
+                    { id: 'dashboard', icon: '📊', label: 'لوحتي' },
+                    { id: 'my-projects', icon: '📦', label: 'مشاريعي' },
+                    { id: 'my-deals', icon: '💰', label: 'طلباتي' },
+                    { id: 'profile', icon: '👤', label: 'ملفي' }
+                ];
+            }
+            if (currentRole === 'admin' || currentRole === 'manager') {
+                return [
+                    { id: 'dashboard', icon: '📊', label: 'الرئيسية' },
+                    { id: 'leads', icon: '🔥', label: 'Leads' },
+                    { id: 'clients', icon: '👥', label: 'العملاء' },
+                    { id: 'projects', icon: '📦', label: 'المشاريع' },
+                    { id: 'deals', icon: '💰', label: 'الصفقات' },
+                    { id: 'commissions', icon: '💵', label: 'العمولات' },
+                    { id: 'team', icon: '👨‍💼', label: 'الفريق' },
+                    { id: 'tasks', icon: '📋', label: 'المهام' },
+                    { id: 'notifications', icon: '🔔', label: 'إشعارات' }
+                ];
+            }
+            return [
+                { id: 'dashboard', icon: '📊', label: 'لوحتي' },
+                { id: 'leads', icon: '🔥', label: 'Leads' },
+                { id: 'clients', icon: '👥', label: 'عملائي' },
+                { id: 'projects', icon: '📦', label: 'المشاريع' },
+                { id: 'deals', icon: '💰', label: 'صفقاتي' },
+                { id: 'commissions', icon: '💵', label: 'عمولاتي' },
+                { id: 'tasks', icon: '📋', label: 'مهامي' },
+                { id: 'notifications', icon: '🔔', label: 'إشعارات' },
+                { id: 'profile', icon: '👤', label: 'ملفي' }
+            ];
+        }
 
-        // ============================================================
-        // ACTIVITY LOG
-        // ============================================================
-        async function logActivity(action, entityType, entityId = "", details = "") {
-            if (!currentUser) return;
+        function buildBottomNav() {
+            const items = getNavItems();
+            const nav = $('bottomNav');
+            nav.innerHTML = items.map(item => `
+                <button class="nav-item ${activeView === item.id ? 'active' : ''}" onclick="navigate('${item.id}')">
+                    <span class="nav-icon">${item.icon}</span>
+                    <span>${item.label}</span>
+                </button>
+            `).join('');
+        }
+
+        window.navigate = navigate;
+
+        async function navigate(view) {
+            activeView = view;
+            buildBottomNav();
+            const titles = {
+                dashboard: 'الرئيسية',
+                leads: 'Leads',
+                clients: 'العملاء',
+                projects: 'المشاريع',
+                deals: 'الصفقات',
+                commissions: 'العمولات',
+                team: 'الفريق',
+                tasks: 'المهام',
+                notifications: 'الإشعارات',
+                profile: 'الملف الشخصي',
+                'my-projects': 'مشاريعي',
+                'my-deals': 'طلباتي'
+            };
+            // Update page title (optional)
+            const titleEl = document.querySelector('.page-title');
+            // We'll render inside content
+
+            content.innerHTML = `<div class="empty-state">⏳ جاري التحميل...</div>`;
+
             try {
-                await addDoc(collection(db, "activityLogs"), {
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    userName: currentUserData?.name || currentUser.email,
-                    action,
-                    entityType,
-                    entityId,
-                    details,
-                    createdAt: serverTimestamp()
+                // Refresh users list each time (for assignment)
+                const uSnap = await getDocs(collection(db, 'users'));
+                usersList = [];
+                uSnap.forEach(d => {
+                    const u = d.data();
+                    if (u.uid) usersList.push({ uid: u.uid, name: u.name || u.email, email: u.email });
                 });
-            } catch (e) { console.warn("Log error:", e); }
+
+                switch (view) {
+                    case 'dashboard':
+                        await renderDashboard();
+                        break;
+                    case 'my-projects':
+                        await renderMyProjects();
+                        break;
+                    case 'my-deals':
+                        await renderMyDeals();
+                        break;
+                    case 'leads':
+                        await renderLeads();
+                        break;
+                    case 'clients':
+                        await renderClients();
+                        break;
+                    case 'projects':
+                        await renderProjects();
+                        break;
+                    case 'deals':
+                        await renderDeals();
+                        break;
+                    case 'commissions':
+                        await renderCommissions();
+                        break;
+                    case 'team':
+                        await renderTeam();
+                        break;
+                    case 'tasks':
+                        await renderTasks();
+                        break;
+                    case 'notifications':
+                        await renderNotifications();
+                        break;
+                    case 'profile':
+                        await renderProfile();
+                        break;
+                    default:
+                        content.innerHTML = `<div class="card"><div class="empty-state">🚧 قيد التطوير</div></div>`;
+                }
+            } catch (e) {
+                console.error(e);
+                content.innerHTML = `<div class="card">❌ خطأ: ${esc(e.message)}</div>`;
+            }
         }
 
         // ============================================================
         // DASHBOARD
         // ============================================================
         async function renderDashboard() {
-            if (currentRole === "client") {
-                const q = query(collection(db, "deals"), where("clientName", "==", currentUserData?.name || currentUser
+            if (currentRole === 'client') {
+                const q = query(collection(db, 'deals'), where('clientName', '==', currentUserData?.name || currentUser
                 .email));
                 const snap = await getDocs(q);
                 let total = 0,
@@ -1263,90 +1036,92 @@
                 snap.forEach(d => { total += Number(d.data().finalPrice || 0);
                     count++; });
                 content.innerHTML = `
-                    <div class="page-title"><div><h1>مرحباً ${esc(currentUserData?.name || "عميلنا")} 👋</h1><p>نظرة سريعة على حسابك</p></div></div>
-                    <div class="stats"><div class="card stat"><div class="stat-icon">📦</div><div class="stat-value">${count}</div><div class="stat-label">الطلبات</div><div class="stat-line"></div></div><div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(total)}</div><div class="stat-label">المشتريات</div><div class="stat-line"></div></div></div>
+                    <div class="page-title">مرحباً ${esc(currentUserData?.name || 'عميلنا')} 👋</div>
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-number">${count}</div><div class="stat-label">الطلبات</div></div>
+                        <div class="stat-item"><div class="stat-number">${money(total)}</div><div class="stat-label">المشتريات</div></div>
+                    </div>
                 `;
                 return;
             }
 
             const [usersSnap, leadsSnap, clientsSnap, dealsSnap, commSnap] = await Promise.all([
-                getDocs(collection(db, "users")),
-                getDocs(collection(db, "leads")),
-                getDocs(collection(db, "clients")),
-                getDocs(collection(db, "deals")),
-                getDocs(collection(db, "commissions"))
+                getDocs(collection(db, 'users')),
+                getDocs(collection(db, 'leads')),
+                getDocs(collection(db, 'clients')),
+                getDocs(collection(db, 'deals')),
+                getDocs(collection(db, 'commissions'))
             ]);
 
             let revenue = 0,
                 commissions = 0,
                 won = 0;
-            const memberPerformance = {};
+            const perf = {};
             dealsSnap.forEach(d => {
                 const x = d.data();
-                if (x.status === "won") {
+                if (x.status === 'won') {
                     won++;
                     const amt = Number(x.finalPrice || 0);
                     revenue += amt;
                     const m = x.memberName || 'غير معين';
-                    if (!memberPerformance[m]) memberPerformance[m] = 0;
-                    memberPerformance[m] += amt;
+                    perf[m] = (perf[m] || 0) + amt;
                 }
             });
             commSnap.forEach(d => { commissions += Number(d.data().amount || 0); });
 
-            let membersTable = '';
-            const sorted = Object.entries(memberPerformance).sort((a, b) => b[1] - a[1]);
-            if (sorted.length === 0) membersTable =
-                `<tr><td colspan="2"><div class="empty">لا توجد مبيعات بعد</div></td></tr>`;
-            else sorted.forEach(([name, total]) => {
-                membersTable += `<tr><td><strong>${esc(name)}</strong></td><td>${money(total)}</td></tr>`;
-            });
+            let rankHtml = '';
+            const sorted = Object.entries(perf).sort((a, b) => b[1] - a[1]);
+            if (sorted.length === 0) rankHtml =
+                `<div class="empty-state">لا توجد مبيعات بعد</div>`;
+            else {
+                rankHtml = `<div class="table-wrap"><table><thead><tr><th>المندوب</th><th>المبيعات</th></tr></thead><tbody>
+                    ${sorted.map(([name, total]) => `<tr><td><strong>${esc(name)}</strong></td><td>${money(total)}</td></tr>`).join('')}
+                </tbody></table></div>`;
+            }
 
             const isAdmin = (currentRole === 'admin' || currentRole === 'manager');
 
             content.innerHTML = `
-                <div class="page-title">
-                    <div><h1>مرحباً ${esc(currentUserData?.name || "بك")} 👋</h1><p>نظرة عامة على الأداء</p></div>
-                    <button class="btn" onclick="openQuickActions()">+ إجراء سريع</button>
+                <div class="page-title">مرحباً ${esc(currentUserData?.name || 'بك')} 👋</div>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-number">${clientsSnap.size}</div><div class="stat-label">العملاء</div></div>
+                    <div class="stat-item"><div class="stat-number">${leadsSnap.size}</div><div class="stat-label">Leads</div></div>
+                    <div class="stat-item"><div class="stat-number">${money(revenue)}</div><div class="stat-label">المبيعات</div></div>
+                    <div class="stat-item"><div class="stat-number">${money(commissions)}</div><div class="stat-label">العمولات</div></div>
                 </div>
-                <div class="stats">
-                    <div class="card stat"><div class="stat-icon">👥</div><div class="stat-value">${clientsSnap.size}</div><div class="stat-label">العملاء</div><div class="stat-line"></div></div>
-                    <div class="card stat"><div class="stat-icon">🔥</div><div class="stat-value">${leadsSnap.size}</div><div class="stat-label">Leads</div><div class="stat-line"></div></div>
-                    <div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(revenue)}</div><div class="stat-label">المبيعات</div><div class="stat-line"></div></div>
-                    <div class="card stat"><div class="stat-icon">💵</div><div class="stat-value">${money(commissions)}</div><div class="stat-label">العمولات</div><div class="stat-line"></div></div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">🏆 ترتيب المندوبين</span></div>
+                    ${rankHtml}
                 </div>
-                <div class="grid grid-2">
-                    <div class="card">
-                        <div class="toolbar"><strong>🏆 ترتيب المندوبين</strong></div>
-                        <div class="table-wrap"><table><thead><tr><th>المندوب</th><th>المبيعات</th></tr></thead><tbody>${membersTable}</tbody></table></div>
-                    </div>
-                    <div class="card">
-                        <div class="toolbar"><strong>📈 المبيعات</strong><span class="badge green">${won} صفقة</span></div>
-                        <div class="chart-box"><canvas id="salesChart"></canvas></div>
-                    </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">📈 أداء المبيعات</span> <span class="badge badge-green">${won} صفقة</span></div>
+                    <div style="height:200px;"><canvas id="salesChart"></canvas></div>
                 </div>
-                <div class="card" style="margin-top:20px">
-                    <div class="toolbar"><strong>⚡ اختصارات سريعة</strong></div>
-                    <div class="grid grid-4">
-                        <button class="btn" onclick="openLeadModal()">🔥 Lead</button>
-                        <button class="btn secondary" onclick="openClientModal()">👤 عميل</button>
-                        <button class="btn secondary" onclick="openDealModal()">💰 صفقة</button>
-                        ${isAdmin ? `<button class="btn secondary" onclick="openTaskModal()">📋 مهمة</button>` : ''}
-                        ${isAdmin ? `<button class="btn secondary" onclick="openProjectModal()">📦 مشروع</button>` : ''}
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">⚡ إجراءات سريعة</span></div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <button class="btn btn-small" onclick="openLeadModal()">🔥 Lead</button>
+                        <button class="btn btn-small btn-secondary" onclick="openClientModal()">👤 عميل</button>
+                        <button class="btn btn-small btn-secondary" onclick="openDealModal()">💰 صفقة</button>
+                        ${isAdmin ? `<button class="btn btn-small btn-secondary" onclick="openTaskModal()">📋 مهمة</button>` : ''}
+                        ${isAdmin ? `<button class="btn btn-small btn-secondary" onclick="openProjectModal()">📦 مشروع</button>` : ''}
                     </div>
                 </div>
             `;
 
             setTimeout(() => {
-                destroyChart("sales");
-                const ctx = $("salesChart")?.getContext("2d");
+                const ctx = document.getElementById('salesChart')?.getContext('2d');
                 if (ctx) {
+                    if (charts.sales) charts.sales.destroy();
                     charts.sales = new Chart(ctx, {
-                        type: "bar",
+                        type: 'bar',
                         data: {
-                            labels: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو"],
-                            datasets: [{ label: "المبيعات", data: [12000, 18500, 15000, 27000, 23000, revenue],
-                                borderRadius: 8, backgroundColor: "#2563eb" }]
+                            labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                            datasets: [{ label: 'المبيعات', data: [12000, 18500, 15000, 27000, 23000, revenue],
+                                backgroundColor: '#2563eb', borderRadius: 8 }]
                         },
                         options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
                     });
@@ -1354,540 +1129,550 @@
             }, 100);
         }
 
-        function destroyChart(name) {
-            if (charts[name]) { charts[name].destroy();
-                charts[name] = null; }
-        }
-
         // ============================================================
-        // MY PROJECTS / DEALS (Client)
+        // MY PROJECTS / DEALS (client)
         // ============================================================
         async function renderMyProjects() {
-            const q = query(collection(db, "clients"), where("email", "==", currentUser.email));
+            const q = query(collection(db, 'clients'), where('email', '==', currentUser.email));
             const snap = await getDocs(q);
-            let rows = "";
-            if (snap.empty) rows = `<tr><td colspan="4"><div class="empty">لا توجد مشاريع</div></td></tr>`;
+            let rows = '';
+            if (snap.empty) rows = `<tr><td colspan="4"><div class="empty-state">لا توجد مشاريع</div></td></tr>`;
             else snap.forEach(d => {
                 const x = d.data();
                 rows +=
-                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.project||"-")}</td><td>${esc(x.phone)}</td><td>${esc(x.notes||"-")}</td></tr>`;
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.project||'-')}</td><td>${esc(x.phone)}</td><td>${esc(x.notes||'-')}</td></tr>`;
             });
-            content.innerHTML =
-                `<div class="page-title"><div><h1>📦 مشاريعي</h1></div></div><div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>المشروع</th><th>الهاتف</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+            content.innerHTML = `
+                <div class="page-title">📦 مشاريعي</div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>المشروع</th><th>الهاتف</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+            `;
         }
 
         async function renderMyDeals() {
-            const q = query(collection(db, "deals"), where("clientName", "==", currentUserData?.name || currentUser.email));
+            const q = query(collection(db, 'deals'), where('clientName', '==', currentUserData?.name || currentUser.email));
             const snap = await getDocs(q);
-            let rows = "",
+            let rows = '',
                 total = 0;
-            if (snap.empty) rows = `<tr><td colspan="5"><div class="empty">لا توجد طلبات</div></td></tr>`;
+            if (snap.empty) rows = `<tr><td colspan="5"><div class="empty-state">لا توجد طلبات</div></td></tr>`;
             else snap.forEach(d => {
                 const x = d.data();
                 total += Number(x.finalPrice || 0);
                 rows +=
                     `<tr><td>${esc(x.clientName)}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate||0}%</td><td>${money(x.commissionAmount||0)}</td><td>${statusBadge(x.status)}</td></tr>`;
             });
-            content.innerHTML =
-                `<div class="page-title"><div><h1>💰 طلباتي</h1></div></div><div class="stats"><div class="card stat"><div class="stat-value">${money(total)}</div><div class="stat-label">الإجمالي</div></div></div><div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+            content.innerHTML = `
+                <div class="page-title">💰 طلباتي</div>
+                <div class="stats-grid"><div class="stat-item"><div class="stat-number">${money(total)}</div><div class="stat-label">الإجمالي</div></div></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+            `;
         }
 
         // ============================================================
-        // LEADS (مختصر)
+        // LEADS
         // ============================================================
         async function renderLeads() {
-            const snap = await getDocs(collection(db, "leads"));
-            let rows = "";
+            const snap = await getDocs(collection(db, 'leads'));
+            let rows = '';
             snap.forEach(d => {
                 const x = d.data();
-                rows += `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.source||"-")}</td><td>${statusBadge(x.status)}</td><td>${esc(x.assignedName||"-")}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn secondary small" onclick="editLead('${d.id}')">✏️</button><button class="btn red small" onclick="deleteLead('${d.id}')">🗑</button></div></td></tr>`;
+                rows += `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.source||'-')}</td><td>${statusBadge(x.status)}</td><td>${esc(x.assignedName||'-')}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn btn-small btn-secondary" onclick="editLead('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteLead('${d.id}')">🗑</button></div></td></tr>`;
             });
             content.innerHTML = `
-                <div class="page-title"><div><h1>🔥 Leads</h1></div><button class="btn" onclick="openLeadModal()">+ جديد</button></div>
-                <div class="card"><div class="toolbar"><div class="search-wrap"><input class="search" placeholder="🔍 بحث..." oninput="filterTable('leadTable',this.value)"></div></div>
-                <div class="table-wrap"><table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty">لا توجد Leads</div></td></tr>'}</tbody></table></div></div>
+                <div class="page-title">🔥 Leads</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <input class="search" placeholder="🔍 بحث..." oninput="filterTable('leadTable',this.value)" style="flex:1;padding:10px 14px;border:1px solid #e2e8f0;border-radius:40px;background:#f8fafc;">
+                        <button class="btn btn-small" onclick="openLeadModal()">+ جديد</button>
+                    </div>
+                    <div class="table-wrap"><table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد Leads</div></td></tr>'}</tbody></table></div>
+                </div>
             `;
         }
 
         window.openLeadModal = function(id = null, data = {}) {
-            showModal(id ? "تعديل Lead" : "Lead جديد", `
-                <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="leadName" value="${esc(data.name)}"></div><div class="field"><label>الهاتف *</label><input id="leadPhone" value="${esc(data.phone)}"></div></div>
-                <div class="grid grid-2"><div class="field"><label>البريد</label><input id="leadEmail" value="${esc(data.email)}"></div><div class="field"><label>المصدر</label><select id="leadSource"><option value="facebook">Facebook</option><option value="website">Website</option><option value="whatsapp">WhatsApp</option><option value="manual">Manual</option></select></div></div>
-                <div class="field"><label>الحالة</label><select id="leadStatus">${[["new","جديد"],["contacted","تم التواصل"],["qualified","مؤهل"],["negotiation","تفاوض"],["won","مربوحة"],["lost","خاسرة"]].map(x => `<option value="${x[0]}">${x[1]}</option>`).join("")}</select></div>
-                <button class="btn" style="width:100%;justify-content:center" onclick="saveLead('${id||""}')">💾 حفظ</button>
+            showModal(id ? 'تعديل Lead' : 'Lead جديد', `
+                <div class="field"><label>الاسم</label><input id="leadName" value="${esc(data.name)}"></div>
+                <div class="field"><label>الهاتف *</label><input id="leadPhone" value="${esc(data.phone)}"></div>
+                <div class="field"><label>المصدر</label><select id="leadSource"><option value="facebook">Facebook</option><option value="website">Website</option><option value="whatsapp">WhatsApp</option><option value="manual">Manual</option></select></div>
+                <div class="field"><label>الحالة</label><select id="leadStatus">${[['new','جديد'],['contacted','تم التواصل'],['qualified','مؤهل'],['negotiation','تفاوض'],['won','مربوحة'],['lost','خاسرة']].map(x => `<option value="${x[0]}">${x[1]}</option>`).join('')}</select></div>
+                <button class="btn" onclick="saveLead('${id||''}')">💾 حفظ</button>
             `);
         };
 
         window.saveLead = async function(id) {
             const data = {
-                name: $("leadName").value.trim(),
-                phone: $("leadPhone").value.trim(),
-                email: $("leadEmail").value.trim(),
-                source: $("leadSource").value,
-                status: $("leadStatus").value,
+                name: $('leadName').value.trim(),
+                phone: $('leadPhone').value.trim(),
+                source: $('leadSource').value,
+                status: $('leadStatus').value,
                 assignedTo: currentUser.uid,
-                assignedName: currentUserData?.name || ""
+                assignedName: currentUserData?.name || ''
             };
-            if (!data.phone) { toast("رقم الهاتف مطلوب"); return; }
+            if (!data.phone) { toast('الهاتف مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, "leads", id), data);
+                if (id) await updateDoc(doc(db, 'leads', id), data);
                 else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "leads"), data); }
-                toast("تم الحفظ");
+                    await addDoc(collection(db, 'leads'), data); }
+                toast('تم الحفظ');
                 closeModal();
                 renderLeads();
             } catch (e) { toast(e.message); }
         };
-        window.editLead = async function(id) { const s = await getDoc(doc(db, "leads", id)); if (s.exists()) openLeadModal(
+        window.editLead = async function(id) { const s = await getDoc(doc(db, 'leads', id)); if (s.exists()) openLeadModal(
                 id, s.data()); };
-        window.deleteLead = async function(id) { if (!confirm("حذف؟")) return; await deleteDoc(doc(db, "leads", id));
-            toast("تم الحذف");
+        window.deleteLead = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'leads', id));
+            toast('تم الحذف');
             renderLeads(); };
 
         // ============================================================
-        // CLIENTS (مختصر)
+        // CLIENTS
         // ============================================================
         async function renderClients() {
-            const snap = await getDocs(collection(db, "clients"));
-            let rows = "";
+            const snap = await getDocs(collection(db, 'clients'));
+            let rows = '';
             snap.forEach(d => {
                 const x = d.data();
                 rows +=
-                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.email||"-")}</td><td>${esc(x.project||"-")}</td><td>${esc(x.memberName||"-")}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn secondary small" onclick="editClient('${d.id}')">✏️</button><button class="btn red small" onclick="deleteClient('${d.id}')">🗑</button></div></td></tr>`;
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.email||'-')}</td><td>${esc(x.project||'-')}</td><td>${esc(x.memberName||'-')}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn btn-small btn-secondary" onclick="editClient('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteClient('${d.id}')">🗑</button></div></td></tr>`;
             });
-            content.innerHTML =
-                `<div class="page-title"><div><h1>👥 العملاء</h1></div><button class="btn" onclick="openClientModal()">+ عميل</button></div><div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty">لا يوجد عملاء</div></td></tr>'}</tbody></table></div></div>`;
+            content.innerHTML = `
+                <div class="page-title">👥 العملاء</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <input class="search" placeholder="🔍 بحث..." oninput="filterTable('clientsTable',this.value)" style="flex:1;padding:10px 14px;border:1px solid #e2e8f0;border-radius:40px;background:#f8fafc;">
+                        <button class="btn btn-small" onclick="openClientModal()">+ عميل</button>
+                    </div>
+                    <div class="table-wrap"><table id="clientsTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا يوجد عملاء</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
         }
 
         window.openClientModal = function(id = null, data = {}) {
-            showModal(id ? "تعديل عميل" : "عميل جديد", `
-                <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="clientName" value="${esc(data.name)}"></div><div class="field"><label>الهاتف *</label><input id="clientPhone" value="${esc(data.phone)}"></div></div>
+            showModal(id ? 'تعديل عميل' : 'عميل جديد', `
+                <div class="field"><label>الاسم</label><input id="clientName" value="${esc(data.name)}"></div>
+                <div class="field"><label>الهاتف *</label><input id="clientPhone" value="${esc(data.phone)}"></div>
                 <div class="field"><label>ملاحظات</label><textarea id="clientNotes">${esc(data.notes)}</textarea></div>
-                <button class="btn" style="width:100%;justify-content:center" onclick="saveClient('${id||""}')">💾 حفظ</button>
+                <button class="btn" onclick="saveClient('${id||''}')">💾 حفظ</button>
             `);
         };
 
         window.saveClient = async function(id) {
             const data = {
-                name: $("clientName").value.trim(),
-                phone: $("clientPhone").value.trim(),
-                notes: $("clientNotes").value.trim(),
+                name: $('clientName').value.trim(),
+                phone: $('clientPhone').value.trim(),
+                notes: $('clientNotes').value.trim(),
                 memberId: currentUser.uid,
-                memberName: currentUserData?.name || ""
+                memberName: currentUserData?.name || ''
             };
-            if (!data.phone) { toast("الهاتف مطلوب"); return; }
+            if (!data.phone) { toast('الهاتف مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, "clients", id), data);
+                if (id) await updateDoc(doc(db, 'clients', id), data);
                 else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "clients"), data); }
-                toast("تم الحفظ");
+                    await addDoc(collection(db, 'clients'), data); }
+                toast('تم الحفظ');
                 closeModal();
                 renderClients();
             } catch (e) { toast(e.message); }
         };
-        window.editClient = async function(id) { const s = await getDoc(doc(db, "clients", id)); if (s.exists())
+        window.editClient = async function(id) { const s = await getDoc(doc(db, 'clients', id)); if (s.exists())
                 openClientModal(id, s.data()); };
-        window.deleteClient = async function(id) { if (!confirm("حذف؟")) return; await deleteDoc(doc(db, "clients", id));
-            toast("تم الحذف");
+        window.deleteClient = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'clients', id));
+            toast('تم الحذف');
             renderClients(); };
 
         // ============================================================
         // PROJECTS (Admin only add/edit)
         // ============================================================
         async function renderProjects() {
-            const snap = await getDocs(collection(db, "projects"));
+            const snap = await getDocs(collection(db, 'projects'));
             const isAdmin = (currentRole === 'admin' || currentRole === 'manager');
-            let rows = "";
+            let rows = '';
             snap.forEach(d => {
                 const x = d.data();
                 const act = isAdmin ?
-                    `<div class="actions"><button class="btn secondary small" onclick="editProject('${d.id}')">✏️</button><button class="btn red small" onclick="deleteProject('${d.id}')">🗑</button></div>` :
-                    `<span style="color:var(--muted);font-size:12px;">عرض</span>`;
+                    `<div class="actions"><button class="btn btn-small btn-secondary" onclick="editProject('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteProject('${d.id}')">🗑</button></div>` :
+                    `<span style="color:#94a3b8;font-size:12px;">عرض</span>`;
                 rows +=
-                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.category||"-")}</td><td>${money(x.price)}</td><td>${x.commissionRate||0}%</td><td>${statusBadge(x.status)}</td><td>${act}</td></tr>`;
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.category||'-')}</td><td>${money(x.price)}</td><td>${x.commissionRate||0}%</td><td>${statusBadge(x.status)}</td><td>${act}</td></tr>`;
             });
-            content.innerHTML =
-                `<div class="page-title"><div><h1>📦 المشاريع</h1></div>${isAdmin?`<button class="btn" onclick="openProjectModal()">+ مشروع</button>`:''}</div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الفئة</th><th>السعر</th><th>العمولة</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="6"><div class="empty">لا توجد مشاريع</div></td></tr>'}</tbody></table></div></div>`;
+            content.innerHTML = `
+                <div class="page-title">📦 المشاريع</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        ${isAdmin ? `<button class="btn btn-small" onclick="openProjectModal()">+ مشروع</button>` : ''}
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الفئة</th><th>السعر</th><th>العمولة</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="6"><div class="empty-state">لا توجد مشاريع</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
         }
 
         window.openProjectModal = function(id = null, data = {}) {
-            showModal(id ? "تعديل مشروع" : "مشروع جديد", `
+            showModal(id ? 'تعديل مشروع' : 'مشروع جديد', `
                 <div class="field"><label>الاسم</label><input id="projectName" value="${esc(data.name)}"></div>
-                <div class="grid grid-2"><div class="field"><label>السعر</label><input id="projectPrice" type="number" value="${data.price||0}"></div><div class="field"><label>العمولة %</label><input id="projectCommission" type="number" value="${data.commissionRate||0}"></div></div>
-                <button class="btn" style="width:100%;justify-content:center" onclick="saveProject('${id||""}')">💾 حفظ</button>
+                <div class="field"><label>السعر</label><input id="projectPrice" type="number" value="${data.price||0}"></div>
+                <div class="field"><label>العمولة %</label><input id="projectCommission" type="number" value="${data.commissionRate||0}"></div>
+                <button class="btn" onclick="saveProject('${id||''}')">💾 حفظ</button>
             `);
         };
 
         window.saveProject = async function(id) {
-            const data = { name: $("projectName").value.trim(), price: Number($("projectPrice").value || 0),
-                commissionRate: Number($("projectCommission").value || 0), status: "active" };
-            if (!data.name) { toast("الاسم مطلوب"); return; }
+            const data = { name: $('projectName').value.trim(), price: Number($('projectPrice').value || 0),
+                commissionRate: Number($('projectCommission').value || 0), status: 'active' };
+            if (!data.name) { toast('الاسم مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, "projects", id), data);
+                if (id) await updateDoc(doc(db, 'projects', id), data);
                 else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "projects"), data); }
-                toast("تم الحفظ");
+                    await addDoc(collection(db, 'projects'), data); }
+                toast('تم الحفظ');
                 closeModal();
                 renderProjects();
             } catch (e) { toast(e.message); }
         };
-        window.editProject = async function(id) { const s = await getDoc(doc(db, "projects", id)); if (s.exists())
+        window.editProject = async function(id) { const s = await getDoc(doc(db, 'projects', id)); if (s.exists())
                 openProjectModal(id, s.data()); };
-        window.deleteProject = async function(id) { if (!confirm("حذف؟")) return; await deleteDoc(doc(db, "projects", id));
-            toast("تم الحذف");
+        window.deleteProject = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'projects', id));
+            toast('تم الحذف');
             renderProjects(); };
 
         // ============================================================
         // DEALS
         // ============================================================
         async function renderDeals() {
-            const snap = await getDocs(collection(db, "deals"));
-            let rows = "";
+            const snap = await getDocs(collection(db, 'deals'));
+            let rows = '';
             snap.forEach(d => {
                 const x = d.data();
                 rows +=
-                    `<tr><td>${esc(x.clientName)}</td><td>${esc(x.memberName||"-")}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate||0}%</td><td>${money(x.commissionAmount)}</td><td>${statusBadge(x.status)}</td><td><button class="btn secondary small" onclick="editDeal('${d.id}')">✏️</button></td></tr>`;
+                    `<tr><td>${esc(x.clientName)}</td><td>${esc(x.memberName||'-')}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate||0}%</td><td>${money(x.commissionAmount)}</td><td>${statusBadge(x.status)}</td><td><button class="btn btn-small btn-secondary" onclick="editDeal('${d.id}')">✏️</button></td></tr>`;
             });
-            content.innerHTML =
-                `<div class="page-title"><div><h1>💰 الصفقات</h1></div><button class="btn" onclick="openDealModal()">+ صفقة</button></div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>المسؤول</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty">لا توجد صفقات</div></td></tr>'}</tbody></table></div></div>`;
+            content.innerHTML = `
+                <div class="page-title">💰 الصفقات</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <button class="btn btn-small" onclick="openDealModal()">+ صفقة</button>
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>العميل</th><th>المسؤول</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد صفقات</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
         }
 
         window.openDealModal = function(id = null, data = {}) {
-            showModal(id ? "تعديل صفقة" : "صفقة جديدة", `
+            showModal(id ? 'تعديل صفقة' : 'صفقة جديدة', `
                 <div class="field"><label>اسم العميل</label><input id="dealClient" value="${esc(data.clientName)}"></div>
-                <div class="grid grid-3"><div class="field"><label>السعر</label><input id="dealPrice" type="number" value="${data.finalPrice||0}"></div><div class="field"><label>العمولة %</label><input id="dealCommission" type="number" value="${data.commissionRate||10}"></div><div class="field"><label>الحالة</label><select id="dealStatus"><option value="pending">معلقة</option><option value="won">مربوحة</option><option value="lost">خاسرة</option></select></div></div>
-                <button class="btn" style="width:100%;justify-content:center" onclick="saveDeal('${id||""}')">💾 حفظ</button>
+                <div class="field"><label>السعر</label><input id="dealPrice" type="number" value="${data.finalPrice||0}"></div>
+                <div class="field"><label>العمولة %</label><input id="dealCommission" type="number" value="${data.commissionRate||10}"></div>
+                <div class="field"><label>الحالة</label><select id="dealStatus"><option value="pending">معلقة</option><option value="won">مربوحة</option><option value="lost">خاسرة</option></select></div>
+                <button class="btn" onclick="saveDeal('${id||''}')">💾 حفظ</button>
             `);
         };
 
         window.saveDeal = async function(id) {
-            const price = Number($("dealPrice").value || 0);
-            const rate = Number($("dealCommission").value || 0);
+            const price = Number($('dealPrice').value || 0);
+            const rate = Number($('dealCommission').value || 0);
             const data = {
-                clientName: $("dealClient").value.trim(),
-                memberName: currentUserData?.name || "",
+                clientName: $('dealClient').value.trim(),
+                memberName: currentUserData?.name || '',
                 memberId: currentUser.uid,
                 finalPrice: price,
                 commissionRate: rate,
                 commissionAmount: price * rate / 100,
-                status: $("dealStatus").value
+                status: $('dealStatus').value
             };
-            if (!data.clientName) { toast("اسم العميل مطلوب"); return; }
+            if (!data.clientName) { toast('اسم العميل مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, "deals", id), data);
+                if (id) await updateDoc(doc(db, 'deals', id), data);
                 else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "deals"), data); }
-                toast("تم الحفظ");
+                    await addDoc(collection(db, 'deals'), data); }
+                toast('تم الحفظ');
                 closeModal();
                 renderDeals();
             } catch (e) { toast(e.message); }
         };
-        window.editDeal = async function(id) { const s = await getDoc(doc(db, "deals", id)); if (s.exists()) openDealModal(
+        window.editDeal = async function(id) { const s = await getDoc(doc(db, 'deals', id)); if (s.exists()) openDealModal(
                 id, s.data()); };
 
         // ============================================================
         // COMMISSIONS
         // ============================================================
         async function renderCommissions() {
-            const snap = await getDocs(collection(db, "commissions"));
-            let rows = "",
+            const snap = await getDocs(collection(db, 'commissions'));
+            let rows = '',
                 pending = 0,
                 paid = 0;
             snap.forEach(d => {
                 const x = d.data();
                 const amt = Number(x.amount || 0);
-                if (x.status === "paid") paid += amt;
+                if (x.status === 'paid') paid += amt;
                 else pending += amt;
                 rows +=
-                    `<tr><td>${esc(x.memberName||"-")}</td><td>${money(amt)}</td><td>${statusBadge(x.status)}</td><td>${x.status==="pending"?`<button class="btn small" onclick="changeComm('${d.id}','approved')">اعتماد</button>`:x.status==="approved"?`<button class="btn green small" onclick="changeComm('${d.id}','paid')">دفع</button>`:"-"}</td></tr>`;
+                    `<tr><td>${esc(x.memberName||'-')}</td><td>${money(amt)}</td><td>${statusBadge(x.status)}</td><td>${x.status==='pending'?`<button class="btn btn-small" onclick="changeComm('${d.id}','approved')">اعتماد</button>`:x.status==='approved'?`<button class="btn btn-small btn-green" onclick="changeComm('${d.id}','paid')">دفع</button>`:'-'}</td></tr>`;
             });
             content.innerHTML = `
-                <div class="page-title"><div><h1>💵 العمولات</h1></div></div>
-                <div class="stats"><div class="card stat"><div class="stat-value">${money(pending)}</div><div class="stat-label">معلقة</div></div><div class="card stat"><div class="stat-value">${money(paid)}</div><div class="stat-label">مدفوعة</div></div></div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>العضو</th><th>المبلغ</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="4"><div class="empty">لا توجد عمولات</div></td></tr>'}</tbody></table></div></div>
+                <div class="page-title">💵 العمولات</div>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-number">${money(pending)}</div><div class="stat-label">معلقة</div></div>
+                    <div class="stat-item"><div class="stat-number">${money(paid)}</div><div class="stat-label">مدفوعة</div></div>
+                </div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العضو</th><th>المبلغ</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="4"><div class="empty-state">لا توجد عمولات</div></td></tr>'}</tbody></table></div></div>
             `;
         }
-        window.changeComm = async function(id, status) { await updateDoc(doc(db, "commissions", id), { status });
-            toast("تم");
+        window.changeComm = async function(id, status) { await updateDoc(doc(db, 'commissions', id), { status });
+            toast('تم');
             renderCommissions(); };
 
         // ============================================================
         // TEAM (Admin only)
         // ============================================================
         async function renderTeam() {
-            if (currentRole !== "admin" && currentRole !== "manager") { content.innerHTML =
-                    `<div class="card"><div class="empty">⛔ غير مصرح</div></div>`; return; }
-            const snap = await getDocs(collection(db, "users"));
-            let rows = "";
+            if (currentRole !== 'admin' && currentRole !== 'manager') {
+                content.innerHTML = `<div class="card"><div class="empty-state">⛔ غير مصرح</div></div>`;
+                return;
+            }
+            const snap = await getDocs(collection(db, 'users'));
+            let rows = '';
             snap.forEach(d => {
                 const x = d.data();
                 rows +=
-                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.email)}</td><td><span class="badge ${x.role==="admin"?"red":x.role==="manager"?"orange":"blue"}">${esc(x.role)}</span></td><td>${statusBadge(x.status)}</td><td>${currentRole==="admin"?`<button class="btn secondary small" onclick="editUser('${d.id}')">✏️</button>`:"-"}</td></tr>`;
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.email)}</td><td><span class="badge ${x.role==='admin'?'badge-red':x.role==='manager'?'badge-orange':'badge-blue'}">${esc(x.role)}</span></td><td>${statusBadge(x.status)}</td><td>${currentRole==='admin'?`<button class="btn btn-small btn-secondary" onclick="editUser('${d.id}')">✏️</button>`:'-'}</td></tr>`;
             });
-            content.innerHTML =
-                `<div class="page-title"><div><h1>👨‍💼 الفريق</h1></div>${currentRole==="admin"?`<button class="btn" onclick="openUserModal()">+ عضو</button>`:""}</div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty">لا يوجد أعضاء</div></td></tr>'}</tbody></table></div></div>`;
+            content.innerHTML = `
+                <div class="page-title">👨‍💼 الفريق</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        ${currentRole==='admin' ? `<button class="btn btn-small" onclick="openUserModal()">+ عضو</button>` : ''}
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty-state">لا يوجد أعضاء</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
         }
 
         window.openUserModal = function(id = null, data = {}) {
-            showModal(id ? "تعديل عضو" : "عضو جديد", `
-                <div class="field"><label>الاسم</label><input id="userName" value="${esc(data.name||"")}"></div>
-                <div class="field"><label>البريد</label><input id="userEmail" type="email" value="${esc(data.email||"")}" ${id?"disabled":""}></div>
-                <div class="grid grid-2"><div class="field"><label>الدور</label><select id="userRole"><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="client">Client</option></select></div><div class="field"><label>العمولة %</label><input id="userCommission" type="number" value="${data.commissionRate||0}"></div></div>
-                ${!id?`<div class="field"><label>كلمة المرور</label><input id="userPassword" type="password" placeholder="6 أحرف على الأقل"></div>`:""}
-                <button class="btn" style="width:100%;justify-content:center" onclick="saveUser('${id||""}')">💾 حفظ</button>
-                <div id="userSaveResult" style="margin-top:10px;text-align:center;color:var(--green)"></div>
+            showModal(id ? 'تعديل عضو' : 'عضو جديد', `
+                <div class="field"><label>الاسم</label><input id="userName" value="${esc(data.name||'')}"></div>
+                <div class="field"><label>البريد</label><input id="userEmail" type="email" value="${esc(data.email||'')}" ${id?'disabled':''}></div>
+                <div class="field"><label>الدور</label><select id="userRole"><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="client">Client</option></select></div>
+                <div class="field"><label>العمولة %</label><input id="userCommission" type="number" value="${data.commissionRate||0}"></div>
+                ${!id?`<div class="field"><label>كلمة المرور</label><input id="userPassword" type="password" placeholder="6 أحرف على الأقل"></div>`:''}
+                <button class="btn" onclick="saveUser('${id||''}')">💾 حفظ</button>
+                <div id="userSaveResult" style="margin-top:10px;text-align:center;color:#10b981;"></div>
             `);
         };
 
         window.saveUser = async function(id) {
-            const name = $("userName").value.trim(),
-                email = $("userEmail").value.trim();
-            const role = $("userRole").value,
-                commissionRate = Number($("userCommission").value || 0);
-            const password = $("userPassword")?.value || "";
-            if (!name || !email) { toast("الاسم والبريد مطلوبان"); return; }
+            const name = $('userName').value.trim(),
+                email = $('userEmail').value.trim();
+            const role = $('userRole').value,
+                commissionRate = Number($('userCommission').value || 0);
+            const password = $('userPassword')?.value || '';
+            if (!name || !email) { toast('الاسم والبريد مطلوبان'); return; }
             if (id) {
-                await updateDoc(doc(db, "users", id), { name, role, commissionRate });
-                toast("تم التحديث");
+                await updateDoc(doc(db, 'users', id), { name, role, commissionRate });
+                toast('تم التحديث');
                 closeModal();
                 renderTeam();
                 return;
             }
-            if (!password || password.length < 6) { toast("كلمة المرور 6 أحرف على الأقل"); return; }
+            if (!password || password.length < 6) { toast('كلمة المرور 6 أحرف على الأقل'); return; }
             try {
                 const res = await createUserWithEmailAndPassword(secondaryAuth, email, password);
-                await addDoc(collection(db, "users"), { uid: res.user.uid, name, email, role, commissionRate, status: "active",
+                await addDoc(collection(db, 'users'), { uid: res.user.uid, name, email, role, commissionRate, status: 'active',
                     createdAt: serverTimestamp() });
-                toast("تم إنشاء الحساب");
+                toast('تم إنشاء الحساب');
                 closeModal();
                 renderTeam();
-            } catch (e) { toast("خطأ: " + e.message); }
+            } catch (e) { toast('خطأ: ' + e.message); }
         };
-        window.editUser = async function(id) { const s = await getDoc(doc(db, "users", id)); if (s.exists()) openUserModal(
+        window.editUser = async function(id) { const s = await getDoc(doc(db, 'users', id)); if (s.exists()) openUserModal(
                 id, s.data()); };
 
         // ============================================================
-        // TASKS (PRO VERSION: assign to specific user + notifications)
+        // TASKS (assign to specific user + notifications)
         // ============================================================
         async function renderTasks() {
-            const snap = await getDocs(collection(db, "tasks"));
+            const snap = await getDocs(collection(db, 'tasks'));
             const isAdmin = (currentRole === 'admin' || currentRole === 'manager');
-            let rows = "";
+            let rows = '';
             snap.forEach(d => {
                 const x = d.data();
-                let act = "";
+                let act = '';
                 if (isAdmin) {
                     act =
-                        `<div class="actions"><button class="btn secondary small" onclick="editTask('${d.id}')">✏️</button><button class="btn red small" onclick="deleteTask('${d.id}')">🗑</button></div>`;
+                        `<div class="actions"><button class="btn btn-small btn-secondary" onclick="editTask('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteTask('${d.id}')">🗑</button></div>`;
                 } else {
                     const st = x.status || 'todo';
                     if (st === 'todo') act =
-                        `<button class="btn orange small" onclick="updateTaskStatus('${d.id}','doing')">⏳ بدء</button>`;
+                        `<button class="btn btn-small btn-orange" onclick="updateTaskStatus('${d.id}','doing')">⏳ بدء</button>`;
                     else if (st === 'doing') act =
-                        `<button class="btn green small" onclick="updateTaskStatus('${d.id}','done')">✅ إنهاء</button>`;
-                    else act = `<span class="badge green">مكتملة</span>`;
+                        `<button class="btn btn-small btn-green" onclick="updateTaskStatus('${d.id}','done')">✅ إنهاء</button>`;
+                    else act = `<span class="badge badge-green">مكتملة</span>`;
                 }
-                const assignedName = usersList.find(u => u.uid === x.assignedToId)?.name || x.assignedTo || "-";
+                const assignedName = usersList.find(u => u.uid === x.assignedToId)?.name || x.assignedTo || '-';
                 rows +=
-                    `<tr><td><strong>${esc(x.title)}</strong></td><td>${esc(assignedName)}</td><td>${statusBadge(x.status)}</td><td><span class="badge ${x.priority==="high"?"red":"orange"}">${esc(x.priority||"medium")}</span></td><td>${act}</td></tr>`;
+                    `<tr><td><strong>${esc(x.title)}</strong></td><td>${esc(assignedName)}</td><td>${statusBadge(x.status)}</td><td><span class="badge ${x.priority==='high'?'badge-red':'badge-orange'}">${esc(x.priority||'medium')}</span></td><td>${act}</td></tr>`;
             });
             content.innerHTML = `
-                <div class="page-title"><div><h1>📋 المهام</h1></div>${isAdmin?`<button class="btn" onclick="openTaskModal()">+ مهمة</button>`:""}</div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty">لا توجد مهام</div></td></tr>'}</tbody></table></div></div>
+                <div class="page-title">📋 المهام</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        ${isAdmin ? `<button class="btn btn-small" onclick="openTaskModal()">+ مهمة</button>` : ''}
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty-state">لا توجد مهام</div></td></tr>'}</tbody></table></div>
+                </div>
             `;
         }
 
         window.updateTaskStatus = async function(id, newStatus) {
             try {
-                const ref = doc(db, "tasks", id);
+                const ref = doc(db, 'tasks', id);
                 await updateDoc(ref, { status: newStatus });
                 const snap = await getDoc(ref);
                 const data = snap.data();
-                // Notify admin/manager that task is done
                 if (newStatus === 'done') {
-                    const admins = await getDocs(query(collection(db, "users"), where("role", "in", ["admin", "manager"])));
+                    const admins = await getDocs(query(collection(db, 'users'), where('role', 'in', ['admin', 'manager'])));
                     admins.forEach(a => {
-                        createNotification(a.data().uid, "✅ مهمة مكتملة",
-                            `${currentUserData?.name || "عضو"} أنهى مهمة: ${data.title}`, "#tasks");
+                        createNotification(a.data().uid, '✅ مهمة مكتملة',
+                            `${currentUserData?.name || 'عضو'} أنهى مهمة: ${data.title}`, '#tasks');
                     });
                 }
-                toast("تم تحديث الحالة");
+                toast('تم تحديث الحالة');
                 renderTasks();
-            } catch (e) { toast("خطأ: " + e.message); }
+            } catch (e) { toast('خطأ: ' + e.message); }
         };
 
         window.openTaskModal = function(id = null, data = {}) {
-            // Build user dropdown
-            let opts =
-                '<option value="">-- اختر عضو --</option>';
+            let opts = '<option value="">-- اختر عضو --</option>';
             usersList.forEach(u => {
                 const sel = (u.uid === data.assignedToId) ? 'selected' : '';
                 opts += `<option value="${u.uid}" ${sel}>${esc(u.name)}</option>`;
             });
 
-            showModal(id ? "تعديل مهمة" : "مهمة جديدة", `
+            showModal(id ? 'تعديل مهمة' : 'مهمة جديدة', `
                 <div class="field"><label>عنوان المهمة</label><input id="taskTitle" value="${esc(data.title)}"></div>
-                <div class="grid grid-2"><div class="field"><label>المسؤول (اختر من الفريق)</label><select id="taskAssignedId">${opts}</select></div><div class="field"><label>الحالة</label><select id="taskStatus"><option value="todo">جديدة</option><option value="doing">قيد التنفيذ</option><option value="done">مكتملة</option></select></div></div>
+                <div class="field"><label>المسؤول</label><select id="taskAssignedId">${opts}</select></div>
+                <div class="field"><label>الحالة</label><select id="taskStatus"><option value="todo">جديدة</option><option value="doing">قيد التنفيذ</option><option value="done">مكتملة</option></select></div>
                 <div class="field"><label>الأولوية</label><select id="taskPriority"><option value="low">منخفضة</option><option value="medium" selected>متوسطة</option><option value="high">عالية</option></select></div>
-                <button class="btn" style="width:100%;justify-content:center" onclick="saveTask('${id||""}')">💾 حفظ</button>
+                <button class="btn" onclick="saveTask('${id||''}')">💾 حفظ</button>
             `);
         };
 
         window.saveTask = async function(id) {
-            const title = $("taskTitle").value.trim();
-            const assignedToId = $("taskAssignedId").value;
-            const status = $("taskStatus").value;
-            const priority = $("taskPriority").value;
-            if (!title) { toast("عنوان المهمة مطلوب"); return; }
-            if (!assignedToId) { toast("يرجى اختيار عضو مسؤول"); return; }
+            const title = $('taskTitle').value.trim();
+            const assignedToId = $('taskAssignedId').value;
+            const status = $('taskStatus').value;
+            const priority = $('taskPriority').value;
+            if (!title) { toast('عنوان المهمة مطلوب'); return; }
+            if (!assignedToId) { toast('اختر عضو مسؤول'); return; }
 
             const assignedUser = usersList.find(u => u.uid === assignedToId);
             const data = {
                 title,
                 assignedToId,
-                assignedTo: assignedUser?.name || "",
+                assignedTo: assignedUser?.name || '',
                 status,
                 priority,
                 createdBy: currentUser.uid
             };
 
             try {
-                let taskId = id;
                 if (id) {
-                    await updateDoc(doc(db, "tasks", id), data);
-                    toast("تم تحديث المهمة");
+                    await updateDoc(doc(db, 'tasks', id), data);
+                    toast('تم تحديث المهمة');
                 } else {
                     data.createdAt = serverTimestamp();
-                    const ref = await addDoc(collection(db, "tasks"), data);
-                    taskId = ref.id;
-                    toast("تم إضافة المهمة");
-                    // إشعار للمستخدم المعين
-                    await createNotification(assignedToId, "📋 مهمة جديدة",
-                        `تم تعيين مهمة "${title}" لك من قبل ${currentUserData?.name || "الإدارة"}`, "#tasks");
-                    await logActivity("تعيين مهمة", "task", ref.id, `لـ ${assignedUser?.name}`);
+                    const ref = await addDoc(collection(db, 'tasks'), data);
+                    toast('تم إضافة المهمة');
+                    await createNotification(assignedToId, '📋 مهمة جديدة',
+                        `تم تعيين مهمة "${title}" لك من قبل ${currentUserData?.name || 'الإدارة'}`, '#tasks');
                 }
                 closeModal();
                 renderTasks();
-            } catch (e) { toast("خطأ: " + e.message); }
+            } catch (e) { toast('خطأ: ' + e.message); }
         };
-
-        window.editTask = async function(id) {
-            const s = await getDoc(doc(db, "tasks", id));
-            if (s.exists()) openTaskModal(id, s.data());
-        };
-        window.deleteTask = async function(id) {
-            if (!confirm("حذف المهمة؟")) return;
-            await deleteDoc(doc(db, "tasks", id));
-            toast("تم الحذف");
-            renderTasks();
-        };
+        window.editTask = async function(id) { const s = await getDoc(doc(db, 'tasks', id)); if (s.exists()) openTaskModal(
+                id, s.data()); };
+        window.deleteTask = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'tasks', id));
+            toast('تم الحذف');
+            renderTasks(); };
 
         // ============================================================
-        // NOTIFICATIONS PAGE (pro)
+        // NOTIFICATIONS
         // ============================================================
         async function renderNotifications() {
             if (!currentUser) return;
-            const q = query(collection(db, "notifications"), where("userId", "==", currentUser.uid), orderBy("createdAt",
-                "desc"));
+            const q = query(collection(db, 'notifications'), where('userId', '==', currentUser.uid), orderBy('createdAt',
+                'desc'));
             const snap = await getDocs(q);
-
-            let items = "";
+            let items = '';
             if (snap.empty) {
-                items = `<div class="empty">🔕 لا توجد إشعارات</div>`;
+                items = `<div class="empty-state">🔕 لا توجد إشعارات</div>`;
             } else {
                 snap.forEach(d => {
                     const n = d.data();
                     const cls = n.read ? '' : 'unread';
                     items += `
-                        <div class="notif-item ${cls}" onclick="markNotifRead('${d.id}')">
-                            <div class="notif-body">
-                                <strong>${esc(n.title)}</strong><br>
-                                <span style="color:var(--text2);font-size:13px;">${esc(n.body)}</span>
+                        <div class="card" style="border-right:4px solid ${n.read ? '#e2e8f0' : '#2563eb'}; margin-bottom:8px; cursor:pointer;" onclick="markNotifRead('${d.id}')">
+                            <div style="display:flex;justify-content:space-between;">
+                                <strong>${esc(n.title)}</strong>
+                                <span style="font-size:12px;color:#94a3b8;">${formatDate(n.createdAt)}</span>
                             </div>
-                            <span class="notif-time">${formatDate(n.createdAt)}</span>
+                            <div style="font-size:14px;color:#475569;margin-top:4px;">${esc(n.body)}</div>
                         </div>
                     `;
                 });
             }
-
             content.innerHTML = `
-                <div class="page-title">
-                    <div><h1>🔔 الإشعارات</h1></div>
-                    <div>
-                        <button class="btn secondary small" onclick="markAllRead('${currentUser.uid}')">تحديد الكل كمقروء</button>
-                    </div>
+                <div class="page-title">🔔 الإشعارات</div>
+                <div style="display:flex;gap:8px;margin-bottom:12px;">
+                    <button class="btn btn-small btn-secondary" onclick="markAllRead('${currentUser.uid}')">تحديد الكل كمقروء</button>
                 </div>
-                <div class="card">
-                    ${items}
-                </div>
+                ${items}
             `;
-            // Mark as read when opened (optional)
-            await updateNotifBadge();
+            updateNotifBadge();
         }
 
-        // Expose markNotifRead to window
         window.markNotifRead = markNotifRead;
         window.markAllRead = markAllRead;
 
         // ============================================================
-        // REPORTS, SETTINGS, PROFILE
+        // PROFILE
         // ============================================================
-        async function renderReports() {
-            content.innerHTML =
-                `<div class="page-title"><div><h1>📈 التقارير</h1></div></div><div class="card"><div class="empty">📊 قريباً تقارير متقدمة مع تصدير Excel</div></div>`;
-        }
-
-        async function renderSettings() {
-            content.innerHTML =
-                `<div class="page-title"><div><h1>⚙️ الإعدادات</h1></div></div><div class="card"><div class="empty">⚙️ سيتم إضافة إعدادات النظام قريباً</div></div>`;
-        }
-
         async function renderProfile() {
             content.innerHTML = `
-                <div class="page-title"><div><h1>👤 ملفي</h1></div></div>
+                <div class="page-title">👤 ملفي</div>
                 <div class="card">
-                    <div style="display:flex;gap:20px;align-items:center;margin-bottom:24px;">
-                        <div class="avatar" style="width:70px;height:70px;font-size:32px;">${(currentUserData?.name||"M")[0]}</div>
-                        <div><h2>${esc(currentUserData?.name||"غير محدد")}</h2><p style="color:var(--muted);">${esc(currentUser.email)}</p><span class="badge blue">${esc(currentRole)}</span></div>
+                    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+                        <div class="avatar" style="width:60px;height:60px;font-size:28px;">${(currentUserData?.name||'M')[0]}</div>
+                        <div><div style="font-weight:700;font-size:18px;">${esc(currentUserData?.name||'غير محدد')}</div><div style="color:#94a3b8;">${esc(currentUser.email)}</div><span class="badge badge-blue">${esc(currentRole)}</span></div>
                     </div>
-                    <div class="field"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name||"")}"></div>
+                    <div class="field"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name||'')}"></div>
                     <button class="btn" onclick="updateProfile()">💾 تحديث</button>
                 </div>
             `;
         }
 
         window.updateProfile = async function() {
-            const name = $("profileName").value.trim();
-            if (!name) { toast("الاسم مطلوب"); return; }
-            await updateDoc(doc(db, "users", currentUser.uid), { name });
+            const name = $('profileName').value.trim();
+            if (!name) { toast('الاسم مطلوب'); return; }
+            await updateDoc(doc(db, 'users', currentUser.uid), { name });
             currentUserData.name = name;
-            $("topName").textContent = name;
-            toast("تم التحديث");
+            $('topName').textContent = name;
+            toast('تم التحديث');
             renderProfile();
         };
 
-        window.openQuickActions = function() { toast("اختر زراً من الاختصارات"); };
-
         // ============================================================
-        // LEAD FILTER
+        // THEME
         // ============================================================
-        window.filterLeadStatus = function(value) {
-            document.querySelectorAll("#leadTable tbody tr").forEach(row => {
-                if (!value) { row.style.display = ""; return; }
-                row.style.display = row.textContent.includes(statusText(value)) ? "" : "none";
-            });
+        window.toggleTheme = function() {
+            document.body.classList.toggle('dark');
+            localStorage.setItem('mina-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
         };
+        if (localStorage.getItem('mina-theme') === 'dark') document.body.classList.add('dark');
 
-        function statusText(s) {
-            const x = { new: "جديد", contacted: "تم التواصل", qualified: "مؤهل", negotiation: "تفاوض", won: "مربوحة",
-                lost: "خاسرة" };
-            return x[s] || s;
-        }
-
-        console.log("🚀 MINA PRO CRM loaded successfully!");
+        // ============================================================
+        // START
+        // ============================================================
+        console.log('🚀 MINA PRO CRM loaded successfully!');
     </script>
 </body>
 </html>
