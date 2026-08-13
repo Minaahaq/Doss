@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MINA PROJECTS • CRM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>MINA PRO • CRM</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
     </script>
     <script type="importmap">
@@ -17,45 +17,58 @@
         }
     </script>
     <style>
+        /* ===== RESET & ROOTS ===== */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Inter, 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         :root {
-            --bg: #f4f7fb;
-            --surface: #fff;
+            --bg: #f1f5f9;
+            --surface: #ffffff;
             --surface2: #f8fafc;
+            --surface3: #f1f4f9;
             --text: #0f172a;
+            --text2: #334155;
             --muted: #64748b;
             --border: #e2e8f0;
             --primary: #2563eb;
             --primary2: #1d4ed8;
+            --primary-light: #dbeafe;
             --purple: #7c3aed;
             --green: #10b981;
             --orange: #f59e0b;
             --red: #ef4444;
-            --shadow: 0 15px 45px rgba(15, 23, 42, .08);
-            --radius: 20px;
+            --shadow: 0 10px 40px rgba(15, 23, 42, 0.06);
+            --shadow-lg: 0 20px 60px rgba(15, 23, 42, 0.10);
+            --radius: 24px;
+            --radius-sm: 14px;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body.dark {
-            --bg: #07111f;
-            --surface: #0e1a2b;
-            --surface2: #132238;
+            --bg: #0b1628;
+            --surface: #12203a;
+            --surface2: #1a2c4a;
+            --surface3: #1f3355;
             --text: #f1f5f9;
+            --text2: #cbd5e1;
             --muted: #94a3b8;
-            --border: #213451;
-            --shadow: 0 20px 50px rgba(0, 0, 0, .35);
+            --border: #1e3355;
+            --primary-light: #1e3a6b;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
         }
 
         body {
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            transition: .25s;
+            transition: var(--transition);
+            font-size: 15px;
+            line-height: 1.5;
         }
 
         button,
@@ -64,181 +77,280 @@
         textarea {
             font: inherit;
         }
-
         button {
             cursor: pointer;
+            border: 0;
+            background: none;
         }
-
         .hidden {
             display: none !important;
         }
 
-        /* LOGIN */
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        /* ===== LOGIN ===== */
         #loginScreen {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            background: radial-gradient(circle at 20% 30%, var(--primary), var(--purple));
         }
-
         .login-card {
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 42px;
-            box-shadow: var(--shadow);
+            border-radius: 40px;
+            padding: 48px 36px;
+            box-shadow: var(--shadow-lg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
         .logo {
-            font-size: 30px;
+            font-size: 34px;
             font-weight: 900;
             text-align: center;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #0f172a, #2563eb, #7c3aed);
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, var(--primary), var(--purple));
             -webkit-background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
         }
-
-        .logo span {
-            color: var(--purple);
-        }
-
         .login-sub {
             text-align: center;
             color: var(--muted);
             margin-bottom: 30px;
+            font-size: 14px;
         }
 
-        /* APP */
+        /* ===== APP LAYOUT ===== */
         #app {
             min-height: 100vh;
         }
-
         .layout {
             display: flex;
             min-height: 100vh;
         }
 
+        /* ===== SIDEBAR ===== */
         .sidebar {
-            width: 250px;
+            width: 260px;
             background: var(--surface);
             border-left: 1px solid var(--border);
-            padding: 20px 14px;
+            padding: 24px 16px;
             position: fixed;
             right: 0;
             top: 0;
             bottom: 0;
-            z-index: 20;
+            z-index: 30;
             overflow-y: auto;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
         }
-
         .brand {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 900;
-            padding: 12px;
-            margin-bottom: 18px;
+            padding: 8px 12px;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
         }
-
+        .brand span {
+            color: var(--purple);
+        }
         .nav {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 6px;
         }
-
         .nav button {
             width: 100%;
-            border: 0;
-            background: transparent;
-            color: var(--muted);
             text-align: right;
-            padding: 13px 15px;
-            border-radius: 13px;
+            padding: 14px 16px;
+            border-radius: 16px;
             font-weight: 700;
-            transition: .2s;
+            color: var(--muted);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
         }
-
         .nav button:hover {
             background: var(--surface2);
             color: var(--text);
         }
-
         .nav button.active {
             background: linear-gradient(135deg, var(--primary), var(--purple));
-            color: white;
-            box-shadow: 0 8px 20px rgba(37, 99, 235, .25);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.30);
+        }
+        .sidebar-footer {
+            position: absolute;
+            bottom: 24px;
+            right: 16px;
+            left: 16px;
+        }
+        .sidebar-footer button {
+            width: 100%;
         }
 
+        /* ===== MAIN ===== */
         .main {
-            margin-right: 250px;
-            width: calc(100% - 250px);
-            padding: 22px;
+            margin-right: 260px;
+            width: calc(100% - 260px);
+            padding: 20px 28px 40px;
         }
 
+        /* ===== TOPBAR ===== */
         .topbar {
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 13px 18px;
+            border-radius: 28px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 22px;
+            gap: 12px;
+            margin-bottom: 28px;
             box-shadow: var(--shadow);
+            position: sticky;
+            top: 12px;
+            z-index: 20;
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.75);
         }
-
+        body.dark .topbar {
+            background: rgba(18, 32, 58, 0.85);
+        }
+        .topbar-title strong {
+            font-size: 18px;
+        }
         .top-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
         }
-
         .icon-btn {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             border: 1px solid var(--border);
             background: var(--surface2);
             color: var(--text);
-            border-radius: 12px;
+            border-radius: 16px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            position: relative;
         }
-
+        .icon-btn:hover {
+            background: var(--surface3);
+            transform: scale(0.96);
+        }
+        .notif-badge {
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            background: var(--red);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5px;
+            border: 2px solid var(--surface);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+            pointer-events: none;
+        }
         .user-box {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-
         .avatar {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--purple));
-            color: white;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .user-meta strong {
+            display: block;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+        .user-meta span {
+            font-size: 11px;
+            color: var(--muted);
         }
 
-        /* COMPONENTS */
+        /* ===== MOBILE NAV ===== */
+        .mobile-nav {
+            display: none;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+            scrollbar-width: none;
+        }
+        .mobile-nav::-webkit-scrollbar {
+            display: none;
+        }
+        .mobile-nav button {
+            white-space: nowrap;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--muted);
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .mobile-nav button.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* ===== COMPONENTS ===== */
         .page-title {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
         }
-
         .page-title h1 {
-            font-size: 25px;
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
-
         .page-title p {
             color: var(--muted);
-            font-size: 13px;
+            font-size: 14px;
             margin-top: 4px;
         }
 
@@ -246,23 +358,24 @@
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 20px;
-            box-shadow: 0 5px 25px rgba(15, 23, 42, .03);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+        .card:hover {
+            box-shadow: var(--shadow-lg);
         }
 
         .grid {
             display: grid;
-            gap: 16px;
+            gap: 20px;
         }
-
         .grid-2 {
             grid-template-columns: repeat(2, 1fr);
         }
-
         .grid-3 {
             grid-template-columns: repeat(3, 1fr);
         }
-
         .grid-4 {
             grid-template-columns: repeat(4, 1fr);
         }
@@ -270,88 +383,92 @@
         .stats {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 18px;
+            gap: 18px;
+            margin-bottom: 24px;
         }
-
         .stat {
+            padding: 20px;
             position: relative;
             overflow: hidden;
         }
-
         .stat-icon {
-            font-size: 25px;
-            margin-bottom: 12px;
+            font-size: 28px;
+            margin-bottom: 8px;
         }
-
         .stat-value {
-            font-size: 30px;
+            font-size: 32px;
             font-weight: 900;
+            letter-spacing: -0.5px;
         }
-
         .stat-label {
             color: var(--muted);
             font-size: 13px;
-            margin-top: 5px;
+            margin-top: 4px;
         }
-
         .stat-line {
             height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--purple));
             border-radius: 10px;
-            margin-top: 15px;
+            margin-top: 14px;
+            width: 30%;
         }
 
         .btn {
-            border: 0;
-            border-radius: 12px;
-            padding: 11px 18px;
+            border-radius: 16px;
+            padding: 12px 24px;
+            font-weight: 800;
             background: linear-gradient(135deg, var(--primary), var(--primary2));
             color: #fff;
-            font-weight: 800;
-            transition: .2s;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 0;
+            font-size: 14px;
         }
-
         .btn:hover {
-            transform: translateY(-1px);
-            filter: brightness(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(37, 99, 235, 0.25);
         }
-
         .btn.secondary {
             background: var(--surface2);
             color: var(--text);
             border: 1px solid var(--border);
         }
-
+        .btn.secondary:hover {
+            background: var(--surface3);
+            box-shadow: none;
+        }
         .btn.green {
             background: var(--green);
         }
-
         .btn.red {
             background: var(--red);
         }
-
         .btn.orange {
             background: var(--orange);
         }
-
         .btn.small {
-            padding: 7px 11px;
+            padding: 8px 14px;
             font-size: 12px;
+            border-radius: 12px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
         }
 
         .field {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
-
         .field label {
             display: block;
-            color: var(--muted);
+            color: var(--text2);
             font-size: 13px;
             font-weight: 700;
-            margin-bottom: 7px;
+            margin-bottom: 6px;
         }
-
         .field input,
         .field select,
         .field textarea,
@@ -360,111 +477,102 @@
             background: var(--surface2);
             color: var(--text);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 14px;
+            border-radius: 14px;
+            padding: 14px 16px;
             outline: none;
+            transition: var(--transition);
+            font-size: 14px;
         }
-
         .field textarea {
             min-height: 100px;
             resize: vertical;
         }
-
         .field input:focus,
         .field select:focus,
         .field textarea:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+            background: var(--surface);
         }
 
         .toolbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
         }
-
         .search-wrap {
             flex: 1;
-            min-width: 220px;
+            min-width: 200px;
         }
-
         .table-wrap {
             overflow: auto;
-            border: 1px solid var(--border);
             border-radius: 16px;
+            border: 1px solid var(--border);
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             min-width: 700px;
+            font-size: 14px;
         }
-
         th {
             background: var(--surface2);
             color: var(--muted);
             font-size: 12px;
             text-align: right;
-            padding: 14px;
-            white-space: nowrap;
+            padding: 16px 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
-
         td {
-            padding: 13px 14px;
+            padding: 14px 14px;
             border-top: 1px solid var(--border);
-            font-size: 13px;
         }
-
         tr:hover td {
             background: var(--surface2);
         }
 
         .badge {
             display: inline-flex;
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 30px;
             font-size: 11px;
             font-weight: 800;
+            align-items: center;
+            gap: 4px;
         }
-
         .badge.blue {
-            background: #dbeafe;
-            color: #1d4ed8;
+            background: var(--primary-light);
+            color: var(--primary);
         }
-
         .badge.green {
             background: #d1fae5;
             color: #047857;
         }
-
         .badge.orange {
             background: #fef3c7;
             color: #b45309;
         }
-
         .badge.red {
             background: #fee2e2;
             color: #b91c1c;
         }
-
         body.dark .badge.blue {
-            background: #172d52;
+            background: #1e3a6b;
             color: #93c5fd;
         }
-
         body.dark .badge.green {
             background: #103d31;
             color: #6ee7b7;
         }
-
         body.dark .badge.orange {
             background: #493614;
             color: #fcd34d;
         }
-
         body.dark .badge.red {
             background: #491d23;
             color: #fca5a5;
@@ -472,89 +580,117 @@
 
         .actions {
             display: flex;
-            gap: 5px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
-
         .chart-box {
-            height: 300px;
+            height: 280px;
+            position: relative;
         }
-
         .empty {
-            padding: 40px;
+            padding: 40px 20px;
             text-align: center;
             color: var(--muted);
         }
 
-        /* MODAL */
+        /* ===== MODAL ===== */
         .modal {
             position: fixed;
             inset: 0;
-            background: rgba(2, 6, 23, .65);
-            backdrop-filter: blur(5px);
+            background: rgba(2, 6, 23, 0.6);
+            backdrop-filter: blur(8px);
             display: none;
             align-items: center;
             justify-content: center;
             padding: 20px;
             z-index: 100;
         }
-
         .modal.show {
             display: flex;
         }
-
         .modal-card {
             width: 100%;
-            max-width: 650px;
+            max-width: 620px;
             max-height: 90vh;
             overflow: auto;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 25px;
+            border-radius: 32px;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            animation: modalFade 0.2s ease;
         }
-
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
         .modal-head {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
-
+        .modal-head strong {
+            font-size: 22px;
+            font-weight: 800;
+        }
         .close {
-            border: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
             background: var(--surface2);
             color: var(--text);
-            width: 35px;
-            height: 35px;
-            border-radius: 10px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+        }
+        .close:hover {
+            background: var(--surface3);
         }
 
-        /* TOAST */
+        /* ===== TOAST ===== */
         .toast {
             position: fixed;
-            bottom: 25px;
+            bottom: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(30px);
+            transform: translateX(-50%) translateY(20px);
             opacity: 0;
             pointer-events: none;
             z-index: 200;
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text);
-            padding: 13px 22px;
-            border-radius: 40px;
-            box-shadow: var(--shadow);
-            transition: .25s;
+            padding: 14px 28px;
+            border-radius: 60px;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
         }
-
         .toast.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
 
-        /* MOBILE */
-        .mobile-nav {
-            display: none;
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:1024px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-3 {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media(max-width:900px) {
@@ -564,53 +700,98 @@
             .main {
                 margin-right: 0;
                 width: 100%;
-                padding: 12px;
+                padding: 16px;
             }
             .mobile-nav {
                 display: flex;
-                overflow: auto;
-                gap: 7px;
-                margin-bottom: 15px;
             }
-            .mobile-nav button {
-                white-space: nowrap;
-                border: 1px solid var(--border);
-                background: var(--surface);
-                color: var(--muted);
-                padding: 9px 13px;
-                border-radius: 30px;
-                font-size: 12px;
-                font-weight: 700;
+            .topbar {
+                padding: 8px 14px;
+                border-radius: 20px;
+                top: 8px;
             }
-            .mobile-nav button.active {
-                background: var(--primary);
-                color: #fff;
+            .topbar-title strong {
+                font-size: 15px;
             }
-            .stats {
-                grid-template-columns: repeat(2, 1fr);
+            .icon-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
             }
-            .grid-2,
-            .grid-3 {
-                grid-template-columns: 1fr;
+            .user-meta {
+                display: none;
             }
         }
 
-        @media(max-width:500px) {
+        @media(max-width:600px) {
             .login-card {
-                padding: 28px 20px;
+                padding: 32px 20px;
             }
             .stats {
                 grid-template-columns: 1fr 1fr;
+                gap: 12px;
             }
             .stat-value {
-                font-size: 23px;
+                font-size: 24px;
             }
-            .topbar {
-                padding: 10px;
+            .grid-2,
+            .grid-3,
+            .grid-4 {
+                grid-template-columns: 1fr;
             }
-            .topbar-title {
+            .page-title h1 {
+                font-size: 22px;
+            }
+            .card {
+                padding: 16px;
+            }
+            .btn {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+            .modal-card {
+                padding: 20px;
+            }
+            .top-actions .icon-btn:not(.notif-btn) {
                 display: none;
             }
+            .table-wrap {
+                border-radius: 12px;
+            }
+            td,
+            th {
+                padding: 10px 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* notification item */
+        .notif-item {
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: var(--surface2);
+            border-right: 4px solid var(--primary);
+            margin-bottom: 10px;
+            transition: var(--transition);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .notif-item.unread {
+            background: var(--primary-light);
+            border-right-color: var(--purple);
+        }
+        body.dark .notif-item.unread {
+            background: #1a2c4a;
+        }
+        .notif-item .notif-body {
+            flex: 1;
+        }
+        .notif-item .notif-time {
+            font-size: 11px;
+            color: var(--muted);
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -619,8 +800,8 @@
     <!-- LOGIN -->
     <section id="loginScreen">
         <div class="login-card">
-            <div class="logo">MINA <span>PROJECTS</span></div>
-            <div class="login-sub">نظام إدارة الشركة و CRM</div>
+            <div class="logo">MINA <span>PRO</span></div>
+            <div class="login-sub">منصة إدارة الفريق والمبيعات</div>
             <div class="field">
                 <label>البريد الإلكتروني</label>
                 <input id="loginEmail" type="email" autocomplete="email" placeholder="admin@company.com">
@@ -629,35 +810,36 @@
                 <label>كلمة المرور</label>
                 <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
             </div>
-            <button class="btn" style="width:100%" id="loginBtn">تسجيل الدخول</button>
-            <div id="loginError" style="color:var(--red);font-size:13px;text-align:center;margin-top:15px"></div>
+            <button class="btn" style="width:100%;justify-content:center" id="loginBtn">تسجيل الدخول</button>
+            <div id="loginError" style="color:var(--red);font-size:13px;text-align:center;margin-top:16px"></div>
         </div>
     </section>
 
-    <!-- APPLICATION -->
+    <!-- APP -->
     <section id="app" class="hidden">
         <div class="layout">
-            <!-- SIDEBAR -->
             <aside class="sidebar">
-                <div class="brand">MINA <span style="color:var(--purple)">PROJECTS</span></div>
+                <div class="brand">MINA <span>PRO</span></div>
                 <nav id="sidebarNav" class="nav"></nav>
-                <div style="position:absolute;bottom:20px;right:14px;left:14px">
-                    <button class="btn secondary" style="width:100%" onclick="logout()">🚪 تسجيل الخروج</button>
+                <div class="sidebar-footer">
+                    <button class="btn secondary" style="width:100%;justify-content:center" onclick="logout()">🚪 تسجيل الخروج</button>
                 </div>
             </aside>
 
-            <!-- MAIN -->
             <main class="main">
                 <div class="topbar">
                     <div class="topbar-title"><strong id="pageHeading">لوحة التحكم</strong></div>
                     <div class="top-actions">
+                        <button class="icon-btn notif-btn" onclick="navigate('notifications')" id="notifBtn">
+                            🔔
+                            <span class="notif-badge hidden" id="notifBadge">0</span>
+                        </button>
                         <button class="icon-btn" onclick="toggleTheme()">🌓</button>
-                        <button class="icon-btn" onclick="navigate('notifications')">🔔</button>
                         <div class="user-box">
                             <div class="avatar" id="topAvatar">M</div>
-                            <div>
+                            <div class="user-meta">
                                 <strong id="topName">Admin</strong>
-                                <div style="font-size:11px;color:var(--muted)" id="topRole">Admin</div>
+                                <span id="topRole">Admin</span>
                             </div>
                         </div>
                     </div>
@@ -679,7 +861,7 @@
         </div>
     </div>
 
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="toast">✅ تم</div>
 
     <script type="module">
         // ============================================================
@@ -687,11 +869,10 @@
         // ============================================================
         import { initializeApp } from "firebase/app";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "firebase/auth";
-        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from "firebase/firestore";
-        import { getFunctions, httpsCallable } from "firebase/functions";
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp, orderBy, onSnapshot, setDoc } from "firebase/firestore";
 
         // ============================================================
-        // FIREBASE CONFIG (استبدل بالقيم الخاصة بك)
+        // CONFIG (استبدل بقيمك)
         // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDsJXNa6EYenn2f5mfoNQVEDxHhCH-XGAo",
@@ -718,13 +899,15 @@
         let currentRole = "member";
         let activeView = "dashboard";
         let charts = {};
+        let usersList = []; // for task assignment
+        let notifUnsubscribe = null;
+
         const content = document.getElementById("content");
+        const $ = id => document.getElementById(id);
 
         // ============================================================
         // HELPERS
         // ============================================================
-        const $ = id => document.getElementById(id);
-
         function esc(value) {
             return String(value ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"',
                 "&quot;").replaceAll("'", "&#039;");
@@ -739,18 +922,16 @@
             if (!timestamp) return "-";
             try {
                 const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-                return date.toLocaleDateString("ar-EG");
-            } catch {
-                return "-";
-            }
+                return date.toLocaleDateString("ar-EG", { hour: '2-digit', minute: '2-digit' });
+            } catch { return "-"; }
         }
 
-        function toast(message) {
+        function toast(msg, icon = "✅") {
             const el = $("toast");
-            el.textContent = message;
+            el.innerHTML = `${icon} ${msg}`;
             el.classList.add("show");
             clearTimeout(window.toastTimer);
-            window.toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
+            window.toastTimer = setTimeout(() => el.classList.remove("show"), 3500);
         }
 
         function showModal(title, html) {
@@ -763,10 +944,7 @@
             $("modal").classList.remove("show");
         }
         window.closeModal = closeModal;
-
-        $("modal").addEventListener("click", e => {
-            if (e.target.id === "modal") closeModal();
-        });
+        $("modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
 
         function statusBadge(status) {
             const map = {
@@ -795,10 +973,67 @@
             const rows = table.querySelectorAll("tbody tr");
             const lower = value.toLowerCase();
             rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(lower) ? "" : "none";
+                row.style.display = row.textContent.toLowerCase().includes(lower) ? "" : "none";
             });
         };
+
+        // ============================================================
+        // NOTIFICATIONS SYSTEM (NEW)
+        // ============================================================
+        async function createNotification(userId, title, body, link = "#", type = "info") {
+            if (!userId) return;
+            try {
+                await addDoc(collection(db, "notifications"), {
+                    userId,
+                    title,
+                    body,
+                    link,
+                    type,
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) { console.warn("Notif error:", e); }
+        }
+
+        async function markNotifRead(notifId) {
+            await updateDoc(doc(db, "notifications", notifId), { read: true });
+        }
+
+        async function markAllRead(userId) {
+            const q = query(collection(db, "notifications"), where("userId", "==", userId), where("read", "==", false));
+            const snap = await getDocs(q);
+            const batch = [];
+            snap.forEach(d => batch.push(updateDoc(doc(db, "notifications", d.id), { read: true })));
+            await Promise.all(batch);
+            toast("تم تحديد الكل كمقروء");
+            if (activeView === "notifications") renderNotifications();
+            updateNotifBadge();
+        }
+
+        async function updateNotifBadge() {
+            if (!currentUser) return;
+            const q = query(collection(db, "notifications"), where("userId", "==", currentUser.uid), where("read", "==",
+                false));
+            const snap = await getDocs(q);
+            const count = snap.size;
+            const badge = $("notifBadge");
+            if (count > 0) {
+                badge.textContent = count > 9 ? "9+" : count;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        }
+
+        // Real-time listener for badge
+        function listenNotifications() {
+            if (notifUnsubscribe) notifUnsubscribe();
+            if (!currentUser) return;
+            const q = query(collection(db, "notifications"), where("userId", "==", currentUser.uid));
+            notifUnsubscribe = onSnapshot(q, () => {
+                updateNotifBadge();
+            });
+        }
 
         // ============================================================
         // NAVIGATION
@@ -871,11 +1106,19 @@
                 "my-projects": "مشاريعي",
                 "my-deals": "طلباتي"
             };
-            $("pageHeading").textContent = titles[view] || "MINA PROJECTS";
+            $("pageHeading").textContent = titles[view] || "MINA PRO";
 
-            content.innerHTML = `<div class="empty">جاري التحميل...</div>`;
+            content.innerHTML = `<div class="empty">⏳ جاري التحميل...</div>`;
 
             try {
+                // Fetch users for assignment dropdowns
+                const usersSnap = await getDocs(collection(db, "users"));
+                usersList = [];
+                usersSnap.forEach(d => {
+                    const u = d.data();
+                    if (u.uid) usersList.push({ uid: u.uid, name: u.name || u.email, email: u.email });
+                });
+
                 switch (view) {
                     case "dashboard":
                         await renderDashboard();
@@ -920,12 +1163,12 @@
                         await renderProfile();
                         break;
                     default:
-                        content.innerHTML = `<div class="card"><div class="empty">هذه الصفحة قيد التطوير</div></div>`;
+                        content.innerHTML = `<div class="card"><div class="empty">🚧 هذه الصفحة قيد التطوير</div></div>`;
                 }
             } catch (error) {
                 console.error(error);
                 content.innerHTML =
-                    `<div class="card">❌ حدث خطأ أثناء تحميل القسم.<br><br><small>${esc(error.message)}</small></div>`;
+                    `<div class="card">❌ حدث خطأ: <br><small>${esc(error.message)}</small></div>`;
             }
         }
 
@@ -939,19 +1182,16 @@
             const email = $("loginEmail").value.trim();
             const password = $("loginPassword").value;
             $("loginError").textContent = "";
-            if (!email || !password) {
-                $("loginError").textContent = "اكتب البريد وكلمة المرور.";
-                return;
-            }
+            if (!email || !password) { $("loginError").textContent = "املأ البريد وكلمة المرور."; return; }
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                console.error(error);
-                $("loginError").textContent = "بيانات الدخول غير صحيحة أو الحساب غير متاح.";
+            } catch (e) {
+                $("loginError").textContent = "بيانات غير صحيحة أو الحساب غير متاح.";
             }
         }
 
         window.logout = async function() {
+            if (notifUnsubscribe) notifUnsubscribe();
             await signOut(auth);
         };
 
@@ -965,7 +1205,7 @@
             currentUser = user;
             const userSnap = await getDoc(doc(db, "users", user.uid));
             if (!userSnap.exists()) {
-                toast("هذا الحساب غير مضاف للشركة.");
+                toast("هذا الحساب غير مسجل في النظام.");
                 await signOut(auth);
                 return;
             }
@@ -978,6 +1218,7 @@
             $("loginScreen").classList.add("hidden");
             $("app").classList.remove("hidden");
             buildNavigation();
+            listenNotifications();
             await navigate("dashboard");
         });
 
@@ -988,12 +1229,10 @@
             document.body.classList.toggle("dark");
             localStorage.setItem("mina-theme", document.body.classList.contains("dark") ? "dark" : "light");
         };
-        if (localStorage.getItem("mina-theme") === "dark") {
-            document.body.classList.add("dark");
-        }
+        if (localStorage.getItem("mina-theme") === "dark") document.body.classList.add("dark");
 
         // ============================================================
-        // ACTIVITY LOG (optional)
+        // ACTIVITY LOG
         // ============================================================
         async function logActivity(action, entityType, entityId = "", details = "") {
             if (!currentUser) return;
@@ -1008,11 +1247,11 @@
                     details,
                     createdAt: serverTimestamp()
                 });
-            } catch (e) { console.warn("Activity log:", e); }
+            } catch (e) { console.warn("Log error:", e); }
         }
 
         // ============================================================
-        // DASHBOARD (معدلة: فيها ترتيب المندوبين)
+        // DASHBOARD
         // ============================================================
         async function renderDashboard() {
             if (currentRole === "client") {
@@ -1024,8 +1263,8 @@
                 snap.forEach(d => { total += Number(d.data().finalPrice || 0);
                     count++; });
                 content.innerHTML = `
-                    <div class="page-title"><div><h1>مرحباً، ${esc(currentUserData?.name || "عميلنا العزيز")} 👋</h1><p>نظرة سريعة على حسابك</p></div></div>
-                    <div class="stats"><div class="card stat"><div class="stat-icon">📦</div><div class="stat-value">${count}</div><div class="stat-label">عدد الطلبات</div><div class="stat-line"></div></div><div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(total)}</div><div class="stat-label">إجمالي المشتريات</div><div class="stat-line"></div></div></div>
+                    <div class="page-title"><div><h1>مرحباً ${esc(currentUserData?.name || "عميلنا")} 👋</h1><p>نظرة سريعة على حسابك</p></div></div>
+                    <div class="stats"><div class="card stat"><div class="stat-icon">📦</div><div class="stat-value">${count}</div><div class="stat-label">الطلبات</div><div class="stat-line"></div></div><div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(total)}</div><div class="stat-label">المشتريات</div><div class="stat-line"></div></div></div>
                 `;
                 return;
             }
@@ -1042,61 +1281,58 @@
                 commissions = 0,
                 won = 0;
             const memberPerformance = {};
-
             dealsSnap.forEach(d => {
                 const x = d.data();
                 if (x.status === "won") {
                     won++;
-                    const amount = Number(x.finalPrice || 0);
-                    revenue += amount;
-                    const member = x.memberName || 'غير معين';
-                    if (!memberPerformance[member]) memberPerformance[member] = 0;
-                    memberPerformance[member] += amount;
+                    const amt = Number(x.finalPrice || 0);
+                    revenue += amt;
+                    const m = x.memberName || 'غير معين';
+                    if (!memberPerformance[m]) memberPerformance[m] = 0;
+                    memberPerformance[m] += amt;
                 }
             });
             commSnap.forEach(d => { commissions += Number(d.data().amount || 0); });
 
             let membersTable = '';
-            const sortedMembers = Object.entries(memberPerformance).sort((a, b) => b[1] - a[1]);
-            if (sortedMembers.length === 0) {
-                membersTable = `<tr><td colspan="2"><div class="empty">لا توجد مبيعات مسجلة حتى الآن</div></td></tr>`;
-            } else {
-                sortedMembers.forEach(([name, total]) => {
-                    membersTable += `<tr><td><strong>${esc(name)}</strong></td><td>${money(total)}</td></tr>`;
-                });
-            }
+            const sorted = Object.entries(memberPerformance).sort((a, b) => b[1] - a[1]);
+            if (sorted.length === 0) membersTable =
+                `<tr><td colspan="2"><div class="empty">لا توجد مبيعات بعد</div></td></tr>`;
+            else sorted.forEach(([name, total]) => {
+                membersTable += `<tr><td><strong>${esc(name)}</strong></td><td>${money(total)}</td></tr>`;
+            });
 
             const isAdmin = (currentRole === 'admin' || currentRole === 'manager');
 
             content.innerHTML = `
                 <div class="page-title">
-                    <div><h1>مرحباً، ${esc(currentUserData?.name || "بك")} 👋</h1><p>نظرة عامة على أداء الشركة اليوم</p></div>
+                    <div><h1>مرحباً ${esc(currentUserData?.name || "بك")} 👋</h1><p>نظرة عامة على الأداء</p></div>
                     <button class="btn" onclick="openQuickActions()">+ إجراء سريع</button>
                 </div>
                 <div class="stats">
-                    <div class="card stat"><div class="stat-icon">👥</div><div class="stat-value">${clientsSnap.size}</div><div class="stat-label">إجمالي العملاء</div><div class="stat-line"></div></div>
+                    <div class="card stat"><div class="stat-icon">👥</div><div class="stat-value">${clientsSnap.size}</div><div class="stat-label">العملاء</div><div class="stat-line"></div></div>
                     <div class="card stat"><div class="stat-icon">🔥</div><div class="stat-value">${leadsSnap.size}</div><div class="stat-label">Leads</div><div class="stat-line"></div></div>
-                    <div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(revenue)}</div><div class="stat-label">المبيعات المربوحة</div><div class="stat-line"></div></div>
+                    <div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(revenue)}</div><div class="stat-label">المبيعات</div><div class="stat-line"></div></div>
                     <div class="card stat"><div class="stat-icon">💵</div><div class="stat-value">${money(commissions)}</div><div class="stat-label">العمولات</div><div class="stat-line"></div></div>
                 </div>
                 <div class="grid grid-2">
                     <div class="card">
-                        <div class="toolbar"><strong>🏆 ترتيب المندوبين (المبيعات)</strong></div>
-                        <div class="table-wrap"><table><thead><tr><th>اسم المندوب</th><th>إجمالي المبيعات</th></tr></thead><tbody>${membersTable}</tbody></table></div>
+                        <div class="toolbar"><strong>🏆 ترتيب المندوبين</strong></div>
+                        <div class="table-wrap"><table><thead><tr><th>المندوب</th><th>المبيعات</th></tr></thead><tbody>${membersTable}</tbody></table></div>
                     </div>
                     <div class="card">
-                        <div class="toolbar"><strong>📈 أداء المبيعات</strong><span class="badge green">${won} صفقة مربوحة</span></div>
+                        <div class="toolbar"><strong>📈 المبيعات</strong><span class="badge green">${won} صفقة</span></div>
                         <div class="chart-box"><canvas id="salesChart"></canvas></div>
                     </div>
                 </div>
-                <div class="card" style="margin-top:16px">
-                    <div class="toolbar"><strong>⚡ اختصارات</strong></div>
+                <div class="card" style="margin-top:20px">
+                    <div class="toolbar"><strong>⚡ اختصارات سريعة</strong></div>
                     <div class="grid grid-4">
-                        <button class="btn" onclick="openLeadModal()">🔥 Lead جديد</button>
-                        <button class="btn secondary" onclick="openClientModal()">👤 عميل جديد</button>
-                        <button class="btn secondary" onclick="openDealModal()">💰 صفقة جديدة</button>
-                        ${isAdmin ? `<button class="btn secondary" onclick="openTaskModal()">📋 مهمة جديدة</button>` : ''}
-                        ${isAdmin ? `<button class="btn secondary" onclick="openProjectModal()">📦 مشروع جديد</button>` : ''}
+                        <button class="btn" onclick="openLeadModal()">🔥 Lead</button>
+                        <button class="btn secondary" onclick="openClientModal()">👤 عميل</button>
+                        <button class="btn secondary" onclick="openDealModal()">💰 صفقة</button>
+                        ${isAdmin ? `<button class="btn secondary" onclick="openTaskModal()">📋 مهمة</button>` : ''}
+                        ${isAdmin ? `<button class="btn secondary" onclick="openProjectModal()">📦 مشروع</button>` : ''}
                     </div>
                 </div>
             `;
@@ -1110,12 +1346,12 @@
                         data: {
                             labels: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو"],
                             datasets: [{ label: "المبيعات", data: [12000, 18500, 15000, 27000, 23000, revenue],
-                                borderRadius: 8 }]
+                                borderRadius: 8, backgroundColor: "#2563eb" }]
                         },
-                        options: { responsive: true, maintainAspectRatio: false }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
                     });
                 }
-            }, 50);
+            }, 100);
         }
 
         function destroyChart(name) {
@@ -1124,120 +1360,61 @@
         }
 
         // ============================================================
-        // MY PROJECTS (Client)
+        // MY PROJECTS / DEALS (Client)
         // ============================================================
         async function renderMyProjects() {
             const q = query(collection(db, "clients"), where("email", "==", currentUser.email));
             const snap = await getDocs(q);
             let rows = "";
-            if (snap.empty) {
-                rows = `<tr><td colspan="4"><div class="empty">لا توجد مشاريع مسجلة باسمك</div></td></tr>`;
-            } else {
-                snap.forEach(d => {
-                    const x = d.data();
-                    rows +=
-                        `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.project || "غير محدد")}</td><td>${esc(x.phone)}</td><td>${esc(x.notes || "-")}</td></tr>`;
-                });
-            }
-            content.innerHTML = `
-                <div class="page-title"><div><h1>📦 مشاريعي</h1><p>المشاريع والخدمات المقدمة لك</p></div></div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>اسم العميل</th><th>المشروع</th><th>الهاتف</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table></div></div>
-            `;
+            if (snap.empty) rows = `<tr><td colspan="4"><div class="empty">لا توجد مشاريع</div></td></tr>`;
+            else snap.forEach(d => {
+                const x = d.data();
+                rows +=
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.project||"-")}</td><td>${esc(x.phone)}</td><td>${esc(x.notes||"-")}</td></tr>`;
+            });
+            content.innerHTML =
+                `<div class="page-title"><div><h1>📦 مشاريعي</h1></div></div><div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>المشروع</th><th>الهاتف</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
         }
 
-        // ============================================================
-        // MY DEALS (Client)
-        // ============================================================
         async function renderMyDeals() {
             const q = query(collection(db, "deals"), where("clientName", "==", currentUserData?.name || currentUser.email));
             const snap = await getDocs(q);
             let rows = "",
                 total = 0;
-            if (snap.empty) {
-                rows = `<tr><td colspan="5"><div class="empty">لا توجد طلبات / صفقات مسجلة</div></td></tr>`;
-            } else {
-                snap.forEach(d => {
-                    const x = d.data();
-                    total += Number(x.finalPrice || 0);
-                    rows +=
-                        `<tr><td>${esc(x.clientName)}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate || 0}%</td><td>${money(x.commissionAmount || 0)}</td><td>${statusBadge(x.status)}</td></tr>`;
-                });
-            }
-            content.innerHTML = `
-                <div class="page-title"><div><h1>💰 طلباتي / صفقاتي</h1><p>حالة طلباتك المالية</p></div></div>
-                <div class="stats"><div class="card stat"><div class="stat-icon">💰</div><div class="stat-value">${money(total)}</div><div class="stat-label">إجمالي المبالغ</div></div></div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>السعر</th><th>العمولة</th><th>قيمة العمولة</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table></div></div>
-            `;
+            if (snap.empty) rows = `<tr><td colspan="5"><div class="empty">لا توجد طلبات</div></td></tr>`;
+            else snap.forEach(d => {
+                const x = d.data();
+                total += Number(x.finalPrice || 0);
+                rows +=
+                    `<tr><td>${esc(x.clientName)}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate||0}%</td><td>${money(x.commissionAmount||0)}</td><td>${statusBadge(x.status)}</td></tr>`;
+            });
+            content.innerHTML =
+                `<div class="page-title"><div><h1>💰 طلباتي</h1></div></div><div class="stats"><div class="card stat"><div class="stat-value">${money(total)}</div><div class="stat-label">الإجمالي</div></div></div><div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
         }
 
         // ============================================================
-        // LEADS
+        // LEADS (مختصر)
         // ============================================================
         async function renderLeads() {
             const snap = await getDocs(collection(db, "leads"));
             let rows = "";
             snap.forEach(d => {
                 const x = d.data();
-                rows += `<tr>
-                    <td><strong>${esc(x.name)}</strong></td>
-                    <td>${esc(x.phone)}</td>
-                    <td>${x.source === "facebook" ? "🔵 Facebook" : esc(x.source || "Website")}</td>
-                    <td>${statusBadge(x.status)}</td>
-                    <td>${esc(x.assignedName || "-")}</td>
-                    <td>${formatDate(x.createdAt)}</td>
-                    <td><div class="actions"><button class="btn secondary small" onclick="editLead('${d.id}')">✏️</button><button class="btn red small" onclick="deleteLead('${d.id}')">🗑</button></div></td>
-                </tr>`;
+                rows += `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.source||"-")}</td><td>${statusBadge(x.status)}</td><td>${esc(x.assignedName||"-")}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn secondary small" onclick="editLead('${d.id}')">✏️</button><button class="btn red small" onclick="deleteLead('${d.id}')">🗑</button></div></td></tr>`;
             });
             content.innerHTML = `
-                <div class="page-title"><div><h1>🔥 Leads</h1><p>إدارة العملاء المحتملين ومصادرهم</p></div><button class="btn" onclick="openLeadModal()">+ Lead جديد</button></div>
-                <div class="card">
-                    <div class="toolbar">
-                        <div class="search-wrap"><input class="search" id="leadSearch" placeholder="🔍 بحث..." oninput="filterTable('leadTable',this.value)"></div>
-                        <select class="search" style="width:180px" id="leadFilter" onchange="filterLeadStatus(this.value)">
-                            <option value="">كل الحالات</option>
-                            <option value="new">جديد</option>
-                            <option value="contacted">تم التواصل</option>
-                            <option value="qualified">مؤهل</option>
-                            <option value="negotiation">تفاوض</option>
-                            <option value="won">مربوحة</option>
-                            <option value="lost">خاسرة</option>
-                        </select>
-                    </div>
-                    <div class="table-wrap">
-                        <table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
-                        <tbody>${rows || `<tr><td colspan="7"><div class="empty">لا توجد Leads</div></td></tr>`}</tbody></table>
-                    </div>
-                </div>
+                <div class="page-title"><div><h1>🔥 Leads</h1></div><button class="btn" onclick="openLeadModal()">+ جديد</button></div>
+                <div class="card"><div class="toolbar"><div class="search-wrap"><input class="search" placeholder="🔍 بحث..." oninput="filterTable('leadTable',this.value)"></div></div>
+                <div class="table-wrap"><table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty">لا توجد Leads</div></td></tr>'}</tbody></table></div></div>
             `;
         }
 
-        window.filterLeadStatus = function(value) {
-            document.querySelectorAll("#leadTable tbody tr").forEach(row => {
-                if (!value) { row.style.display = ""; return; }
-                row.style.display = row.textContent.includes(statusText(value)) ? "" : "none";
-            });
-        };
-
-        function statusText(s) {
-            const x = { new: "جديد", contacted: "تم التواصل", qualified: "مؤهل", negotiation: "تفاوض", won: "مربوحة",
-                lost: "خاسرة" };
-            return x[s] || s;
-        }
-
         window.openLeadModal = function(id = null, data = {}) {
-            showModal(id ? "✏️ تعديل Lead" : "🔥 إضافة Lead", `
+            showModal(id ? "تعديل Lead" : "Lead جديد", `
                 <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="leadName" value="${esc(data.name)}"></div><div class="field"><label>الهاتف *</label><input id="leadPhone" value="${esc(data.phone)}"></div></div>
-                <div class="grid grid-2"><div class="field"><label>البريد</label><input id="leadEmail" value="${esc(data.email)}"></div><div class="field"><label>المصدر</label><select id="leadSource">
-                    <option value="facebook" ${data.source==="facebook"?"selected":""}>Facebook</option>
-                    <option value="website" ${data.source==="website"?"selected":""}>Website</option>
-                    <option value="whatsapp" ${data.source==="whatsapp"?"selected":""}>WhatsApp</option>
-                    <option value="manual" ${data.source==="manual"?"selected":""}>Manual</option>
-                </select></div></div>
-                <div class="grid grid-2"><div class="field"><label>الحالة</label><select id="leadStatus">
-                    ${[["new","جديد"],["contacted","تم التواصل"],["qualified","مؤهل"],["negotiation","تفاوض"],["won","مربوحة"],["lost","خاسرة"]].map(x => `<option value="${x[0]}" ${data.status===x[0]?"selected":""}>${x[1]}</option>`).join("")}
-                </select></div><div class="field"><label>الحملة</label><input id="leadCampaign" value="${esc(data.campaign)}" placeholder="اسم الحملة"></div></div>
-                <div class="field"><label>ملاحظات</label><textarea id="leadNotes">${esc(data.notes)}</textarea></div>
-                <button class="btn" style="width:100%" onclick="saveLead('${id || ""}')">💾 حفظ</button>
+                <div class="grid grid-2"><div class="field"><label>البريد</label><input id="leadEmail" value="${esc(data.email)}"></div><div class="field"><label>المصدر</label><select id="leadSource"><option value="facebook">Facebook</option><option value="website">Website</option><option value="whatsapp">WhatsApp</option><option value="manual">Manual</option></select></div></div>
+                <div class="field"><label>الحالة</label><select id="leadStatus">${[["new","جديد"],["contacted","تم التواصل"],["qualified","مؤهل"],["negotiation","تفاوض"],["won","مربوحة"],["lost","خاسرة"]].map(x => `<option value="${x[0]}">${x[1]}</option>`).join("")}</select></div>
+                <button class="btn" style="width:100%;justify-content:center" onclick="saveLead('${id||""}')">💾 حفظ</button>
             `);
         };
 
@@ -1248,86 +1425,45 @@
                 email: $("leadEmail").value.trim(),
                 source: $("leadSource").value,
                 status: $("leadStatus").value,
-                campaign: $("leadCampaign").value.trim(),
-                notes: $("leadNotes").value.trim()
+                assignedTo: currentUser.uid,
+                assignedName: currentUserData?.name || ""
             };
             if (!data.phone) { toast("رقم الهاتف مطلوب"); return; }
             try {
-                if (id) {
-                    await updateDoc(doc(db, "leads", id), data);
-                    await logActivity("تعديل Lead", "lead", id);
-                    toast("تم تحديث الـ Lead");
-                } else {
-                    data.assignedTo = currentUser.uid;
-                    data.assignedName = currentUserData?.name || "";
-                    data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "leads"), data);
-                    await logActivity("إضافة Lead", "lead", data.phone);
-                    toast("تمت إضافة الـ Lead");
-                }
+                if (id) await updateDoc(doc(db, "leads", id), data);
+                else { data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "leads"), data); }
+                toast("تم الحفظ");
                 closeModal();
                 renderLeads();
-            } catch (e) { toast("حدث خطأ: " + e.message); }
+            } catch (e) { toast(e.message); }
         };
-
-        window.editLead = async function(id) {
-            const snap = await getDoc(doc(db, "leads", id));
-            if (!snap.exists()) return;
-            openLeadModal(id, snap.data());
-        };
-
-        window.deleteLead = async function(id) {
-            if (!confirm("هل تريد حذف هذا الـ Lead؟")) return;
-            await deleteDoc(doc(db, "leads", id));
-            await logActivity("حذف Lead", "lead", id);
+        window.editLead = async function(id) { const s = await getDoc(doc(db, "leads", id)); if (s.exists()) openLeadModal(
+                id, s.data()); };
+        window.deleteLead = async function(id) { if (!confirm("حذف؟")) return; await deleteDoc(doc(db, "leads", id));
             toast("تم الحذف");
-            renderLeads();
-        };
+            renderLeads(); };
 
         // ============================================================
-        // CLIENTS
+        // CLIENTS (مختصر)
         // ============================================================
         async function renderClients() {
             const snap = await getDocs(collection(db, "clients"));
             let rows = "";
             snap.forEach(d => {
                 const x = d.data();
-                rows += `<tr>
-                    <td><strong>${esc(x.name)}</strong></td>
-                    <td>${esc(x.phone)}</td>
-                    <td>${esc(x.email || "-")}</td>
-                    <td>${esc(x.project || "-")}</td>
-                    <td>${esc(x.memberName || "-")}</td>
-                    <td>${formatDate(x.createdAt)}</td>
-                    <td><div class="actions"><button class="btn secondary small" onclick="editClient('${d.id}')">✏️</button><button class="btn red small" onclick="deleteClient('${d.id}')">🗑</button></div></td>
-                </tr>`;
+                rows +=
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.email||"-")}</td><td>${esc(x.project||"-")}</td><td>${esc(x.memberName||"-")}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn secondary small" onclick="editClient('${d.id}')">✏️</button><button class="btn red small" onclick="deleteClient('${d.id}')">🗑</button></div></td></tr>`;
             });
-            content.innerHTML = `
-                <div class="page-title"><div><h1>👥 العملاء</h1><p>قاعدة بيانات العملاء</p></div><button class="btn" onclick="openClientModal()">+ عميل جديد</button></div>
-                <div class="card">
-                    <div class="toolbar"><div class="search-wrap"><input class="search" placeholder="🔍 ابحث بالاسم أو الهاتف..." oninput="filterTable('clientsTable',this.value)"></div></div>
-                    <div class="table-wrap"><table id="clientsTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead>
-                    <tbody>${rows || `<tr><td colspan="7"><div class="empty">لا يوجد عملاء</div></td></tr>`}</tbody></table></div>
-                </div>
-            `;
+            content.innerHTML =
+                `<div class="page-title"><div><h1>👥 العملاء</h1></div><button class="btn" onclick="openClientModal()">+ عميل</button></div><div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty">لا يوجد عملاء</div></td></tr>'}</tbody></table></div></div>`;
         }
 
-        window.openClientModal = async function(id = null, data = {}) {
-            let projectOptions = '<option value="">-- اختر مشروعاً --</option>';
-            try {
-                const projectsSnap = await getDocs(collection(db, "projects"));
-                projectsSnap.forEach(doc => {
-                    const p = doc.data();
-                    const selected = (data.project === p.name) ? 'selected' : '';
-                    projectOptions += `<option value="${esc(p.name)}" ${selected}>${esc(p.name)}</option>`;
-                });
-            } catch (e) { console.warn("فشل جلب المشاريع", e); }
-
-            showModal(id ? "✏️ تعديل العميل" : "👤 عميل جديد", `
+        window.openClientModal = function(id = null, data = {}) {
+            showModal(id ? "تعديل عميل" : "عميل جديد", `
                 <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="clientName" value="${esc(data.name)}"></div><div class="field"><label>الهاتف *</label><input id="clientPhone" value="${esc(data.phone)}"></div></div>
-                <div class="grid grid-2"><div class="field"><label>البريد</label><input id="clientEmail" value="${esc(data.email)}"></div><div class="field"><label>المشروع</label><select id="clientProject">${projectOptions}</select></div></div>
                 <div class="field"><label>ملاحظات</label><textarea id="clientNotes">${esc(data.notes)}</textarea></div>
-                <button class="btn" style="width:100%" onclick="saveClient('${id || ""}')">💾 حفظ العميل</button>
+                <button class="btn" style="width:100%;justify-content:center" onclick="saveClient('${id||""}')">💾 حفظ</button>
             `);
         };
 
@@ -1335,42 +1471,28 @@
             const data = {
                 name: $("clientName").value.trim(),
                 phone: $("clientPhone").value.trim(),
-                email: $("clientEmail").value.trim(),
-                project: $("clientProject").value.trim(),
-                notes: $("clientNotes").value.trim()
+                notes: $("clientNotes").value.trim(),
+                memberId: currentUser.uid,
+                memberName: currentUserData?.name || ""
             };
-            if (!data.phone) { toast("رقم الهاتف مطلوب"); return; }
+            if (!data.phone) { toast("الهاتف مطلوب"); return; }
             try {
-                if (id) {
-                    await updateDoc(doc(db, "clients", id), data);
-                    toast("تم تحديث العميل");
-                } else {
-                    data.memberId = currentUser.uid;
-                    data.memberName = currentUserData?.name || "";
-                    data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "clients"), data);
-                    await logActivity("إضافة عميل", "client", data.phone);
-                    toast("تم إضافة العميل");
-                }
+                if (id) await updateDoc(doc(db, "clients", id), data);
+                else { data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "clients"), data); }
+                toast("تم الحفظ");
                 closeModal();
                 renderClients();
             } catch (e) { toast(e.message); }
         };
-
-        window.editClient = async function(id) {
-            const snap = await getDoc(doc(db, "clients", id));
-            if (snap.exists()) openClientModal(id, snap.data());
-        };
-
-        window.deleteClient = async function(id) {
-            if (!confirm("حذف العميل؟")) return;
-            await deleteDoc(doc(db, "clients", id));
-            toast("تم حذف العميل");
-            renderClients();
-        };
+        window.editClient = async function(id) { const s = await getDoc(doc(db, "clients", id)); if (s.exists())
+                openClientModal(id, s.data()); };
+        window.deleteClient = async function(id) { if (!confirm("حذف؟")) return; await deleteDoc(doc(db, "clients", id));
+            toast("تم الحذف");
+            renderClients(); };
 
         // ============================================================
-        // PROJECTS (معدلة: عرض فقط للأعضاء)
+        // PROJECTS (Admin only add/edit)
         // ============================================================
         async function renderProjects() {
             const snap = await getDocs(collection(db, "projects"));
@@ -1378,69 +1500,43 @@
             let rows = "";
             snap.forEach(d => {
                 const x = d.data();
-                const actionsHtml = isAdmin ?
+                const act = isAdmin ?
                     `<div class="actions"><button class="btn secondary small" onclick="editProject('${d.id}')">✏️</button><button class="btn red small" onclick="deleteProject('${d.id}')">🗑</button></div>` :
-                    `<span style="color:var(--muted);font-size:12px;">عرض فقط</span>`;
-                rows += `<tr>
-                    <td><strong>${esc(x.name)}</strong></td>
-                    <td>${esc(x.category || "-")}</td>
-                    <td>${money(x.price)}</td>
-                    <td>${Number(x.commissionRate||0)}%</td>
-                    <td>${statusBadge(x.status)}</td>
-                    <td>${actionsHtml}</td>
-                </tr>`;
+                    `<span style="color:var(--muted);font-size:12px;">عرض</span>`;
+                rows +=
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.category||"-")}</td><td>${money(x.price)}</td><td>${x.commissionRate||0}%</td><td>${statusBadge(x.status)}</td><td>${act}</td></tr>`;
             });
-            content.innerHTML = `
-                <div class="page-title"><div><h1>📦 المشاريع</h1><p>${isAdmin ? 'إدارة المنتجات والخدمات' : 'عرض المشاريع المتاحة'}</p></div>
-                ${isAdmin ? `<button class="btn" onclick="openProjectModal()">+ مشروع جديد</button>` : ''}</div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>المشروع</th><th>الفئة</th><th>السعر</th><th>العمولة</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-                <tbody>${rows || `<tr><td colspan="6"><div class="empty">لا توجد مشاريع</div></td></tr>`}</tbody></table></div></div>
-            `;
+            content.innerHTML =
+                `<div class="page-title"><div><h1>📦 المشاريع</h1></div>${isAdmin?`<button class="btn" onclick="openProjectModal()">+ مشروع</button>`:''}</div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الفئة</th><th>السعر</th><th>العمولة</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="6"><div class="empty">لا توجد مشاريع</div></td></tr>'}</tbody></table></div></div>`;
         }
 
         window.openProjectModal = function(id = null, data = {}) {
-            showModal(id ? "✏️ تعديل المشروع" : "📦 مشروع جديد", `
-                <div class="field"><label>اسم المشروع</label><input id="projectName" value="${esc(data.name)}"></div>
-                <div class="grid grid-2"><div class="field"><label>الفئة</label><input id="projectCategory" value="${esc(data.category)}"></div><div class="field"><label>السعر</label><input id="projectPrice" type="number" value="${Number(data.price||0)}"></div></div>
-                <div class="grid grid-2"><div class="field"><label>نسبة العمولة %</label><input id="projectCommission" type="number" value="${Number(data.commissionRate||0)}"></div><div class="field"><label>الحالة</label><select id="projectStatus"><option value="active" ${data.status==="active"?"selected":""}>نشط</option><option value="inactive" ${data.status==="inactive"?"selected":""}>متوقف</option></select></div></div>
-                <button class="btn" style="width:100%" onclick="saveProject('${id || ""}')">💾 حفظ</button>
+            showModal(id ? "تعديل مشروع" : "مشروع جديد", `
+                <div class="field"><label>الاسم</label><input id="projectName" value="${esc(data.name)}"></div>
+                <div class="grid grid-2"><div class="field"><label>السعر</label><input id="projectPrice" type="number" value="${data.price||0}"></div><div class="field"><label>العمولة %</label><input id="projectCommission" type="number" value="${data.commissionRate||0}"></div></div>
+                <button class="btn" style="width:100%;justify-content:center" onclick="saveProject('${id||""}')">💾 حفظ</button>
             `);
         };
 
         window.saveProject = async function(id) {
-            const data = {
-                name: $("projectName").value.trim(),
-                category: $("projectCategory").value.trim(),
-                price: Number($("projectPrice").value || 0),
-                commissionRate: Number($("projectCommission").value || 0),
-                status: $("projectStatus").value
-            };
-            if (!data.name) { toast("اسم المشروع مطلوب"); return; }
+            const data = { name: $("projectName").value.trim(), price: Number($("projectPrice").value || 0),
+                commissionRate: Number($("projectCommission").value || 0), status: "active" };
+            if (!data.name) { toast("الاسم مطلوب"); return; }
             try {
-                if (id) {
-                    await updateDoc(doc(db, "projects", id), data);
-                    toast("تم التحديث");
-                } else {
-                    data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, "projects"), data);
-                    toast("تم إضافة المشروع");
-                }
+                if (id) await updateDoc(doc(db, "projects", id), data);
+                else { data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "projects"), data); }
+                toast("تم الحفظ");
                 closeModal();
                 renderProjects();
             } catch (e) { toast(e.message); }
         };
-
-        window.editProject = async function(id) {
-            const snap = await getDoc(doc(db, "projects", id));
-            if (snap.exists()) openProjectModal(id, snap.data());
-        };
-
-        window.deleteProject = async function(id) {
-            if (!confirm("حذف المشروع؟")) return;
-            await deleteDoc(doc(db, "projects", id));
+        window.editProject = async function(id) { const s = await getDoc(doc(db, "projects", id)); if (s.exists())
+                openProjectModal(id, s.data()); };
+        window.deleteProject = async function(id) { if (!confirm("حذف؟")) return; await deleteDoc(doc(db, "projects", id));
             toast("تم الحذف");
-            renderProjects();
-        };
+            renderProjects(); };
 
         // ============================================================
         // DEALS
@@ -1450,28 +1546,19 @@
             let rows = "";
             snap.forEach(d => {
                 const x = d.data();
-                rows += `<tr>
-                    <td>${esc(x.clientName || x.clientId || "-")}</td>
-                    <td>${esc(x.memberName || "-")}</td>
-                    <td>${money(x.finalPrice)}</td>
-                    <td>${Number(x.commissionRate||0)}%</td>
-                    <td>${money(x.commissionAmount)}</td>
-                    <td>${statusBadge(x.status)}</td>
-                    <td><button class="btn secondary small" onclick="editDeal('${d.id}')">✏️</button></td>
-                </tr>`;
+                rows +=
+                    `<tr><td>${esc(x.clientName)}</td><td>${esc(x.memberName||"-")}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate||0}%</td><td>${money(x.commissionAmount)}</td><td>${statusBadge(x.status)}</td><td><button class="btn secondary small" onclick="editDeal('${d.id}')">✏️</button></td></tr>`;
             });
-            content.innerHTML = `
-                <div class="page-title"><div><h1>💰 الصفقات</h1><p>Sales Pipeline والصفقات</p></div><button class="btn" onclick="openDealModal()">+ صفقة جديدة</button></div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>المسؤول</th><th>السعر</th><th>العمولة</th><th>قيمة العمولة</th><th>الحالة</th><th></th></tr></thead>
-                <tbody>${rows || `<tr><td colspan="7"><div class="empty">لا توجد صفقات</div></td></tr>`}</tbody></table></div></div>
-            `;
+            content.innerHTML =
+                `<div class="page-title"><div><h1>💰 الصفقات</h1></div><button class="btn" onclick="openDealModal()">+ صفقة</button></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>المسؤول</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty">لا توجد صفقات</div></td></tr>'}</tbody></table></div></div>`;
         }
 
         window.openDealModal = function(id = null, data = {}) {
-            showModal(id ? "✏️ تعديل الصفقة" : "💰 صفقة جديدة", `
-                <div class="grid grid-2"><div class="field"><label>اسم العميل</label><input id="dealClient" value="${esc(data.clientName)}"></div><div class="field"><label>المسؤول</label><input id="dealMember" value="${esc(data.memberName || currentUserData?.name)}"></div></div>
-                <div class="grid grid-3"><div class="field"><label>السعر النهائي</label><input id="dealPrice" type="number" value="${Number(data.finalPrice||0)}"></div><div class="field"><label>نسبة العمولة %</label><input id="dealCommission" type="number" value="${Number(data.commissionRate||10)}"></div><div class="field"><label>الحالة</label><select id="dealStatus"><option value="pending" ${data.status==="pending"?"selected":""}>معلقة</option><option value="won" ${data.status==="won"?"selected":""}>مربوحة</option><option value="lost" ${data.status==="lost"?"selected":""}>خاسرة</option></select></div></div>
-                <button class="btn" style="width:100%" onclick="saveDeal('${id || ""}')">💾 حفظ الصفقة</button>
+            showModal(id ? "تعديل صفقة" : "صفقة جديدة", `
+                <div class="field"><label>اسم العميل</label><input id="dealClient" value="${esc(data.clientName)}"></div>
+                <div class="grid grid-3"><div class="field"><label>السعر</label><input id="dealPrice" type="number" value="${data.finalPrice||0}"></div><div class="field"><label>العمولة %</label><input id="dealCommission" type="number" value="${data.commissionRate||10}"></div><div class="field"><label>الحالة</label><select id="dealStatus"><option value="pending">معلقة</option><option value="won">مربوحة</option><option value="lost">خاسرة</option></select></div></div>
+                <button class="btn" style="width:100%;justify-content:center" onclick="saveDeal('${id||""}')">💾 حفظ</button>
             `);
         };
 
@@ -1489,24 +1576,16 @@
             };
             if (!data.clientName) { toast("اسم العميل مطلوب"); return; }
             try {
-                if (id) {
-                    await updateDoc(doc(db, "deals", id), data);
-                    toast("تم تحديث الصفقة");
-                } else {
-                    data.createdAt = serverTimestamp();
-                    const ref = await addDoc(collection(db, "deals"), data);
-                    toast("تم إنشاء الصفقة");
-                    await logActivity("إنشاء صفقة", "deal", ref.id);
-                }
+                if (id) await updateDoc(doc(db, "deals", id), data);
+                else { data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, "deals"), data); }
+                toast("تم الحفظ");
                 closeModal();
                 renderDeals();
             } catch (e) { toast(e.message); }
         };
-
-        window.editDeal = async function(id) {
-            const snap = await getDoc(doc(db, "deals", id));
-            if (snap.exists()) openDealModal(id, snap.data());
-        };
+        window.editDeal = async function(id) { const s = await getDoc(doc(db, "deals", id)); if (s.exists()) openDealModal(
+                id, s.data()); };
 
         // ============================================================
         // COMMISSIONS
@@ -1518,140 +1597,80 @@
                 paid = 0;
             snap.forEach(d => {
                 const x = d.data();
-                const amount = Number(x.amount || 0);
-                if (x.status === "paid") paid += amount;
-                else pending += amount;
-                rows += `<tr>
-                    <td>${esc(x.memberName || x.memberId || "-")}</td>
-                    <td>${money(amount)}</td>
-                    <td>${statusBadge(x.status)}</td>
-                    <td><div class="actions">
-                        ${x.status==="pending" ? `<button class="btn small" onclick="changeCommission('${d.id}','approved')">اعتماد</button>` : ""}
-                        ${x.status==="approved" ? `<button class="btn green small" onclick="changeCommission('${d.id}','paid')">دفع</button>` : ""}
-                    </div></td>
-                </tr>`;
+                const amt = Number(x.amount || 0);
+                if (x.status === "paid") paid += amt;
+                else pending += amt;
+                rows +=
+                    `<tr><td>${esc(x.memberName||"-")}</td><td>${money(amt)}</td><td>${statusBadge(x.status)}</td><td>${x.status==="pending"?`<button class="btn small" onclick="changeComm('${d.id}','approved')">اعتماد</button>`:x.status==="approved"?`<button class="btn green small" onclick="changeComm('${d.id}','paid')">دفع</button>`:"-"}</td></tr>`;
             });
             content.innerHTML = `
-                <div class="page-title"><div><h1>💵 العمولات</h1><p>متابعة العمولات وحالات الدفع</p></div></div>
-                <div class="stats"><div class="card stat"><div class="stat-icon">⏳</div><div class="stat-value">${money(pending)}</div><div class="stat-label">غير مدفوعة</div></div>
-                <div class="card stat"><div class="stat-icon">✅</div><div class="stat-value">${money(paid)}</div><div class="stat-label">مدفوعة</div></div></div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>العضو</th><th>المبلغ</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-                <tbody>${rows || `<tr><td colspan="4"><div class="empty">لا توجد عمولات</div></td></tr>`}</tbody></table></div></div>
+                <div class="page-title"><div><h1>💵 العمولات</h1></div></div>
+                <div class="stats"><div class="card stat"><div class="stat-value">${money(pending)}</div><div class="stat-label">معلقة</div></div><div class="card stat"><div class="stat-value">${money(paid)}</div><div class="stat-label">مدفوعة</div></div></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العضو</th><th>المبلغ</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="4"><div class="empty">لا توجد عمولات</div></td></tr>'}</tbody></table></div></div>
             `;
         }
-
-        window.changeCommission = async function(id, status) {
-            await updateDoc(doc(db, "commissions", id), { status });
-            toast("تم تغيير الحالة");
-            renderCommissions();
-        };
+        window.changeComm = async function(id, status) { await updateDoc(doc(db, "commissions", id), { status });
+            toast("تم");
+            renderCommissions(); };
 
         // ============================================================
-        // TEAM
+        // TEAM (Admin only)
         // ============================================================
         async function renderTeam() {
-            if (currentRole !== "admin" && currentRole !== "manager") {
-                content.innerHTML =
-                    `<div class="card"><div class="empty">⛔ غير مصرح لك بعرض هذه الصفحة.</div></div>`;
-                return;
-            }
+            if (currentRole !== "admin" && currentRole !== "manager") { content.innerHTML =
+                    `<div class="card"><div class="empty">⛔ غير مصرح</div></div>`; return; }
             const snap = await getDocs(collection(db, "users"));
             let rows = "";
             snap.forEach(d => {
                 const x = d.data();
-                rows += `<tr>
-                    <td><strong>${esc(x.name)}</strong></td>
-                    <td>${esc(x.email)}</td>
-                    <td><span class="badge ${x.role==="admin"?"red":x.role==="manager"?"orange":"blue"}">${esc(x.role || "member")}</span></td>
-                    <td>${statusBadge(x.status)}</td>
-                    <td>${currentRole === "admin" ? `<div class="actions"><button class="btn secondary small" onclick="editUser('${d.id}')">✏️</button></div>` : "-"}</td>
-                </tr>`;
+                rows +=
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.email)}</td><td><span class="badge ${x.role==="admin"?"red":x.role==="manager"?"orange":"blue"}">${esc(x.role)}</span></td><td>${statusBadge(x.status)}</td><td>${currentRole==="admin"?`<button class="btn secondary small" onclick="editUser('${d.id}')">✏️</button>`:"-"}</td></tr>`;
             });
-            content.innerHTML = `
-                <div class="page-title"><div><h1>👨‍💼 فريق العمل</h1><p>إدارة أعضاء الفريق وأدوارهم</p></div>
-                ${currentRole === "admin" ? `<button class="btn" onclick="openUserModal()">+ عضو جديد</button>` : ""}</div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الحالة</th><th>إجراءات</th></tr></thead>
-                <tbody>${rows || `<tr><td colspan="5"><div class="empty">لا يوجد أعضاء</div></td></tr>`}</tbody></table></div></div>
-            `;
+            content.innerHTML =
+                `<div class="page-title"><div><h1>👨‍💼 الفريق</h1></div>${currentRole==="admin"?`<button class="btn" onclick="openUserModal()">+ عضو</button>`:""}</div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty">لا يوجد أعضاء</div></td></tr>'}</tbody></table></div></div>`;
         }
 
         window.openUserModal = function(id = null, data = {}) {
-            showModal(id ? "✏️ تعديل العضو" : "👤 عضو جديد", `
-                <div class="field"><label>الاسم</label><input id="userName" value="${esc(data.name || '')}"></div>
-                <div class="field"><label>البريد الإلكتروني</label><input id="userEmail" type="email" value="${esc(data.email || '')}" ${id ? 'disabled' : ''}>
-                ${!id ? '<small style="color:var(--muted)">سيتم إنشاء حساب دخول لهذا البريد</small>' : ''}</div>
-                <div class="grid grid-2"><div class="field"><label>الدور</label><select id="userRole">
-                    <option value="member" ${data.role === 'member' ? 'selected' : ''}>Member</option>
-                    <option value="manager" ${data.role === 'manager' ? 'selected' : ''}>Manager</option>
-                    <option value="admin" ${data.role === 'admin' ? 'selected' : ''}>Admin</option>
-                    <option value="client" ${data.role === 'client' ? 'selected' : ''}>Client</option>
-                </select></div><div class="field"><label>نسبة العمولة (للأعضاء فقط)</label><input id="userCommission" type="number" value="${Number(data.commissionRate || 0)}"></div></div>
-                <div class="field"><label>الحالة</label><select id="userStatus"><option value="active" ${data.status === 'active' ? 'selected' : ''}>نشط</option><option value="inactive" ${data.status === 'inactive' ? 'selected' : ''}>متوقف</option></select></div>
-                ${!id ? `<div class="field"><label>كلمة المرور المؤقتة</label><input id="userPassword" type="password" placeholder="أدخل كلمة مرور قوية"><small style="color:var(--muted)">سيتم إرسالها للمستخدم عبر البريد (اختياري)</small></div>` : ''}
-                <button class="btn" style="width:100%" onclick="saveUser('${id || ''}')">💾 ${id ? 'تحديث' : 'حفظ وإنشاء حساب'}</button>
-                <div id="userSaveResult" style="margin-top:10px;color:var(--green);text-align:center;"></div>
+            showModal(id ? "تعديل عضو" : "عضو جديد", `
+                <div class="field"><label>الاسم</label><input id="userName" value="${esc(data.name||"")}"></div>
+                <div class="field"><label>البريد</label><input id="userEmail" type="email" value="${esc(data.email||"")}" ${id?"disabled":""}></div>
+                <div class="grid grid-2"><div class="field"><label>الدور</label><select id="userRole"><option value="member">Member</option><option value="manager">Manager</option><option value="admin">Admin</option><option value="client">Client</option></select></div><div class="field"><label>العمولة %</label><input id="userCommission" type="number" value="${data.commissionRate||0}"></div></div>
+                ${!id?`<div class="field"><label>كلمة المرور</label><input id="userPassword" type="password" placeholder="6 أحرف على الأقل"></div>`:""}
+                <button class="btn" style="width:100%;justify-content:center" onclick="saveUser('${id||""}')">💾 حفظ</button>
+                <div id="userSaveResult" style="margin-top:10px;text-align:center;color:var(--green)"></div>
             `);
         };
 
         window.saveUser = async function(id) {
-            const name = document.getElementById('userName').value.trim();
-            const email = document.getElementById('userEmail').value.trim();
-            const role = document.getElementById('userRole').value;
-            const commissionRate = parseFloat(document.getElementById('userCommission').value) || 0;
-            const status = document.getElementById('userStatus').value;
-            const password = document.getElementById('userPassword')?.value || '';
-
-            const resultEl = document.getElementById('userSaveResult');
-            resultEl.textContent = '';
-
-            if (!name || !email) { toast('الاسم والبريد الإلكتروني مطلوبان'); return; }
-
+            const name = $("userName").value.trim(),
+                email = $("userEmail").value.trim();
+            const role = $("userRole").value,
+                commissionRate = Number($("userCommission").value || 0);
+            const password = $("userPassword")?.value || "";
+            if (!name || !email) { toast("الاسم والبريد مطلوبان"); return; }
             if (id) {
-                try {
-                    await updateDoc(doc(db, 'users', id), { name, role, commissionRate, status });
-                    toast('تم تحديث العضو');
-                    closeModal();
-                    renderTeam();
-                } catch (e) { toast('خطأ: ' + e.message); }
-                return;
-            }
-
-            if (!password || password.length < 6) { toast('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
-
-            try {
-                const result = await createUserWithEmailAndPassword(
-                    secondaryAuth,
-                    email,
-                    password
-                );
-
-                await addDoc(collection(db, 'users'), {
-                    uid: result.user.uid,
-                    name,
-                    email,
-                    role,
-                    commissionRate,
-                    status,
-                    createdAt: serverTimestamp()
-                });
-                resultEl.textContent = '✅ تم إنشاء الحساب بنجاح!';
-                toast('تم إضافة العضو الجديد');
+                await updateDoc(doc(db, "users", id), { name, role, commissionRate });
+                toast("تم التحديث");
                 closeModal();
                 renderTeam();
-            } catch (error) {
-                console.error(error);
-                toast('فشل الإنشاء: ' + (error.message || error.details));
-                resultEl.textContent = '❌ ' + (error.message || 'خطأ غير معروف');
+                return;
             }
+            if (!password || password.length < 6) { toast("كلمة المرور 6 أحرف على الأقل"); return; }
+            try {
+                const res = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                await addDoc(collection(db, "users"), { uid: res.user.uid, name, email, role, commissionRate, status: "active",
+                    createdAt: serverTimestamp() });
+                toast("تم إنشاء الحساب");
+                closeModal();
+                renderTeam();
+            } catch (e) { toast("خطأ: " + e.message); }
         };
-
-        window.editUser = async function(id) {
-            const snap = await getDoc(doc(db, "users", id));
-            if (snap.exists()) openUserModal(id, snap.data());
-        };
+        window.editUser = async function(id) { const s = await getDoc(doc(db, "users", id)); if (s.exists()) openUserModal(
+                id, s.data()); };
 
         // ============================================================
-        // TASKS (معدلة: الأعضاء يغيرون الحالة فقط)
+        // TASKS (PRO VERSION: assign to specific user + notifications)
         // ============================================================
         async function renderTasks() {
             const snap = await getDocs(collection(db, "tasks"));
@@ -1659,86 +1678,106 @@
             let rows = "";
             snap.forEach(d => {
                 const x = d.data();
-                let actionsHtml = '';
+                let act = "";
                 if (isAdmin) {
-                    actionsHtml =
+                    act =
                         `<div class="actions"><button class="btn secondary small" onclick="editTask('${d.id}')">✏️</button><button class="btn red small" onclick="deleteTask('${d.id}')">🗑</button></div>`;
                 } else {
-                    const currentStatus = x.status || 'todo';
-                    if (currentStatus === 'todo') {
-                        actionsHtml =
-                            `<button class="btn orange small" onclick="updateTaskStatus('${d.id}','doing')">⏳ بدء التنفيذ</button>`;
-                    } else if (currentStatus === 'doing') {
-                        actionsHtml =
-                            `<button class="btn green small" onclick="updateTaskStatus('${d.id}','done')">✅ إنهاء المهمة</button>`;
-                    } else {
-                        actionsHtml = `<span class="badge green">مكتملة ✅</span>`;
-                    }
+                    const st = x.status || 'todo';
+                    if (st === 'todo') act =
+                        `<button class="btn orange small" onclick="updateTaskStatus('${d.id}','doing')">⏳ بدء</button>`;
+                    else if (st === 'doing') act =
+                        `<button class="btn green small" onclick="updateTaskStatus('${d.id}','done')">✅ إنهاء</button>`;
+                    else act = `<span class="badge green">مكتملة</span>`;
                 }
-                rows += `<tr>
-                    <td><strong>${esc(x.title)}</strong></td>
-                    <td>${esc(x.assignedTo || "-")}</td>
-                    <td>${statusBadge(x.status)}</td>
-                    <td><span class="badge ${x.priority === "high" ? "red" : "orange"}">${esc(x.priority || "medium")}</span></td>
-                    <td>${actionsHtml}</td>
-                </tr>`;
+                const assignedName = usersList.find(u => u.uid === x.assignedToId)?.name || x.assignedTo || "-";
+                rows +=
+                    `<tr><td><strong>${esc(x.title)}</strong></td><td>${esc(assignedName)}</td><td>${statusBadge(x.status)}</td><td><span class="badge ${x.priority==="high"?"red":"orange"}">${esc(x.priority||"medium")}</span></td><td>${act}</td></tr>`;
             });
             content.innerHTML = `
-                <div class="page-title"><div><h1>📋 المهام</h1><p>${isAdmin ? 'إدارة المهام ومتابعتها' : 'المهام المطلوبة منك'}</p></div>
-                ${isAdmin ? `<button class="btn" onclick="openTaskModal()">+ مهمة جديدة</button>` : ''}</div>
-                <div class="card"><div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th>إجراءات</th></tr></thead>
-                <tbody>${rows || `<tr><td colspan="5"><div class="empty">لا توجد مهام</div></td></tr>`}</tbody></table></div></div>
+                <div class="page-title"><div><h1>📋 المهام</h1></div>${isAdmin?`<button class="btn" onclick="openTaskModal()">+ مهمة</button>`:""}</div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty">لا توجد مهام</div></td></tr>'}</tbody></table></div></div>
             `;
         }
 
-        // دالة جديدة لتحديث حالة المهمة (خاصة بالأعضاء)
         window.updateTaskStatus = async function(id, newStatus) {
             try {
-                await updateDoc(doc(db, "tasks", id), { status: newStatus });
-                toast(`تم تحديث الحالة إلى ${newStatus === 'done' ? 'مكتملة' : 'قيد التنفيذ'}`);
+                const ref = doc(db, "tasks", id);
+                await updateDoc(ref, { status: newStatus });
+                const snap = await getDoc(ref);
+                const data = snap.data();
+                // Notify admin/manager that task is done
+                if (newStatus === 'done') {
+                    const admins = await getDocs(query(collection(db, "users"), where("role", "in", ["admin", "manager"])));
+                    admins.forEach(a => {
+                        createNotification(a.data().uid, "✅ مهمة مكتملة",
+                            `${currentUserData?.name || "عضو"} أنهى مهمة: ${data.title}`, "#tasks");
+                    });
+                }
+                toast("تم تحديث الحالة");
                 renderTasks();
-            } catch (e) {
-                toast('حدث خطأ: ' + e.message);
-            }
+            } catch (e) { toast("خطأ: " + e.message); }
         };
 
         window.openTaskModal = function(id = null, data = {}) {
-            showModal(id ? "✏️ تعديل المهمة" : "📋 مهمة جديدة", `
+            // Build user dropdown
+            let opts =
+                '<option value="">-- اختر عضو --</option>';
+            usersList.forEach(u => {
+                const sel = (u.uid === data.assignedToId) ? 'selected' : '';
+                opts += `<option value="${u.uid}" ${sel}>${esc(u.name)}</option>`;
+            });
+
+            showModal(id ? "تعديل مهمة" : "مهمة جديدة", `
                 <div class="field"><label>عنوان المهمة</label><input id="taskTitle" value="${esc(data.title)}"></div>
-                <div class="grid grid-2"><div class="field"><label>المسؤول</label><input id="taskAssigned" value="${esc(data.assignedTo || currentUserData?.name || "")}"></div><div class="field"><label>الحالة</label><select id="taskStatus"><option value="todo" ${data.status==="todo"?"selected":""}>جديدة</option><option value="doing" ${data.status==="doing"?"selected":""}>قيد التنفيذ</option><option value="done" ${data.status==="done"?"selected":""}>مكتملة</option></select></div></div>
-                <div class="field"><label>الأولوية</label><select id="taskPriority"><option value="low" ${data.priority==="low"?"selected":""}>منخفضة</option><option value="medium" ${data.priority==="medium" || !data.priority ?"selected":""}>متوسطة</option><option value="high" ${data.priority==="high"?"selected":""}>عالية</option></select></div>
-                <button class="btn" style="width:100%" onclick="saveTask('${id || ""}')">💾 حفظ</button>
+                <div class="grid grid-2"><div class="field"><label>المسؤول (اختر من الفريق)</label><select id="taskAssignedId">${opts}</select></div><div class="field"><label>الحالة</label><select id="taskStatus"><option value="todo">جديدة</option><option value="doing">قيد التنفيذ</option><option value="done">مكتملة</option></select></div></div>
+                <div class="field"><label>الأولوية</label><select id="taskPriority"><option value="low">منخفضة</option><option value="medium" selected>متوسطة</option><option value="high">عالية</option></select></div>
+                <button class="btn" style="width:100%;justify-content:center" onclick="saveTask('${id||""}')">💾 حفظ</button>
             `);
         };
 
         window.saveTask = async function(id) {
+            const title = $("taskTitle").value.trim();
+            const assignedToId = $("taskAssignedId").value;
+            const status = $("taskStatus").value;
+            const priority = $("taskPriority").value;
+            if (!title) { toast("عنوان المهمة مطلوب"); return; }
+            if (!assignedToId) { toast("يرجى اختيار عضو مسؤول"); return; }
+
+            const assignedUser = usersList.find(u => u.uid === assignedToId);
             const data = {
-                title: $("taskTitle").value.trim(),
-                assignedTo: $("taskAssigned").value.trim(),
-                status: $("taskStatus").value,
-                priority: $("taskPriority").value
+                title,
+                assignedToId,
+                assignedTo: assignedUser?.name || "",
+                status,
+                priority,
+                createdBy: currentUser.uid
             };
-            if (!data.title) { toast("عنوان المهمة مطلوب"); return; }
+
             try {
+                let taskId = id;
                 if (id) {
                     await updateDoc(doc(db, "tasks", id), data);
                     toast("تم تحديث المهمة");
                 } else {
                     data.createdAt = serverTimestamp();
-                    data.createdBy = currentUser.uid;
-                    await addDoc(collection(db, "tasks"), data);
+                    const ref = await addDoc(collection(db, "tasks"), data);
+                    taskId = ref.id;
                     toast("تم إضافة المهمة");
+                    // إشعار للمستخدم المعين
+                    await createNotification(assignedToId, "📋 مهمة جديدة",
+                        `تم تعيين مهمة "${title}" لك من قبل ${currentUserData?.name || "الإدارة"}`, "#tasks");
+                    await logActivity("تعيين مهمة", "task", ref.id, `لـ ${assignedUser?.name}`);
                 }
                 closeModal();
                 renderTasks();
-            } catch (e) { toast(e.message); }
+            } catch (e) { toast("خطأ: " + e.message); }
         };
 
         window.editTask = async function(id) {
-            const snap = await getDoc(doc(db, "tasks", id));
-            if (snap.exists()) openTaskModal(id, snap.data());
+            const s = await getDoc(doc(db, "tasks", id));
+            if (s.exists()) openTaskModal(id, s.data());
         };
-
         window.deleteTask = async function(id) {
             if (!confirm("حذف المهمة؟")) return;
             await deleteDoc(doc(db, "tasks", id));
@@ -1747,39 +1786,75 @@
         };
 
         // ============================================================
-        // REPORTS, NOTIFICATIONS, SETTINGS
+        // NOTIFICATIONS PAGE (pro)
+        // ============================================================
+        async function renderNotifications() {
+            if (!currentUser) return;
+            const q = query(collection(db, "notifications"), where("userId", "==", currentUser.uid), orderBy("createdAt",
+                "desc"));
+            const snap = await getDocs(q);
+
+            let items = "";
+            if (snap.empty) {
+                items = `<div class="empty">🔕 لا توجد إشعارات</div>`;
+            } else {
+                snap.forEach(d => {
+                    const n = d.data();
+                    const cls = n.read ? '' : 'unread';
+                    items += `
+                        <div class="notif-item ${cls}" onclick="markNotifRead('${d.id}')">
+                            <div class="notif-body">
+                                <strong>${esc(n.title)}</strong><br>
+                                <span style="color:var(--text2);font-size:13px;">${esc(n.body)}</span>
+                            </div>
+                            <span class="notif-time">${formatDate(n.createdAt)}</span>
+                        </div>
+                    `;
+                });
+            }
+
+            content.innerHTML = `
+                <div class="page-title">
+                    <div><h1>🔔 الإشعارات</h1></div>
+                    <div>
+                        <button class="btn secondary small" onclick="markAllRead('${currentUser.uid}')">تحديد الكل كمقروء</button>
+                    </div>
+                </div>
+                <div class="card">
+                    ${items}
+                </div>
+            `;
+            // Mark as read when opened (optional)
+            await updateNotifBadge();
+        }
+
+        // Expose markNotifRead to window
+        window.markNotifRead = markNotifRead;
+        window.markAllRead = markAllRead;
+
+        // ============================================================
+        // REPORTS, SETTINGS, PROFILE
         // ============================================================
         async function renderReports() {
             content.innerHTML =
-                `<div class="page-title"><div><h1>📈 التقارير</h1><p>تحليلات وإحصائيات متقدمة</p></div></div>
-                <div class="card"><div class="empty">📊 سيتم إضافة تقارير متقدمة قريباً.<br><br><small>يمكنك تصدير البيانات من كل قسم على حدة.</small></div></div>`;
-        }
-
-        async function renderNotifications() {
-            content.innerHTML =
-                `<div class="page-title"><div><h1>🔔 الإشعارات</h1><p>آخر التنبيهات والتحديثات</p></div></div>
-                <div class="card"><div class="empty">🔕 لا توجد إشعارات جديدة.</div></div>`;
+                `<div class="page-title"><div><h1>📈 التقارير</h1></div></div><div class="card"><div class="empty">📊 قريباً تقارير متقدمة مع تصدير Excel</div></div>`;
         }
 
         async function renderSettings() {
             content.innerHTML =
-                `<div class="page-title"><div><h1>⚙️ الإعدادات</h1><p>إعدادات النظام والتفضيلات</p></div></div>
-                <div class="card"><div class="empty">⚙️ سيتم إضافة إعدادات النظام قريباً.<br><br><small>الوضع المظلم متوفر حالياً من أعلى الصفحة.</small></div></div>`;
+                `<div class="page-title"><div><h1>⚙️ الإعدادات</h1></div></div><div class="card"><div class="empty">⚙️ سيتم إضافة إعدادات النظام قريباً</div></div>`;
         }
 
-        // ============================================================
-        // PROFILE
-        // ============================================================
         async function renderProfile() {
             content.innerHTML = `
-                <div class="page-title"><div><h1>👤 ملفي الشخصي</h1><p>بيانات حسابك</p></div></div>
+                <div class="page-title"><div><h1>👤 ملفي</h1></div></div>
                 <div class="card">
-                    <div style="display:flex;gap:20px;align-items:center;margin-bottom:20px;">
-                        <div class="avatar" style="width:70px;height:70px;font-size:30px;">${(currentUserData?.name || currentUser.email || "M")[0].toUpperCase()}</div>
-                        <div><h2 style="margin-bottom:5px;">${esc(currentUserData?.name || "غير محدد")}</h2><p style="color:var(--muted);">${esc(currentUser.email)}</p><p><span class="badge blue">${esc(currentRole || "member")}</span></p></div>
+                    <div style="display:flex;gap:20px;align-items:center;margin-bottom:24px;">
+                        <div class="avatar" style="width:70px;height:70px;font-size:32px;">${(currentUserData?.name||"M")[0]}</div>
+                        <div><h2>${esc(currentUserData?.name||"غير محدد")}</h2><p style="color:var(--muted);">${esc(currentUser.email)}</p><span class="badge blue">${esc(currentRole)}</span></div>
                     </div>
-                    <div class="grid grid-2"><div class="field"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name || "")}"></div><div class="field"><label>البريد</label><input value="${esc(currentUser.email)}" disabled></div></div>
-                    <button class="btn" onclick="updateProfile()">💾 حفظ التغييرات</button>
+                    <div class="field"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name||"")}"></div>
+                    <button class="btn" onclick="updateProfile()">💾 تحديث</button>
                 </div>
             `;
         }
@@ -1790,15 +1865,29 @@
             await updateDoc(doc(db, "users", currentUser.uid), { name });
             currentUserData.name = name;
             $("topName").textContent = name;
-            toast("تم تحديث الملف");
+            toast("تم التحديث");
             renderProfile();
         };
 
-        window.openQuickActions = function() {
-            toast("اختر زراً من الاختصارات أدناه");
+        window.openQuickActions = function() { toast("اختر زراً من الاختصارات"); };
+
+        // ============================================================
+        // LEAD FILTER
+        // ============================================================
+        window.filterLeadStatus = function(value) {
+            document.querySelectorAll("#leadTable tbody tr").forEach(row => {
+                if (!value) { row.style.display = ""; return; }
+                row.style.display = row.textContent.includes(statusText(value)) ? "" : "none";
+            });
         };
 
-        console.log("🚀 MINA PROJECTS CRM loaded successfully!");
+        function statusText(s) {
+            const x = { new: "جديد", contacted: "تم التواصل", qualified: "مؤهل", negotiation: "تفاوض", won: "مربوحة",
+                lost: "خاسرة" };
+            return x[s] || s;
+        }
+
+        console.log("🚀 MINA PRO CRM loaded successfully!");
     </script>
 </body>
 </html>
