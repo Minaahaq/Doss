@@ -685,8 +685,7 @@
         // IMPORTS
         // ============================================================
         import { initializeApp } from "firebase/app";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from "firebase/firestore";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "firebase/auth";        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp } from "firebase/firestore";
         import { getFunctions, httpsCallable } from "firebase/functions";
 
         // ============================================================
@@ -703,10 +702,11 @@ const firebaseConfig = {
   measurementId: "G-4XPCD5L40F"
 };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const functions = getFunctions(app, "us-central1");
+       const app = initializeApp(firebaseConfig);
+       const auth = getAuth(app);
+       const db = getFirestore(app);
+       const secondaryApp = initializeApp(firebaseConfig, "secondary");
+       const secondaryAuth = getAuth(secondaryApp);
 
         // ============================================================
         // STATE
@@ -1608,8 +1608,21 @@ const firebaseConfig = {
             if (!password || password.length < 6) { toast('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
 
             try {
-                const createUser = httpsCallable(functions, 'createUser');
-                const result = await createUser({ email, password, name, role, commissionRate, status });
+                const result = await createUserWithEmailAndPassword(
+    secondaryAuth,
+    email,
+    password
+);
+
+await addDoc(collection(db, 'users'), {
+    uid: result.user.uid,
+    name,
+    email,
+    role,
+    commissionRate,
+    status,
+    createdAt: serverTimestamp()
+});
                 resultEl.textContent = '✅ تم إنشاء الحساب بنجاح!';
                 toast('تم إضافة العضو الجديد');
                 closeModal();
