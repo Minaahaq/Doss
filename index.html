@@ -2,8 +2,14 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>MINA KING • CRM</title>
+    <meta name="theme-color" content="#080c14">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MINA KING">
+    <link rel="manifest" href="manifest.webmanifest">
     <!-- خط فخم -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
@@ -708,6 +714,277 @@
             background: var(--bg-surface);
         }
 
+
+        /* ==========================================================
+           NATIVE APP UI — MOBILE / TABLET
+           ========================================================== */
+        html {
+            background: var(--bg-primary);
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body {
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        button { cursor: pointer; touch-action: manipulation; }
+
+        #app {
+            width: 100%;
+            max-width: 1180px;
+            min-height: 100dvh;
+            margin: 0 auto;
+            padding: 18px 22px calc(110px + env(safe-area-inset-bottom));
+        }
+
+        .topbar {
+            position: sticky;
+            top: max(10px, env(safe-area-inset-top));
+            z-index: 40;
+            min-height: 62px;
+            margin-bottom: 22px;
+            padding: 8px 12px;
+            border-radius: 22px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-surface-light);
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: transform .18s ease, background .18s ease;
+        }
+
+        .icon-btn:active { transform: scale(.94); }
+
+        .page-title {
+            margin: 4px 2px 18px;
+            font-size: clamp(22px, 3vw, 32px);
+            line-height: 1.2;
+            letter-spacing: -.4px;
+        }
+
+        .card {
+            border-radius: 22px;
+            padding: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 16px;
+        }
+
+        table { min-width: 720px; }
+
+        .bottom-nav {
+            position: fixed;
+            z-index: 90;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: max(10px, env(safe-area-inset-bottom));
+            width: min(calc(100% - 20px), 760px);
+            padding: 7px;
+            border-radius: 22px;
+            background: rgba(10, 15, 27, .88);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            box-shadow: 0 16px 50px rgba(0,0,0,.45);
+        }
+
+        .nav-item {
+            min-height: 52px;
+            border-radius: 16px;
+            transition: background .18s ease, transform .18s ease;
+        }
+
+        .nav-item:active { transform: scale(.96); }
+
+        .modal {
+            align-items: flex-end;
+            padding: 10px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+        }
+
+        .modal-content {
+            width: min(680px, 100%);
+            max-width: 680px;
+            max-height: min(88dvh, 760px);
+            border-radius: 26px 26px 18px 18px;
+            padding: 22px 18px calc(20px + env(safe-area-inset-bottom));
+        }
+
+        .modal-content::before {
+            content: "";
+            display: block;
+            width: 42px;
+            height: 4px;
+            margin: -6px auto 16px;
+            border-radius: 99px;
+            background: var(--border-subtle);
+        }
+
+        .field input, .field select, .field textarea {
+            min-height: 50px;
+            font-size: 16px;
+        }
+
+        .btn { min-height: 48px; }
+
+        @media (max-width: 700px) {
+            body { padding-bottom: 0; }
+
+            #app {
+                max-width: 100%;
+                padding: 12px 10px calc(100px + env(safe-area-inset-bottom));
+            }
+
+            .topbar {
+                top: 8px;
+                margin-bottom: 18px;
+                border-radius: 20px;
+            }
+
+            .user-name {
+                max-width: 150px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .page-title { font-size: 23px; margin-bottom: 14px; }
+            .card { padding: 12px; border-radius: 20px; }
+
+            /* الجداول تظل جداول — بدون تحويلها إلى Cards */
+            .table-wrap {
+                overflow-x: auto;
+                overflow-y: hidden;
+                margin-inline: -2px;
+                border-radius: 16px;
+                -webkit-overflow-scrolling: touch;
+                overscroll-behavior-x: contain;
+                scrollbar-width: thin;
+            }
+
+            table {
+                width: max-content;
+                min-width: 680px;
+                border-collapse: separate;
+                border-spacing: 0;
+                table-layout: auto;
+            }
+
+            table thead { display: table-header-group; }
+            table tbody { display: table-row-group; }
+            table tr { display: table-row; }
+            table th, table td {
+                display: table-cell;
+                white-space: nowrap;
+                min-height: 0;
+                padding: 12px 13px;
+                border-bottom: 1px solid var(--border-subtle);
+                text-align: right;
+                vertical-align: middle;
+            }
+
+            table th {
+                position: sticky;
+                top: 0;
+                z-index: 3;
+                font-size: 11px;
+                letter-spacing: .2px;
+                background: var(--bg-surface);
+            }
+
+            table tbody tr {
+                background: var(--bg-surface-light);
+                transition: background .15s ease;
+            }
+
+            table tbody tr:active { background: var(--bg-surface); }
+
+            /* تثبيت أول عمود لسهولة قراءة الجدول أثناء السحب */
+            table th:first-child,
+            table td:first-child {
+                position: sticky;
+                right: 0;
+                z-index: 2;
+                background: var(--bg-surface-light);
+                box-shadow: -7px 0 12px rgba(0,0,0,.10);
+            }
+
+            table th:first-child {
+                z-index: 5;
+                background: var(--bg-surface);
+            }
+
+            table td::before { content: none !important; display: none !important; }
+            table td:last-child { border-top: 0 !important; justify-content: initial; }
+            table td[colspan] { display: table-cell; text-align: center; }
+
+            .actions { justify-content: flex-end; flex-wrap: nowrap; }
+
+            .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+            .bottom-nav {
+                width: calc(100% - 16px);
+                bottom: max(8px, env(safe-area-inset-bottom));
+                border-radius: 20px;
+                overflow-x: auto;
+                display: flex;
+                scrollbar-width: none;
+            }
+
+            .bottom-nav::-webkit-scrollbar { display: none; }
+
+            .nav-item {
+                flex: 0 0 74px;
+                min-width: 74px;
+                padding: 5px 6px;
+                font-size: 10px;
+            }
+
+            .nav-item .nav-icon { font-size: 19px; }
+        }
+
+        @media (min-width: 701px) and (max-width: 1100px) {
+            #app { padding-left: 18px; padding-right: 18px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+
         /* ========================================================== */
         /* RESPONSIVE TWEAKS */
         /* ========================================================== */
@@ -810,6 +1087,37 @@
                 font-size: 18px;
             }
         }
+
+        /* ========================================================== */
+        /* V5 APP EXPERIENCE */
+        /* ========================================================== */
+        .app-utility-bar{display:flex;align-items:center;gap:8px;margin:-8px 0 16px;position:sticky;top:74px;z-index:35;}
+        .quick-add,.global-search-btn,.install-btn{border:1px solid var(--border-subtle);background:var(--bg-surface);color:var(--text-primary);border-radius:16px;min-height:44px;padding:8px 13px;font-weight:800;display:inline-flex;align-items:center;gap:7px;box-shadow:0 6px 20px rgba(0,0,0,.12);}
+        .quick-add{background:linear-gradient(135deg,var(--color-purple),var(--color-blue));color:#fff;border:0;}
+        .network-status{font-size:11px;color:var(--color-emerald);margin-inline-start:auto;font-weight:800;white-space:nowrap;}
+        .network-status.offline{color:var(--color-red);}
+        .search-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(14px);z-index:300;display:none;padding:14px;}
+        .search-overlay.show{display:flex;align-items:flex-start;justify-content:center;}
+        .search-panel{width:min(720px,100%);margin-top:8vh;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:26px;padding:18px;box-shadow:0 30px 90px rgba(0,0,0,.55);max-height:82vh;overflow:auto;}
+        .search-input{width:100%;min-height:54px;border:1px solid var(--border-subtle);border-radius:17px;background:var(--bg-primary);color:var(--text-primary);padding:12px 16px;font-size:17px;outline:none;}
+        .search-result{padding:13px;border:1px solid var(--border-subtle);border-radius:16px;margin-top:9px;background:var(--bg-surface-light);cursor:pointer;}
+        .search-result:active{transform:scale(.99);}
+        .result-type{font-size:10px;color:var(--color-gold);font-weight:900;text-transform:uppercase;}
+        .quick-sheet{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+        .quick-sheet button{min-height:70px;border:1px solid var(--border-subtle);border-radius:18px;background:var(--bg-surface-light);color:var(--text-primary);font-weight:800;font-size:14px;}
+        .install-btn{color:var(--color-gold);}
+        .offline-banner{display:none;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);color:#fecaca;border-radius:14px;padding:10px 12px;margin-bottom:12px;font-size:12px;font-weight:800;}
+        .offline-banner.show{display:block;}
+        .profile-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+        .profile-metric{background:var(--bg-surface-light);border:1px solid var(--border-subtle);border-radius:17px;padding:13px;text-align:center;}
+        .profile-metric b{display:block;font-size:20px;}
+        .profile-metric span{font-size:10px;color:var(--text-muted);font-weight:800;}
+        .due-overdue{color:var(--color-red)!important;font-weight:900;}
+        .invoice-print{display:none;}
+        @media print{
+            body>*:not(#invoicePrint){display:none!important}.invoice-print{display:block!important;color:#111;background:#fff;padding:30px;font-family:Arial,sans-serif}.invoice-print h1{font-size:28px}.invoice-print table{width:100%;border-collapse:collapse;margin-top:20px}.invoice-print th,.invoice-print td{border:1px solid #ddd;padding:10px;color:#111!important;background:#fff!important}.invoice-print .invoice-total{font-size:22px;font-weight:900;margin-top:20px}
+        }
+        @media(max-width:700px){.app-utility-bar{top:68px;overflow:auto;scrollbar-width:none}.app-utility-bar::-webkit-scrollbar{display:none}.quick-add span,.global-search-btn span{display:none}.quick-add,.global-search-btn,.install-btn{min-width:44px;justify-content:center;padding:8px 12px}.profile-metrics{grid-template-columns:repeat(2,1fr)}.network-status{font-size:10px}.search-panel{margin-top:3vh;border-radius:22px}.quick-sheet{grid-template-columns:repeat(2,1fr)}}
     </style>
 </head>
 <body>
@@ -857,6 +1165,15 @@
             </div>
         </div>
 
+        <!-- App utilities -->
+        <div class="app-utility-bar">
+            <button class="quick-add" onclick="openQuickActions()">＋ <span>إضافة</span></button>
+            <button class="global-search-btn" onclick="openGlobalSearch()">⌕ <span>بحث شامل</span></button>
+            <span class="network-status" id="networkStatus">● متصل</span>
+            <button class="install-btn hidden" id="installBtn" onclick="installApp()">📲 تثبيت</button>
+        </div>
+        <div id="offlineBanner" class="offline-banner">⚠️ أنت تعمل بدون إنترنت. البيانات المحفوظة محليًا متاحة للعرض، وأي تعديل يحتاج عودة الاتصال.</div>
+
         <!-- Content -->
         <div id="content"></div>
 
@@ -877,6 +1194,15 @@
         </div>
     </div>
 
+    <div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeGlobalSearch()">
+        <div class="search-panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;"><strong style="font-size:20px;">🔎 البحث الشامل</strong><button class="modal-close" onclick="closeGlobalSearch()">✕</button></div>
+            <input id="globalSearchInput" class="search-input" placeholder="ابحث عن عميل، Lead، صفقة، مندوب، مشروع..." oninput="runGlobalSearch(this.value)">
+            <div id="globalSearchResults"><div class="empty-state">اكتب كلمة للبحث</div></div>
+        </div>
+    </div>
+    <div id="invoicePrint" class="invoice-print"></div>
+
     <!-- TOAST -->
     <div id="toast" class="toast">✅ تم</div>
 
@@ -889,7 +1215,7 @@
         // ============================================================
         import { initializeApp } from "firebase/app";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "firebase/auth";
-        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc, query, where, serverTimestamp, onSnapshot, orderBy } from "firebase/firestore";
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, query, where, serverTimestamp, onSnapshot, orderBy } from "firebase/firestore";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDsJXNa6EYenn2f5mfoNQVEDxHhCH-XGAo",
@@ -1138,14 +1464,29 @@
             }
             currentUser = user;
             try {
-                const snap = await getDoc(doc(db, 'users', user.uid));
+                let snap = await getDoc(doc(db, 'users', user.uid));
+
+                // الحسابات القديمة قد يكون Document ID لها تلقائيًا،
+                // لذلك نبحث أيضًا باستخدام حقل uid المخزن داخل الوثيقة.
                 if (!snap.exists()) {
-                    toast('الحساب غير مسجل');
+                    const userQuery = query(
+                        collection(db, 'users'),
+                        where('uid', '==', user.uid)
+                    );
+                    const userSnap = await getDocs(userQuery);
+                    if (!userSnap.empty) {
+                        snap = userSnap.docs[0];
+                    }
+                }
+
+                if (!snap.exists()) {
+                    toast('الحساب غير مسجل في بيانات النظام');
                     await signOut(auth);
                     return;
                 }
 
                 currentUserData = snap.data();
+                currentUserData._docId = snap.id;
             } catch (e) {
                 console.error('User profile load error:', e);
                 toast('تعذر تحميل بيانات الحساب', '⚠️');
@@ -1184,6 +1525,47 @@
         }
 
         // ============================================================
+        // AUDIT LOG — تسجيل كل حركة مهمة داخل النظام
+        // ============================================================
+        async function logActivity(action, entity, entityId = '', details = {}) {
+            try {
+                await addDoc(collection(db, 'activityLogs'), {
+                    action,
+                    entity,
+                    entityId: entityId || '',
+                    actorId: currentUser?.uid || '',
+                    actorName: currentUserData?.name || currentUser?.email || 'مستخدم',
+                    actorEmail: currentUser?.email || '',
+                    details,
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) {
+                // لا نوقف العملية الأساسية إذا فشل تسجيل السجل.
+                console.warn('Audit log failed:', e);
+            }
+        }
+
+        function activityLabel(action, entity) {
+            const map = {
+                create: 'أضاف', update: 'عدّل', delete: 'حذف', approve: 'اعتمد',
+                pay: 'سجّل دفع', login: 'سجّل دخول', logout: 'سجّل خروج'
+            };
+            const entities = {
+                lead: 'Lead', client: 'عميل', deal: 'صفقة', project: 'مشروع',
+                user: 'عضو', commission: 'عمولة', task: 'مهمة'
+            };
+            return `${map[action] || action} ${entities[entity] || entity}`;
+        }
+
+        function activityDateValue(ts) {
+            if (!ts) return 0;
+            if (typeof ts.toMillis === 'function') return ts.toMillis();
+            if (typeof ts.toDate === 'function') return ts.toDate().getTime();
+            if (ts instanceof Date) return ts.getTime();
+            return Number(ts) || 0;
+        }
+
+        // ============================================================
         // NAVIGATION
         // ============================================================
         function getNavItems() {
@@ -1203,6 +1585,8 @@
                     { id: 'projects', icon: '📦', label: 'المشاريع' },
                     { id: 'deals', icon: '💎', label: 'الصفقات' },
                     { id: 'commissions', icon: '💰', label: 'العمولات' },
+                    { id: 'reports', icon: '📊', label: 'التقارير' },
+                    { id: 'activity', icon: '🕘', label: 'سجل النشاط' },
                     { id: 'team', icon: '👨‍💼', label: 'الفريق' },
                     { id: 'tasks', icon: '📋', label: 'المهام' },
                     { id: 'notifications', icon: '🔔', label: 'إشعارات' }
@@ -1231,6 +1615,9 @@
                 </button>
             `).join('');
         }
+
+        window.renderReports = renderReports;
+        window.renderActivityLog = renderActivityLog;
 
         window.navigate = navigate;
 
@@ -1269,6 +1656,12 @@
                         break;
                     case 'commissions':
                         await renderCommissions();
+                        break;
+                    case 'reports':
+                        await renderReports();
+                        break;
+                    case 'activity':
+                        await renderActivityLog();
                         break;
                     case 'team':
                         await renderTeam();
@@ -1331,7 +1724,7 @@
                     won++;
                     const amt = Number(x.finalPrice || 0);
                     revenue += amt;
-                    const m = x.memberName || 'غير معين';
+                    const m = x.createdByName || x.memberName || 'غير معين';
                     perf[m] = (perf[m] || 0) + amt;
                 }
             });
@@ -1443,7 +1836,16 @@
             let rows = '';
             snap.forEach(d => {
                 const x = d.data();
-                rows += `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.source||'-')}</td><td>${statusBadge(x.status)}</td><td>${esc(x.assignedName||'-')}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn btn-small btn-secondary" onclick="editLead('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteLead('${d.id}')">🗑</button></div></td></tr>`;
+                const creator = x.createdByName || x.assignedName || '-';
+                rows += `<tr>
+                    <td data-label="الاسم"><strong>${esc(x.name)}</strong></td>
+                    <td data-label="الهاتف">${esc(x.phone)}</td>
+                    <td data-label="المصدر">${esc(x.source||'-')}</td>
+                    <td data-label="الحالة">${statusBadge(x.status)}</td>
+                    <td data-label="أضافه">${esc(creator)}</td>
+                    <td data-label="التاريخ">${formatDate(x.createdAt)}</td>
+                    <td data-label="إجراءات"><div class="actions"><button class="btn btn-small btn-secondary" onclick="editLead('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteLead('${d.id}')">🗑</button></div></td>
+                </tr>`;
             });
             content.innerHTML = `
                 <div class="page-title">🔥 Leads</div>
@@ -1452,7 +1854,7 @@
                         <input class="search" placeholder="🔍 بحث..." oninput="filterTable('leadTable',this.value)" style="flex:1;padding:10px 14px;border:1px solid var(--border-subtle);border-radius:40px;background:var(--bg-primary);color:var(--text-primary);">
                         <button class="btn btn-small" onclick="openLeadModal()">+ جديد</button>
                     </div>
-                    <div class="table-wrap"><table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد Leads</div></td></tr>'}</tbody></table></div>
+                    <div class="table-wrap"><table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>أضافه</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد Leads</div></td></tr>'}</tbody></table></div>
                 </div>
             `;
         }
@@ -1478,9 +1880,22 @@
             };
             if (!data.phone) { toast('الهاتف مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, 'leads', id), data);
-                else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, 'leads'), data); }
+                if (id) {
+                    data.updatedById = currentUser.uid;
+                    data.updatedByName = currentUserData?.name || currentUser.email || '';
+                    data.updatedAt = serverTimestamp();
+                    delete data.assignedTo;
+                    delete data.assignedName;
+                    await updateDoc(doc(db, 'leads', id), data);
+                    await logActivity('update', 'lead', id, { name: data.name, status: data.status });
+                } else {
+                    data.createdAt = serverTimestamp();
+                    data.createdById = currentUser.uid;
+                    data.createdByName = currentUserData?.name || currentUser.email || '';
+                    data.createdByEmail = currentUser.email || '';
+                    const ref = await addDoc(collection(db, 'leads'), data);
+                    await logActivity('create', 'lead', ref.id, { name: data.name, phone: data.phone });
+                }
                 toast('تم الحفظ');
                 closeModal();
                 renderLeads();
@@ -1489,6 +1904,7 @@
         window.editLead = async function(id) { const s = await getDoc(doc(db, 'leads', id)); if (s.exists()) openLeadModal(
                 id, s.data()); };
         window.deleteLead = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'leads', id));
+            await logActivity('delete', 'lead', id);
             toast('تم الحذف');
             renderLeads(); };
 
@@ -1501,7 +1917,15 @@
             snap.forEach(d => {
                 const x = d.data();
                 rows +=
-                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.phone)}</td><td>${esc(x.email||'-')}</td><td>${esc(x.project||'-')}</td><td>${esc(x.memberName||'-')}</td><td>${formatDate(x.createdAt)}</td><td><div class="actions"><button class="btn btn-small btn-secondary" onclick="editClient('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteClient('${d.id}')">🗑</button></div></td></tr>`;
+                    `<tr>
+                        <td data-label="الاسم"><strong>${esc(x.name)}</strong></td>
+                        <td data-label="الهاتف">${esc(x.phone)}</td>
+                        <td data-label="البريد">${esc(x.email||'-')}</td>
+                        <td data-label="المشروع">${esc(x.project||'-')}</td>
+                        <td data-label="أضافه">${esc(x.createdByName || x.memberName || '-')}</td>
+                        <td data-label="التاريخ">${formatDate(x.createdAt)}</td>
+                        <td data-label="إجراءات"><div class="actions"><button class="btn btn-small btn-secondary" onclick="editClient('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteClient('${d.id}')">🗑</button></div></td>
+                    </tr>`;
             });
             content.innerHTML = `
                 <div class="page-title">🤝 العملاء</div>
@@ -1510,7 +1934,7 @@
                         <input class="search" placeholder="🔍 بحث..." oninput="filterTable('clientsTable',this.value)" style="flex:1;padding:10px 14px;border:1px solid var(--border-subtle);border-radius:40px;background:var(--bg-primary);color:var(--text-primary);">
                         <button class="btn btn-small" onclick="openClientModal()">+ عميل</button>
                     </div>
-                    <div class="table-wrap"><table id="clientsTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>المسؤول</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا يوجد عملاء</div></td></tr>'}</tbody></table></div>
+                    <div class="table-wrap"><table id="clientsTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>أضافه</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا يوجد عملاء</div></td></tr>'}</tbody></table></div>
                 </div>
             `;
         }
@@ -1534,9 +1958,22 @@
             };
             if (!data.phone) { toast('الهاتف مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, 'clients', id), data);
-                else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, 'clients'), data); }
+                if (id) {
+                    data.updatedById = currentUser.uid;
+                    data.updatedByName = currentUserData?.name || currentUser.email || '';
+                    data.updatedAt = serverTimestamp();
+                    delete data.memberId;
+                    delete data.memberName;
+                    await updateDoc(doc(db, 'clients', id), data);
+                    await logActivity('update', 'client', id, { name: data.name, phone: data.phone });
+                } else {
+                    data.createdAt = serverTimestamp();
+                    data.createdById = currentUser.uid;
+                    data.createdByName = currentUserData?.name || currentUser.email || '';
+                    data.createdByEmail = currentUser.email || '';
+                    const ref = await addDoc(collection(db, 'clients'), data);
+                    await logActivity('create', 'client', ref.id, { name: data.name, phone: data.phone });
+                }
                 toast('تم الحفظ');
                 closeModal();
                 renderClients();
@@ -1545,6 +1982,7 @@
         window.editClient = async function(id) { const s = await getDoc(doc(db, 'clients', id)); if (s.exists())
                 openClientModal(id, s.data()); };
         window.deleteClient = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'clients', id));
+            await logActivity('delete', 'client', id);
             toast('تم الحذف');
             renderClients(); };
 
@@ -1588,9 +2026,14 @@
                 commissionRate: Number($('projectCommission').value || 0), status: 'active' };
             if (!data.name) { toast('الاسم مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, 'projects', id), data);
-                else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, 'projects'), data); }
+                if (id) {
+                    await updateDoc(doc(db, 'projects', id), data);
+                    await logActivity('update', 'project', id, { name: data.name, price: data.price });
+                } else {
+                    data.createdAt = serverTimestamp();
+                    const ref = await addDoc(collection(db, 'projects'), data);
+                    await logActivity('create', 'project', ref.id, { name: data.name, price: data.price });
+                }
                 toast('تم الحفظ');
                 closeModal();
                 renderProjects();
@@ -1599,6 +2042,7 @@
         window.editProject = async function(id) { const s = await getDoc(doc(db, 'projects', id)); if (s.exists())
                 openProjectModal(id, s.data()); };
         window.deleteProject = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'projects', id));
+            await logActivity('delete', 'project', id);
             toast('تم الحذف');
             renderProjects(); };
 
@@ -1611,7 +2055,15 @@
             snap.forEach(d => {
                 const x = d.data();
                 rows +=
-                    `<tr><td><strong>${esc(x.clientName)}</strong></td><td>${esc(x.memberName||'-')}</td><td style="color:var(--color-emerald);font-weight:800;">${money(x.finalPrice)}</td><td>${x.commissionRate||0}%</td><td style="color:var(--color-gold);">${money(x.commissionAmount)}</td><td>${statusBadge(x.status)}</td><td><button class="btn btn-small btn-secondary" onclick="editDeal('${d.id}')">✏️</button></td></tr>`;
+                    `<tr>
+                        <td data-label="العميل"><strong>${esc(x.clientName)}</strong></td>
+                        <td data-label="باع بواسطة"><strong>${esc(x.createdByName || x.memberName || '-')}</strong></td>
+                        <td data-label="السعر" style="color:var(--color-emerald);font-weight:800;">${money(x.finalPrice)}</td>
+                        <td data-label="العمولة">${x.commissionRate||0}%</td>
+                        <td data-label="قيمة العمولة" style="color:var(--color-gold);">${money(x.commissionAmount)}</td>
+                        <td data-label="الحالة">${statusBadge(x.status)}</td>
+                        <td data-label="إجراءات"><button class="btn btn-small btn-secondary" onclick="editDeal('${d.id}')">✏️</button><button class="btn btn-small btn-gold" onclick="printInvoice('${d.id}')">🧾</button></td>
+                    </tr>`;
             });
             content.innerHTML = `
                 <div class="page-title">💎 الصفقات</div>
@@ -1619,7 +2071,7 @@
                     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
                         <button class="btn btn-small" onclick="openDealModal()">+ صفقة</button>
                     </div>
-                    <div class="table-wrap"><table><thead><tr><th>العميل</th><th>المسؤول</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد صفقات</div></td></tr>'}</tbody></table></div>
+                    <div class="table-wrap"><table><thead><tr><th>العميل</th><th>باع بواسطة</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد صفقات</div></td></tr>'}</tbody></table></div>
                 </div>
             `;
         }
@@ -1648,9 +2100,22 @@
             };
             if (!data.clientName) { toast('اسم العميل مطلوب'); return; }
             try {
-                if (id) await updateDoc(doc(db, 'deals', id), data);
-                else { data.createdAt = serverTimestamp();
-                    await addDoc(collection(db, 'deals'), data); }
+                if (id) {
+                    delete data.memberId;
+                    delete data.memberName;
+                    data.updatedById = currentUser.uid;
+                    data.updatedByName = currentUserData?.name || currentUser.email || '';
+                    data.updatedAt = serverTimestamp();
+                    await updateDoc(doc(db, 'deals', id), data);
+                    await logActivity('update', 'deal', id, { clientName: data.clientName, finalPrice: data.finalPrice, status: data.status });
+                } else {
+                    data.createdAt = serverTimestamp();
+                    data.createdById = currentUser.uid;
+                    data.createdByName = currentUserData?.name || currentUser.email || '';
+                    data.createdByEmail = currentUser.email || '';
+                    const ref = await addDoc(collection(db, 'deals'), data);
+                    await logActivity('create', 'deal', ref.id, { clientName: data.clientName, finalPrice: data.finalPrice, status: data.status, seller: data.createdByName });
+                }
                 toast('تم الحفظ');
                 closeModal();
                 renderDeals();
@@ -1658,6 +2123,153 @@
         };
         window.editDeal = async function(id) { const s = await getDoc(doc(db, 'deals', id)); if (s.exists()) openDealModal(
                 id, s.data()); };
+
+        // ============================================================
+        // REPORTS — تقارير الإدارة والمندوبين
+        // ============================================================
+        async function renderReports(period = 'all') {
+            if (currentRole !== 'admin' && currentRole !== 'manager') {
+                content.innerHTML = `<div class="card"><div class="empty-state">⛔ التقارير متاحة للإدارة فقط</div></div>`;
+                return;
+            }
+
+            const [dealsSnap, clientsSnap, leadsSnap, usersSnap] = await Promise.all([
+                getDocs(collection(db, 'deals')),
+                getDocs(collection(db, 'clients')),
+                getDocs(collection(db, 'leads')),
+                getDocs(collection(db, 'users'))
+            ]);
+
+            const now = Date.now();
+            const periodMs = {
+                today: 86400000,
+                week: 7 * 86400000,
+                month: 30 * 86400000,
+                year: 365 * 86400000
+            }[period] || Infinity;
+            const inPeriod = x => period === 'all' || (now - activityDateValue(x.createdAt) <= periodMs);
+
+            const reps = {};
+            usersSnap.forEach(d => {
+                const u = d.data();
+                if (u.uid) reps[u.uid] = { name: u.name || u.email || 'بدون اسم', email: u.email || '', deals: 0, sales: 0, commissions: 0, clients: 0, leads: 0 };
+            });
+
+            let won = 0, sales = 0, commissions = 0, clients = 0, leads = 0, allDeals = 0;
+            dealsSnap.forEach(d => {
+                const x = d.data();
+                if (!inPeriod(x)) return;
+                allDeals++;
+                const uid = x.createdById || x.memberId || '';
+                const name = x.createdByName || x.memberName || 'غير معروف';
+                if (!reps[uid]) reps[uid] = { name, email: '', deals: 0, sales: 0, commissions: 0, clients: 0, leads: 0 };
+                reps[uid].deals++;
+                if (x.status === 'won') {
+                    won++;
+                    const amount = Number(x.finalPrice || 0);
+                    const comm = Number(x.commissionAmount || 0);
+                    sales += amount;
+                    commissions += comm;
+                    reps[uid].sales += amount;
+                    reps[uid].commissions += comm;
+                }
+            });
+
+            clientsSnap.forEach(d => {
+                const x = d.data();
+                if (!inPeriod(x)) return;
+                clients++;
+                const uid = x.createdById || x.memberId || '';
+                const name = x.createdByName || x.memberName || 'غير معروف';
+                if (!reps[uid]) reps[uid] = { name, email: '', deals: 0, sales: 0, commissions: 0, clients: 0, leads: 0 };
+                reps[uid].clients++;
+            });
+
+            leadsSnap.forEach(d => {
+                const x = d.data();
+                if (!inPeriod(x)) return;
+                leads++;
+                const uid = x.createdById || x.assignedTo || '';
+                const name = x.createdByName || x.assignedName || 'غير معروف';
+                if (!reps[uid]) reps[uid] = { name, email: '', deals: 0, sales: 0, commissions: 0, clients: 0, leads: 0 };
+                reps[uid].leads++;
+            });
+
+            const conversion = leads ? ((won / leads) * 100).toFixed(1) : '0.0';
+            const avgDeal = won ? sales / won : 0;
+            const sorted = Object.values(reps).sort((a,b) => b.sales - a.sales);
+            const periodLabel = { all:'كل الوقت', today:'اليوم', week:'آخر 7 أيام', month:'آخر 30 يوم', year:'آخر سنة' }[period] || 'كل الوقت';
+
+            const rows = sorted.map((r, i) => `<tr>
+                <td>${i + 1}</td>
+                <td><strong>${esc(r.name)}</strong></td>
+                <td>${r.leads}</td>
+                <td>${r.clients}</td>
+                <td>${r.deals}</td>
+                <td style="color:var(--color-emerald);font-weight:800;">${money(r.sales)}</td>
+                <td style="color:var(--color-gold);font-weight:800;">${money(r.commissions)}</td>
+            </tr>`).join('');
+
+            content.innerHTML = `
+                <div class="page-title">📊 التقارير</div>
+                <div class="card">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+                        <div><strong>تقرير أداء الفريق</strong><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">${periodLabel}</div></div>
+                        <select onchange="renderReports(this.value)" style="min-width:145px;padding:10px 12px;border-radius:12px;border:1px solid var(--border-subtle);background:var(--bg-primary);color:var(--text-primary);">
+                            <option value="all" ${period==='all'?'selected':''}>كل الوقت</option>
+                            <option value="today" ${period==='today'?'selected':''}>اليوم</option>
+                            <option value="week" ${period==='week'?'selected':''}>آخر 7 أيام</option>
+                            <option value="month" ${period==='month'?'selected':''}>آخر 30 يوم</option>
+                            <option value="year" ${period==='year'?'selected':''}>آخر سنة</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-number">${won}</div><div class="stat-label">صفقات مربوحة</div></div>
+                    <div class="stat-item"><div class="stat-number">${money(sales)}</div><div class="stat-label">إجمالي المبيعات</div></div>
+                    <div class="stat-item"><div class="stat-number">${money(avgDeal)}</div><div class="stat-label">متوسط الصفقة</div></div>
+                    <div class="stat-item"><div class="stat-number">${conversion}%</div><div class="stat-label">نسبة التحويل</div></div>
+                    <div class="stat-item"><div class="stat-number">${clients}</div><div class="stat-label">عملاء مضافون</div></div>
+                    <div class="stat-item"><div class="stat-number">${leads}</div><div class="stat-label">Leads</div></div>
+                </div>
+                <div class="card">
+                    <div style="font-weight:800;margin-bottom:12px;">🏆 أداء المندوبين</div>
+                    <div class="table-wrap"><table><thead><tr><th>#</th><th>المندوب</th><th>Leads</th><th>عملاء</th><th>صفقات</th><th>المبيعات</th><th>العمولة</th></tr></thead><tbody>${rows || '<tr><td colspan="7"><div class="empty-state">لا توجد بيانات في الفترة المحددة</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // ACTIVITY LOG — من عمل ماذا ومتى؟
+        // ============================================================
+        async function renderActivityLog() {
+            if (currentRole !== 'admin' && currentRole !== 'manager') {
+                content.innerHTML = `<div class="card"><div class="empty-state">⛔ سجل النشاط متاح للإدارة فقط</div></div>`;
+                return;
+            }
+            const snap = await getDocs(collection(db, 'activityLogs'));
+            const items = [];
+            snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+            items.sort((a,b) => activityDateValue(b.createdAt) - activityDateValue(a.createdAt));
+
+            const rows = items.slice(0, 250).map(x => `<tr>
+                <td><strong>${esc(x.actorName || 'مستخدم')}</strong></td>
+                <td>${esc(activityLabel(x.action, x.entity))}</td>
+                <td>${esc(x.details?.name || x.details?.clientName || x.details?.seller || '-')}</td>
+                <td>${formatDate(x.createdAt)}</td>
+            </tr>`).join('');
+
+            content.innerHTML = `
+                <div class="page-title">🕘 سجل النشاط</div>
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+                        <div><strong>كل العمليات المهمة</strong><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">تعرف مين عمل إيه ومتى</div></div>
+                        <span class="badge badge-blue">${items.length} سجل</span>
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>المستخدم</th><th>العملية</th><th>التفاصيل</th><th>التاريخ</th></tr></thead><tbody>${rows || '<tr><td colspan="4"><div class="empty-state">لا توجد عمليات مسجلة بعد</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
 
         // ============================================================
         // COMMISSIONS
@@ -1685,6 +2297,7 @@
             `;
         }
         window.changeComm = async function(id, status) { await updateDoc(doc(db, 'commissions', id), { status });
+            await logActivity(status === 'paid' ? 'pay' : 'approve', 'commission', id, { status });
             toast('تم');
             renderCommissions(); };
 
@@ -1735,6 +2348,7 @@
             if (!name || !email) { toast('الاسم والبريد مطلوبان'); return; }
             if (id) {
                 await updateDoc(doc(db, 'users', id), { name, role, commissionRate });
+                await logActivity('update', 'user', id, { name, role });
                 toast('تم التحديث');
                 closeModal();
                 renderTeam();
@@ -1743,8 +2357,16 @@
             if (!password || password.length < 6) { toast('كلمة المرور 6 أحرف على الأقل'); return; }
             try {
                 const res = await createUserWithEmailAndPassword(secondaryAuth, email, password);
-                await addDoc(collection(db, 'users'), { uid: res.user.uid, name, email, role, commissionRate, status: 'active',
-                    createdAt: serverTimestamp() });
+                await setDoc(doc(db, 'users', res.user.uid), {
+                    uid: res.user.uid,
+                    name,
+                    email,
+                    role,
+                    commissionRate,
+                    status: 'active',
+                    createdAt: serverTimestamp()
+                });
+                await logActivity('create', 'user', res.user.uid, { name, role });
                 toast('تم إنشاء الحساب');
                 closeModal();
                 renderTeam();
@@ -1775,8 +2397,10 @@
                     else act = `<span class="badge badge-emerald">مكتملة</span>`;
                 }
                 const assignedName = usersList.find(u => u.uid === x.assignedToId)?.name || x.assignedTo || '-';
+                const due = x.dueDate ? new Date(x.dueDate) : null;
+                const overdue = due && !['done'].includes(x.status||'') && due.getTime() < Date.now();
                 rows +=
-                    `<tr><td><strong>${esc(x.title)}</strong></td><td>${esc(assignedName)}</td><td>${statusBadge(x.status)}</td><td><span class="badge ${x.priority==='high'?'badge-red':'badge-gold'}">${esc(x.priority||'medium')}</span></td><td>${act}</td></tr>`;
+                    `<tr><td><strong>${esc(x.title)}</strong></td><td>${esc(assignedName)}</td><td>${statusBadge(x.status)}</td><td><span class="badge ${x.priority==='high'?'badge-red':'badge-gold'}">${esc(x.priority||'medium')}</span></td><td class="${overdue?'due-overdue':''}">${due ? due.toLocaleString('ar-EG') : '-'}</td><td>${act}</td></tr>`;
             });
             content.innerHTML = `
                 <div class="page-title">📋 المهام</div>
@@ -1784,7 +2408,7 @@
                     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
                         ${isAdmin ? `<button class="btn btn-small btn-gold" onclick="openTaskModal()">+ مهمة</button>` : ''}
                     </div>
-                    <div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty-state">لا توجد مهام</div></td></tr>'}</tbody></table></div>
+                    <div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th>التسليم</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="6"><div class="empty-state">لا توجد مهام</div></td></tr>'}</tbody></table></div>
                 </div>
             `;
         }
@@ -1819,6 +2443,7 @@
                 <div class="field"><label>المسؤول</label><select id="taskAssignedId">${opts}</select></div>
                 <div class="field"><label>الحالة</label><select id="taskStatus"><option value="todo">جديدة</option><option value="doing">قيد التنفيذ</option><option value="done">مكتملة</option></select></div>
                 <div class="field"><label>الأولوية</label><select id="taskPriority"><option value="low">منخفضة</option><option value="medium" selected>متوسطة</option><option value="high">عالية</option></select></div>
+                 <div class="field"><label>موعد التسليم</label><input id="taskDueDate" type="datetime-local" value="${esc(data.dueDate||'')}"></div>
                 <button class="btn" onclick="saveTask('${id||''}')">💾 حفظ</button>
             `);
         };
@@ -1828,6 +2453,7 @@
             const assignedToId = $('taskAssignedId').value;
             const status = $('taskStatus').value;
             const priority = $('taskPriority').value;
+            const dueDate = $('taskDueDate').value || '';
             if (!title) { toast('عنوان المهمة مطلوب'); return; }
             if (!assignedToId) { toast('اختر عضو مسؤول'); return; }
 
@@ -1838,16 +2464,20 @@
                 assignedTo: assignedUser?.name || '',
                 status,
                 priority,
-                createdBy: currentUser.uid
+                dueDate,
+                createdBy: currentUser.uid,
+                createdByName: currentUserData?.name || currentUser.email || '' 
             };
 
             try {
                 if (id) {
                     await updateDoc(doc(db, 'tasks', id), data);
+                    await logActivity('update', 'task', id, { title, assignedTo: assignedUser?.name || '', dueDate });
                     toast('تم تحديث المهمة');
                 } else {
                     data.createdAt = serverTimestamp();
                     const ref = await addDoc(collection(db, 'tasks'), data);
+                    await logActivity('create', 'task', ref.id, { title, assignedTo: assignedUser?.name || '', dueDate });
                     toast('تم إضافة المهمة');
                     await createNotification(assignedToId, '📋 مهمة جديدة',
                         `تم تعيين مهمة "${title}" لك من قبل ${currentUserData?.name || 'الإدارة'}`, '#tasks');
@@ -1859,6 +2489,7 @@
         window.editTask = async function(id) { const s = await getDoc(doc(db, 'tasks', id)); if (s.exists()) openTaskModal(
                 id, s.data()); };
         window.deleteTask = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'tasks', id));
+            await logActivity('delete', 'task', id);
             toast('تم الحذف');
             renderTasks(); };
 
@@ -1905,30 +2536,139 @@
         // PROFILE
         // ============================================================
         async function renderProfile() {
+            const uid = currentUser.uid;
+            const [clientsSnap, leadsSnap, dealsSnap] = await Promise.all([
+                getDocs(query(collection(db,'clients'), where('createdById','==',uid))),
+                getDocs(query(collection(db,'leads'), where('createdById','==',uid))),
+                getDocs(query(collection(db,'deals'), where('createdById','==',uid)))
+            ]);
+            let sales=0, won=0;
+            dealsSnap.forEach(d=>{const x=d.data(); if(x.status==='won'){won++;sales+=Number(x.finalPrice||0)}});
             content.innerHTML = `
                 <div class="page-title">👤 ملفي</div>
                 <div class="card">
                     <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-                        <div class="avatar" style="width:60px;height:60px;font-size:28px;">${(currentUserData?.name||'M')[0]}</div>
+                        <div class="avatar" style="width:60px;height:60px;font-size:28px;">${esc((currentUserData?.name||'M')[0])}</div>
                         <div><div style="font-weight:800;font-size:20px;color:var(--text-primary);">${esc(currentUserData?.name||'غير محدد')}</div><div style="color:var(--text-muted);">${esc(currentUser.email)}</div><span class="badge badge-gold">${esc(currentRole)}</span></div>
                     </div>
-                    <div class="field"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name||'')}"></div>
+                    <div class="profile-metrics">
+                        <div class="profile-metric"><b>${clientsSnap.size}</b><span>عملاء</span></div>
+                        <div class="profile-metric"><b>${leadsSnap.size}</b><span>Leads</span></div>
+                        <div class="profile-metric"><b>${won}</b><span>صفقات</span></div>
+                        <div class="profile-metric"><b>${money(sales)}</b><span>مبيعات</span></div>
+                    </div>
+                    <div class="field" style="margin-top:18px;"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name||'')}"></div>
                     <button class="btn" onclick="updateProfile()">💾 تحديث</button>
-                </div>
-            `;
+                </div>`;
         }
 
         window.updateProfile = async function() {
             const name = $('profileName').value.trim();
             if (!name) { toast('الاسم مطلوب'); return; }
-            await updateDoc(doc(db, 'users', currentUser.uid), { name });
+            await updateDoc(doc(db, 'users', currentUserData?._docId || currentUser.uid), { name });
             currentUserData.name = name;
+            await logActivity('update','user',currentUserData._docId || currentUser.uid,{name});
             $('topName').textContent = name;
             toast('تم التحديث');
             renderProfile();
         };
 
+
         // ============================================================
+        // V5 — QUICK ACTIONS / GLOBAL SEARCH / INSTALL / OFFLINE
+        // ============================================================
+        function openQuickActions(){
+            showModal('⚡ إضافة سريعة', `<div class="quick-sheet">
+                <button onclick="closeModal();openClientModal()">👤<br>عميل</button>
+                <button onclick="closeModal();openLeadModal()">🔥<br>Lead</button>
+                <button onclick="closeModal();openDealModal()">💰<br>صفقة</button>
+                <button onclick="closeModal();openTaskModal()">📋<br>مهمة</button>
+                <button onclick="closeModal();openProjectModal()">📦<br>مشروع</button>
+                <button onclick="closeModal();navigate('reports')">📊<br>التقارير</button>
+            </div>`);
+        }
+        window.openQuickActions=openQuickActions;
+
+        function openGlobalSearch(){
+            $('searchOverlay').classList.add('show');
+            setTimeout(()=>$('globalSearchInput')?.focus(),50);
+        }
+        function closeGlobalSearch(){ $('searchOverlay').classList.remove('show'); }
+        window.openGlobalSearch=openGlobalSearch; window.closeGlobalSearch=closeGlobalSearch;
+
+        async function runGlobalSearch(term){
+            const box=$('globalSearchResults');
+            term=(term||'').trim().toLowerCase();
+            if(!term){box.innerHTML='<div class="empty-state">اكتب كلمة للبحث</div>';return;}
+            box.innerHTML='<div class="empty-state">⏳ بحث...</div>';
+            const sources=[
+                ['clients','👤 عميل',x=>`${x.name||''} ${x.phone||''} ${x.email||''} ${x.project||''}`, 'clients'],
+                ['leads','🔥 Lead',x=>`${x.name||''} ${x.phone||''} ${x.source||''} ${x.createdByName||''}`, 'leads'],
+                ['deals','💰 صفقة',x=>`${x.clientName||''} ${x.createdByName||x.memberName||''} ${x.finalPrice||''}`, 'deals'],
+                ['projects','📦 مشروع',x=>`${x.name||''} ${x.category||''}`, 'projects'],
+                ['users','👤 مندوب',x=>`${x.name||''} ${x.email||''} ${x.role||''}`, 'team']
+            ];
+            const found=[];
+            for(const [col,label,toText,target] of sources){
+                try{
+                    const snap=await getDocs(collection(db,col));
+                    snap.forEach(d=>{const x=d.data();if(toText(x).toLowerCase().includes(term))found.push({id:d.id,label,target,x});});
+                }catch(e){console.warn(e)}
+            }
+            if(!found.length){box.innerHTML='<div class="empty-state">لا توجد نتائج</div>';return;}
+            box.innerHTML=found.slice(0,40).map(r=>{
+                const title=r.x.name||r.x.clientName||r.x.title||r.x.email||'بدون اسم';
+                const sub=r.x.createdByName||r.x.memberName||r.x.phone||r.x.email||'';
+                return `<div class="search-result" onclick="closeGlobalSearch();navigate('${r.target}')"><div class="result-type">${r.label}</div><strong>${esc(title)}</strong><div style="font-size:12px;color:var(--text-muted);margin-top:3px;">${esc(sub)}</div></div>`;
+            }).join('');
+        }
+        window.runGlobalSearch=runGlobalSearch;
+
+        let deferredInstallPrompt=null;
+        window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;$('installBtn')?.classList.remove('hidden');});
+        async function installApp(){
+            if(!deferredInstallPrompt){toast('التثبيت غير متاح حاليًا');return;}
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt=null;$('installBtn')?.classList.add('hidden');
+        }
+        window.installApp=installApp;
+
+        function updateNetworkStatus(){
+            const el=$('networkStatus'); if(!el)return;
+            const online=navigator.onLine; el.textContent=online?'● متصل':'● بدون إنترنت'; el.classList.toggle('offline',!online);
+            document.body.classList.toggle('is-offline',!online);
+        }
+        window.addEventListener('online',updateNetworkStatus); window.addEventListener('offline',updateNetworkStatus); updateNetworkStatus();
+
+        // Local cache for quick offline viewing of the main lists. Firebase paths remain unchanged.
+        async function cacheCollection(name){
+            try{const snap=await getDocs(collection(db,name));const arr=snap.docs.map(d=>({id:d.id,data:d.data()}));localStorage.setItem('mina-cache-'+name,JSON.stringify(arr));return arr;}catch(e){
+                try{return JSON.parse(localStorage.getItem('mina-cache-'+name)||'[]');}catch{return []}
+            }
+        }
+        async function cachedCollection(name){
+            if(navigator.onLine)return cacheCollection(name);
+            try{return JSON.parse(localStorage.getItem('mina-cache-'+name)||'[]');}catch{return []}
+        }
+
+        // Printable invoice from the existing deals collection.
+        async function printInvoice(id){
+            try{
+                const s=await getDoc(doc(db,'deals',id)); if(!s.exists())return;
+                const x=s.data();
+                const inv=$('invoicePrint');
+                inv.innerHTML=`<h1>MINA KING</h1><p>فاتورة صفقة</p><hr><p><b>العميل:</b> ${esc(x.clientName||'-')}</p><p><b>المندوب:</b> ${esc(x.createdByName||x.memberName||'-')}</p><table><tr><th>البيان</th><th>القيمة</th></tr><tr><td>قيمة الصفقة</td><td>${money(x.finalPrice)}</td></tr><tr><td>نسبة العمولة</td><td>${x.commissionRate||0}%</td></tr><tr><td>قيمة العمولة</td><td>${money(x.commissionAmount||0)}</td></tr><tr><td>الحالة</td><td>${esc(x.status||'-')}</td></tr></table><div class="invoice-total">الإجمالي: ${money(x.finalPrice)}</div><p style="margin-top:30px;font-size:12px">تم إنشاء المستند من MINA KING CRM</p>`;
+                await logActivity('create','deal',id,{invoicePrinted:true,clientName:x.clientName||''});
+                window.print();
+            }catch(e){toast('تعذر إنشاء الفاتورة: '+e.message,'⚠️')}
+        }
+        window.printInvoice=printInvoice;
+
+        // Refresh cached core data when the app becomes active.
+        window.addEventListener('visibilitychange',()=>{if(!document.hidden && currentUser && navigator.onLine){['users','clients','leads','deals','projects','tasks'].forEach(cacheCollection)}});
+
+                // ============================================================
         // THEME
         // ============================================================
         window.toggleTheme = function() {
@@ -1946,7 +2686,10 @@
             console.warn('Theme preference unavailable:', e);
         }
 
-        console.log('👑 MINA KING CRM loaded successfully!');
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('SW:',e)));
+        }
+        console.log('👑 MINA KING CRM V5 loaded successfully!');
     </script>
 </body>
 </html>
