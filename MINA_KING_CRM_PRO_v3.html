@@ -1,0 +1,2297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>MINA KING • CRM</title>
+    <!-- خط فخم -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js">
+    </script>
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js",
+                "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js",
+                "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js"
+            }
+        }
+    </script>
+    <style>
+        /* ========================================================== */
+        /* ROOT & RESET (تصميم ملكي فاخر) */
+        /* ========================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --bg-primary: #080c14;
+            --bg-surface: #111b2e;
+            --bg-surface-light: #1a2844;
+            --bg-elevated: #1f3152;
+            --text-primary: #f0f4ff;
+            --text-secondary: #b0c4de;
+            --text-muted: #6b7f9b;
+            --border-subtle: #233a5c;
+            --color-gold: #f6b83d;
+            --color-gold-dim: #7a5d1e;
+            --color-emerald: #10b981;
+            --color-emerald-dim: #065f46;
+            --color-purple: #8b5cf6;
+            --color-purple-dim: #4c1d95;
+            --color-blue: #3b82f6;
+            --color-red: #ef4444;
+            --shadow-glow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.3);
+            --radius-xl: 32px;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+        }
+
+        html {
+            width: 100%;
+            min-height: 100%;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            font-size: 15px;
+            line-height: 1.6;
+            padding-bottom: calc(80px + env(safe-area-inset-bottom));
+            /* مساحة للشريط السفلي */
+            transition: background 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* الوضع الفاتح (اختياري لكنه يبقى فخم) */
+        body.light {
+            --bg-primary: #f0f4ff;
+            --bg-surface: #ffffff;
+            --bg-surface-light: #f8faff;
+            --bg-elevated: #eef2f9;
+            --text-primary: #0a1a33;
+            --text-secondary: #2a3f5e;
+            --text-muted: #7a8ba3;
+            --border-subtle: #dce3ef;
+            --shadow-glow: 0 8px 32px rgba(0, 20, 50, 0.1);
+            --shadow-glass: 0 4px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-purple);
+            border-radius: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ========================================================== */
+        /* LOGIN (بوابة دخول فاخرة) */
+        /* ========================================================== */
+        #loginScreen {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: radial-gradient(circle at top right, #1a0b2e, #080c14);
+        }
+        .login-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 40px 28px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: var(--shadow-glow);
+            backdrop-filter: blur(10px);
+        }
+        .login-logo {
+            font-size: 36px;
+            font-weight: 900;
+            text-align: center;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+            letter-spacing: -1px;
+        }
+        .login-sub {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .field {
+            margin-bottom: 18px;
+        }
+        .field label {
+            display: block;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+        .field input {
+            width: 100%;
+            min-width: 0;
+            padding: 15px 18px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: 0.3s;
+            outline: none;
+        }
+        .field input:focus {
+            border-color: var(--color-purple);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 15px;
+            border: 0;
+            background: linear-gradient(135deg, var(--color-purple), var(--color-blue));
+            color: #fff;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35);
+            width: 100%;
+            letter-spacing: 0.5px;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secondary {
+            background: var(--bg-surface-light);
+            color: var(--text-primary);
+            box-shadow: none;
+            border: 1px solid var(--border-subtle);
+        }
+        .btn-gold {
+            background: linear-gradient(135deg, var(--color-gold), #d97706);
+            box-shadow: 0 6px 20px rgba(246, 184, 61, 0.3);
+        }
+        .btn-emerald {
+            background: linear-gradient(135deg, var(--color-emerald), #047857);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+        .btn-red {
+            background: linear-gradient(135deg, var(--color-red), #b91c1c);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+        }
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 12px;
+            width: auto;
+            border-radius: 40px;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            box-shadow: none;
+        }
+
+        /* ========================================================== */
+        /* APP SHELL (تطبيق فاخر) */
+        /* ========================================================== */
+        #app {
+            width: 100%;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 16px 16px calc(80px + env(safe-area-inset-bottom));
+            position: relative;
+        }
+
+        /* الشريط العلوي (زجاجي) */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(17, 27, 46, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 60px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-glass);
+        }
+        body.light .topbar {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-gold), var(--color-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+        .user-info {
+            line-height: 1.2;
+        }
+        .user-name {
+            font-weight: 800;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+        .user-role {
+            font-size: 11px;
+            color: var(--color-gold);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: 0.2s;
+            position: relative;
+        }
+        body.light .icon-btn {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: rgba(0, 0, 0, 0.06);
+        }
+        .icon-btn:active {
+            transform: scale(0.90);
+        }
+        .badge-dot {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--color-red);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-primary);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
+        }
+
+        /* الشريط السفلي (زجاجي فاخر) */
+        .bottom-nav {
+            position: fixed;
+            bottom: calc(12px + env(safe-area-inset-bottom));
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 440px;
+            background: rgba(17, 27, 46, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 60px;
+            display: flex;
+            justify-content: space-around;
+            padding: 6px 6px;
+            z-index: 50;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+        }
+        body.light .bottom-nav {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: none;
+            border: 0;
+            padding: 6px 12px;
+            border-radius: 40px;
+            transition: all 0.2s;
+            min-width: 50px;
+        }
+        .nav-item .nav-icon {
+            font-size: 22px;
+            line-height: 1.2;
+        }
+        .nav-item.active {
+            color: var(--color-gold);
+            background: rgba(246, 184, 61, 0.1);
+        }
+        body.light .nav-item.active {
+            background: rgba(139, 92, 246, 0.08);
+            color: var(--color-purple);
+        }
+
+        /* ========================================================== */
+        /* CARDS & CONTENT (فخامة) */
+        /* ========================================================== */
+        .page-title {
+            font-size: 26px;
+            font-weight: 900;
+            margin: 6px 0 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff, var(--text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        body.light .page-title {
+            background: linear-gradient(135deg, #0a1a33, var(--color-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .page-sub {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 18px 16px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-glow);
+            transition: transform 0.2s;
+        }
+        .card:active {
+            transform: scale(0.99);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .card-title {
+            font-weight: 800;
+            font-size: 17px;
+            color: var(--text-primary);
+        }
+        .card-title span {
+            color: var(--color-gold);
+        }
+
+        /* شبكة الإحصائيات الضخمة */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+        .stat-item {
+            background: var(--bg-surface-light);
+            border-radius: var(--radius-md);
+            padding: 18px 14px;
+            text-align: center;
+            border: 1px solid var(--border-subtle);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.05), transparent);
+            pointer-events: none;
+        }
+        .stat-number {
+            font-size: 30px;
+            font-weight: 900;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* الجداول */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            margin-top: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 480px;
+        }
+        th {
+            text-align: right;
+            padding: 12px 12px;
+            background: var(--bg-primary);
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        td {
+            padding: 12px 12px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+        }
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        /* البادجات الفاخرة */
+        .badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            background: var(--bg-surface-light);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+        .badge-gold {
+            background: var(--color-gold-dim);
+            color: var(--color-gold);
+            border-color: var(--color-gold);
+        }
+        .badge-purple {
+            background: var(--color-purple-dim);
+            color: var(--color-purple);
+            border-color: var(--color-purple);
+        }
+        .badge-emerald {
+            background: var(--color-emerald-dim);
+            color: var(--color-emerald);
+            border-color: var(--color-emerald);
+        }
+        .badge-red {
+            background: #4c1d1d;
+            color: var(--color-red);
+            border-color: var(--color-red);
+        }
+        .badge-blue {
+            background: #1a2a5c;
+            color: var(--color-blue);
+            border-color: var(--color-blue);
+        }
+
+        body.light .badge {
+            background: var(--bg-primary);
+        }
+        body.light .badge-gold {
+            background: #fef3c7;
+            color: #b45309;
+            border-color: #f59e0b;
+        }
+        body.light .badge-purple {
+            background: #ede9fe;
+            color: #6d28d9;
+            border-color: #7c3aed;
+        }
+        body.light .badge-emerald {
+            background: #d1fae5;
+            color: #047857;
+            border-color: #10b981;
+        }
+        body.light .badge-red {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #ef4444;
+        }
+        body.light .badge-blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-color: #3b82f6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .empty-state {
+            padding: 30px 10px;
+            text-align: center;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* ========================================================== */
+        /* MODAL (فاخر) */
+        /* ========================================================== */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-xl);
+            padding: 28px 24px;
+            max-width: 480px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: modalFade 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-glow);
+        }
+        @keyframes modalFade {
+            from {
+                opacity: 0;
+                transform: scale(0.92) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ========================================================== */
+        /* TOAST فاخر */
+        /* ========================================================== */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 14px;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-glow);
+            white-space: nowrap;
+            max-width: 90%;
+            backdrop-filter: blur(10px);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ========================================================== */
+        /* INPUTS داخل المودال */
+        /* ========================================================== */
+        .field select,
+        .field textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .field textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .field select:focus,
+        .field textarea:focus {
+            border-color: var(--color-purple);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+        .field select option {
+            background: var(--bg-surface);
+        }
+
+
+        /* ==========================================================
+           NATIVE APP UI — MOBILE / TABLET
+           ========================================================== */
+        html {
+            background: var(--bg-primary);
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body {
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        button { cursor: pointer; touch-action: manipulation; }
+
+        #app {
+            width: 100%;
+            max-width: 1180px;
+            min-height: 100dvh;
+            margin: 0 auto;
+            padding: 18px 22px calc(110px + env(safe-area-inset-bottom));
+        }
+
+        .topbar {
+            position: sticky;
+            top: max(10px, env(safe-area-inset-top));
+            z-index: 40;
+            min-height: 62px;
+            margin-bottom: 22px;
+            padding: 8px 12px;
+            border-radius: 22px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-surface-light);
+            color: var(--text-primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: transform .18s ease, background .18s ease;
+        }
+
+        .icon-btn:active { transform: scale(.94); }
+
+        .page-title {
+            margin: 4px 2px 18px;
+            font-size: clamp(22px, 3vw, 32px);
+            line-height: 1.2;
+            letter-spacing: -.4px;
+        }
+
+        .card {
+            border-radius: 22px;
+            padding: 20px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .table-wrap {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 16px;
+        }
+
+        table { min-width: 720px; }
+
+        .bottom-nav {
+            position: fixed;
+            z-index: 90;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: max(10px, env(safe-area-inset-bottom));
+            width: min(calc(100% - 20px), 760px);
+            padding: 7px;
+            border-radius: 22px;
+            background: rgba(10, 15, 27, .88);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            box-shadow: 0 16px 50px rgba(0,0,0,.45);
+        }
+
+        .nav-item {
+            min-height: 52px;
+            border-radius: 16px;
+            transition: background .18s ease, transform .18s ease;
+        }
+
+        .nav-item:active { transform: scale(.96); }
+
+        .modal {
+            align-items: flex-end;
+            padding: 10px;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
+        }
+
+        .modal-content {
+            width: min(680px, 100%);
+            max-width: 680px;
+            max-height: min(88dvh, 760px);
+            border-radius: 26px 26px 18px 18px;
+            padding: 22px 18px calc(20px + env(safe-area-inset-bottom));
+        }
+
+        .modal-content::before {
+            content: "";
+            display: block;
+            width: 42px;
+            height: 4px;
+            margin: -6px auto 16px;
+            border-radius: 99px;
+            background: var(--border-subtle);
+        }
+
+        .field input, .field select, .field textarea {
+            min-height: 50px;
+            font-size: 16px;
+        }
+
+        .btn { min-height: 48px; }
+
+        @media (max-width: 700px) {
+            body { padding-bottom: 0; }
+
+            #app {
+                max-width: 100%;
+                padding: 12px 12px calc(100px + env(safe-area-inset-bottom));
+            }
+
+            .topbar {
+                top: 8px;
+                margin-bottom: 18px;
+                border-radius: 20px;
+            }
+
+            .user-name {
+                max-width: 150px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .page-title { font-size: 23px; margin-bottom: 14px; }
+            .card { padding: 14px; border-radius: 20px; }
+
+            .table-wrap { overflow: visible; }
+
+            table {
+                min-width: 0;
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0 10px;
+            }
+
+            table thead { display: none; }
+
+            table tbody, table tr, table td {
+                display: block;
+                width: 100%;
+            }
+
+            table tr {
+                position: relative;
+                padding: 11px 13px;
+                border: 1px solid var(--border-subtle);
+                border-radius: 18px;
+                background: var(--bg-surface-light);
+                box-shadow: 0 8px 24px rgba(0,0,0,.12);
+            }
+
+            table td {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 14px;
+                min-height: 34px;
+                padding: 7px 0;
+                border: 0 !important;
+                text-align: right;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                flex: 0 0 auto;
+                color: var(--text-muted);
+                font-size: 11px;
+                font-weight: 800;
+            }
+
+            table td:last-child {
+                justify-content: flex-end;
+                padding-top: 10px;
+                border-top: 1px solid var(--border-subtle) !important;
+            }
+
+            table td:last-child::before { display: none; }
+
+            table td[colspan] {
+                display: block;
+                text-align: center;
+            }
+
+            table td[colspan]::before { display: none; }
+
+            .actions { justify-content: flex-end; }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .bottom-nav {
+                width: calc(100% - 16px);
+                bottom: max(8px, env(safe-area-inset-bottom));
+                border-radius: 20px;
+                overflow-x: auto;
+                display: flex;
+                scrollbar-width: none;
+            }
+
+            .bottom-nav::-webkit-scrollbar { display: none; }
+
+            .nav-item {
+                flex: 0 0 74px;
+                min-width: 74px;
+                padding: 5px 6px;
+                font-size: 10px;
+            }
+
+            .nav-item .nav-icon { font-size: 19px; }
+        }
+
+        @media (min-width: 701px) and (max-width: 1100px) {
+            #app { padding-left: 18px; padding-right: 18px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
+
+        /* ========================================================== */
+        /* RESPONSIVE TWEAKS */
+        /* ========================================================== */
+        /* ========================================================== */
+        /* CROSS-DEVICE RESPONSIVE FIXES */
+        /* ========================================================== */
+        button,
+        input,
+        select,
+        textarea {
+            touch-action: manipulation;
+        }
+
+        img,
+        canvas,
+        svg,
+        video {
+            max-width: 100%;
+        }
+
+        @media (min-width: 700px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .page-title {
+                font-size: 30px;
+            }
+        }
+
+        @media (max-width: 699px) {
+            .table-wrap {
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            table {
+                min-width: 560px;
+            }
+
+            .modal {
+                padding: 12px;
+                align-items: flex-end;
+            }
+
+            .modal-content {
+                max-height: min(88vh, 760px);
+                max-height: min(88dvh, 760px);
+                border-radius: 24px 24px 18px 18px;
+                padding: 22px 16px calc(22px + env(safe-area-inset-bottom));
+            }
+
+            .field input,
+            .field select,
+            .field textarea {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar {
+                padding: 6px 10px;
+                border-radius: 40px;
+            }
+            .avatar {
+                width: 38px;
+                height: 38px;
+                font-size: 15px;
+            }
+            .user-name {
+                font-size: 14px;
+            }
+            .page-title {
+                font-size: 22px;
+            }
+            .stat-number {
+                font-size: 24px;
+            }
+            .card {
+                padding: 14px;
+            }
+            .btn {
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+            .bottom-nav {
+                padding: 4px 4px;
+                bottom: 8px;
+            }
+            .nav-item {
+                padding: 4px 8px;
+                min-width: 40px;
+            }
+            .nav-item .nav-icon {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========================================================== -->
+    <!-- LOGIN -->
+    <!-- ========================================================== -->
+    <section id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">MINA KING</div>
+            <div class="login-sub">منصة القيادة والذكاء التجاري</div>
+            <div class="field">
+                <label>البريد الإلكتروني</label>
+                <input id="loginEmail" type="email" placeholder="admin@company.com" />
+            </div>
+            <div class="field">
+                <label>كلمة المرور</label>
+                <input id="loginPassword" type="password" placeholder="••••••••" />
+            </div>
+            <button class="btn" id="loginBtn">🚀 دخول</button>
+            <div id="loginError" style="color:var(--color-red);font-size:13px;text-align:center;margin-top:14px;"></div>
+        </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- APP -->
+    <!-- ========================================================== -->
+    <section id="app" class="hidden">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="avatar" id="topAvatar">M</div>
+                <div class="user-info">
+                    <div class="user-name" id="topName">Admin</div>
+                    <div class="user-role" id="topRole">مدير</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <button class="icon-btn" id="notifBtn" onclick="navigate('notifications')">
+                    🔔
+                    <span class="badge-dot hidden" id="notifBadge">0</span>
+                </button>
+                <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+                <button class="icon-btn" onclick="logout()">🚪</button>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div id="content"></div>
+
+        <!-- Bottom Nav -->
+        <div class="bottom-nav" id="bottomNav"></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- MODAL -->
+    <!-- ========================================================== -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title" id="modalTitle">نافذة</span>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- TOAST -->
+    <div id="toast" class="toast">✅ تم</div>
+
+    <!-- ========================================================== -->
+    <!-- SCRIPT (الكود الذهبي) -->
+    <!-- ========================================================== -->
+    <script type="module">
+        // ============================================================
+        // IMPORTS & CONFIG
+        // ============================================================
+        import { initializeApp } from "firebase/app";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword } from "firebase/auth";
+        import { getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc, query, where, serverTimestamp, onSnapshot, orderBy } from "firebase/firestore";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsJXNa6EYenn2f5mfoNQVEDxHhCH-XGAo",
+            authDomain: "alzahady-6e615.firebaseapp.com",
+            databaseURL: "https://alzahady-6e615-default-rtdb.firebaseio.com",
+            projectId: "alzahady-6e615",
+            storageBucket: "alzahady-6e615.firebasestorage.app",
+            messagingSenderId: "377804257010",
+            appId: "1:377804257010:web:9516e9ecbbc8b22ab0c26b",
+            measurementId: "G-4XPCD5L40F"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const secondaryApp = initializeApp(firebaseConfig, "secondary");
+        const secondaryAuth = getAuth(secondaryApp);
+
+        // ============================================================
+        // STATE
+        // ============================================================
+        let currentUser = null;
+        let currentUserData = null;
+        let currentRole = 'member';
+        let activeView = 'dashboard';
+        let charts = {};
+        let usersList = [];
+        let notifUnsubscribe = null;
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        const $ = (id) => document.getElementById(id);
+        const content = $('content');
+
+        // ============================================================
+        // HELPERS
+        // ============================================================
+        function esc(str) { return String(str ?? '').replace(/[&<>"]/g, function(m) { if (m === '&') return '&amp;'; if (m ===
+                    '<') return '&lt;'; if (m === '>') return '&gt;'; if (m === '"') return '&quot;'; return m; }); }
+
+        function money(val) { return Number(val || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD',
+                maximumFractionDigits: 0 }); }
+
+        function formatDate(ts) {
+            if (!ts) return '-';
+            try { const d = ts.toDate ? ts.toDate() : new Date(ts); return d.toLocaleDateString('ar-EG', { hour: '2-digit',
+                    minute: '2-digit' }); } catch { return '-'; }
+        }
+
+        function toast(msg, icon = '✅') {
+            const el = $('toast');
+            el.innerHTML = `${icon} ${msg}`;
+            el.classList.add('show');
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        function showModal(title, html) {
+            $('modalTitle').textContent = title;
+            $('modalBody').innerHTML = html;
+            $('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            $('modal').classList.remove('show');
+        }
+        window.closeModal = closeModal;
+        $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
+
+        function statusBadge(status) {
+            const map = {
+                new: ['جديد', 'badge-blue'],
+                contacted: ['تم التواصل', 'badge-gold'],
+                qualified: ['مؤهل', 'badge-purple'],
+                negotiation: ['تفاوض', 'badge-gold'],
+                won: ['مربوحة', 'badge-emerald'],
+                lost: ['خاسرة', 'badge-red'],
+                pending: ['معلقة', 'badge-gold'],
+                approved: ['معتمدة', 'badge-blue'],
+                paid: ['مدفوعة', 'badge-emerald'],
+                active: ['نشط', 'badge-emerald'],
+                inactive: ['متوقف', 'badge-red'],
+                todo: ['جديدة', 'badge-blue'],
+                doing: ['قيد التنفيذ', 'badge-gold'],
+                done: ['مكتملة', 'badge-emerald']
+            };
+            const x = map[status] || [status || 'غير محدد', 'badge-blue'];
+            return `<span class="badge ${x[1]}">${esc(x[0])}</span>`;
+        }
+
+        function filterTable(tableId, value) {
+            const tbl = document.getElementById(tableId);
+            if (!tbl) return;
+            const rows = tbl.querySelectorAll('tbody tr');
+            const v = value.toLowerCase();
+            rows.forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(v) ? '' : 'none';
+            });
+        }
+        window.filterTable = filterTable;
+
+        // ============================================================
+        // NOTIFICATION SOUND (فاخر بصوتين)
+        // ============================================================
+        function playNotificationSound() {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+                // نغمة ذهبية
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.value = 987.77;
+                gain1.gain.setValueAtTime(0.2, now);
+                gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.25);
+
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.value = 1318.51;
+                gain2.gain.setValueAtTime(0.15, now + 0.1);
+                gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(now + 0.1);
+                osc2.stop(now + 0.4);
+
+                if (navigator.vibrate) navigator.vibrate(50);
+            } catch (e) { /* ignore */ }
+        }
+
+        // ============================================================
+        // NOTIFICATIONS SYSTEM
+        // ============================================================
+        async function createNotification(userId, title, body, link = '#') {
+            if (!userId) return;
+            try {
+                await addDoc(collection(db, 'notifications'), {
+                    userId,
+                    title,
+                    body,
+                    link,
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
+            } catch (e) { console.warn('Notif error', e); }
+        }
+
+        async function markNotifRead(id) {
+            await updateDoc(doc(db, 'notifications', id), { read: true });
+            if (activeView === 'notifications') renderNotifications();
+            updateNotifBadge();
+        }
+
+        async function markAllRead(userId) {
+            const q = query(collection(db, 'notifications'), where('userId', '==', userId), where('read', '==', false));
+            const snap = await getDocs(q);
+            await Promise.all(snap.docs.map(d => updateDoc(doc(db, 'notifications', d.id), { read: true })));
+            toast('تم تحديد الكل كمقروء', '👑');
+            if (activeView === 'notifications') renderNotifications();
+            updateNotifBadge();
+        }
+
+        async function updateNotifBadge() {
+            if (!currentUser) return;
+            const q = query(collection(db, 'notifications'), where('userId', '==', currentUser.uid), where('read', '==',
+                false));
+            const snap = await getDocs(q);
+            const count = snap.size;
+            const badge = $('notifBadge');
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function listenNotifications() {
+            if (notifUnsubscribe) notifUnsubscribe();
+            if (!currentUser) return;
+            const q = query(collection(db, 'notifications'), where('userId', '==', currentUser.uid));
+            let lastCount = null;
+            notifUnsubscribe = onSnapshot(q, (snapshot) => {
+                let unread = 0;
+                snapshot.forEach(d => { if (!d.data().read) unread++; });
+                // لا تشغّل الصوت عند أول تحميل؛ فقط عند وصول إشعار جديد.
+                if (lastCount !== null && unread > lastCount) playNotificationSound();
+                lastCount = unread;
+                updateNotifBadge();
+            }, (error) => {
+                console.warn('Notification listener error:', error);
+            });
+        }
+
+        // ============================================================
+        // AUTH
+        // ============================================================
+        $('loginBtn').addEventListener('click', login);
+        $('loginPassword').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+
+        let loginBusy = false;
+
+        async function login() {
+            if (loginBusy) return;
+            const email = $('loginEmail').value.trim();
+            const pass = $('loginPassword').value;
+            $('loginError').textContent = '';
+            if (!email || !pass) { $('loginError').textContent = 'املأ البريد وكلمة المرور'; return; }
+            loginBusy = true;
+            const btn = $('loginBtn');
+            const oldText = btn.textContent;
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (e) {
+                // نحافظ على رسالة بسيطة للمستخدم، مع تسجيل السبب للمطور.
+                console.warn('Login error:', e);
+                $('loginError').textContent = 'بيانات غير صحيحة';
+            } finally {
+                loginBusy = false;
+                btn.disabled = false;
+                btn.style.opacity = '';
+                btn.textContent = oldText;
+            }
+        }
+
+        window.logout = async function() {
+            if (notifUnsubscribe) notifUnsubscribe();
+            await signOut(auth);
+        };
+
+        onAuthStateChanged(auth, async user => {
+            if (!user) {
+                $('loginScreen').classList.remove('hidden');
+                $('app').classList.add('hidden');
+                currentUser = null;
+                return;
+            }
+            currentUser = user;
+            try {
+                let snap = await getDoc(doc(db, 'users', user.uid));
+
+                // الحسابات القديمة قد يكون Document ID لها تلقائيًا،
+                // لذلك نبحث أيضًا باستخدام حقل uid المخزن داخل الوثيقة.
+                if (!snap.exists()) {
+                    const userQuery = query(
+                        collection(db, 'users'),
+                        where('uid', '==', user.uid)
+                    );
+                    const userSnap = await getDocs(userQuery);
+                    if (!userSnap.empty) {
+                        snap = userSnap.docs[0];
+                    }
+                }
+
+                if (!snap.exists()) {
+                    toast('الحساب غير مسجل في بيانات النظام');
+                    await signOut(auth);
+                    return;
+                }
+
+                currentUserData = snap.data();
+                currentUserData._docId = snap.id;
+            } catch (e) {
+                console.error('User profile load error:', e);
+                toast('تعذر تحميل بيانات الحساب', '⚠️');
+                await signOut(auth);
+                return;
+            }
+            currentRole = currentUserData.role || 'member';
+            $('topName').textContent = currentUserData.name || user.displayName || user.email;
+            const roleMap = { admin: 'مدير', manager: 'مدير فريق', member: 'مندوب', client: 'عميل' };
+            $('topRole').textContent = roleMap[currentRole] || currentRole.toUpperCase();
+            $('topAvatar').textContent = (currentUserData.name || user.email || 'M')[0].toUpperCase();
+
+            // Fetch users list
+            const uSnap = await getDocs(collection(db, 'users'));
+            usersList = [];
+            uSnap.forEach(d => {
+                const u = d.data();
+                if (u.uid) usersList.push({ uid: u.uid, name: u.name || u.email, email: u.email });
+            });
+
+            $('loginScreen').classList.add('hidden');
+            $('app').classList.remove('hidden');
+            buildBottomNav();
+            listenNotifications();
+            await navigate('dashboard');
+        });
+
+        async function refreshUsersList() {
+            const uSnap = await getDocs(collection(db, 'users'));
+            usersList = [];
+            uSnap.forEach(d => {
+                const u = d.data();
+                if (u.uid) usersList.push({ uid: u.uid, name: u.name || u.email, email: u.email });
+            });
+            return usersList;
+        }
+
+        // ============================================================
+        // NAVIGATION
+        // ============================================================
+        function getNavItems() {
+            if (currentRole === 'client') {
+                return [
+                    { id: 'dashboard', icon: '👑', label: 'لوحتي' },
+                    { id: 'my-projects', icon: '📦', label: 'مشاريعي' },
+                    { id: 'my-deals', icon: '💰', label: 'طلباتي' },
+                    { id: 'profile', icon: '👤', label: 'ملفي' }
+                ];
+            }
+            if (currentRole === 'admin' || currentRole === 'manager') {
+                return [
+                    { id: 'dashboard', icon: '👑', label: 'الرئيسية' },
+                    { id: 'leads', icon: '🔥', label: 'Leads' },
+                    { id: 'clients', icon: '🤝', label: 'العملاء' },
+                    { id: 'projects', icon: '📦', label: 'المشاريع' },
+                    { id: 'deals', icon: '💎', label: 'الصفقات' },
+                    { id: 'commissions', icon: '💰', label: 'العمولات' },
+                    { id: 'team', icon: '👨‍💼', label: 'الفريق' },
+                    { id: 'tasks', icon: '📋', label: 'المهام' },
+                    { id: 'notifications', icon: '🔔', label: 'إشعارات' }
+                ];
+            }
+            return [
+                { id: 'dashboard', icon: '👑', label: 'لوحتي' },
+                { id: 'leads', icon: '🔥', label: 'Leads' },
+                { id: 'clients', icon: '🤝', label: 'عملائي' },
+                { id: 'projects', icon: '📦', label: 'المشاريع' },
+                { id: 'deals', icon: '💎', label: 'صفقاتي' },
+                { id: 'commissions', icon: '💰', label: 'عمولاتي' },
+                { id: 'tasks', icon: '📋', label: 'مهامي' },
+                { id: 'notifications', icon: '🔔', label: 'إشعارات' },
+                { id: 'profile', icon: '👤', label: 'ملفي' }
+            ];
+        }
+
+        function buildBottomNav() {
+            const items = getNavItems();
+            const nav = $('bottomNav');
+            nav.innerHTML = items.map(item => `
+                <button class="nav-item ${activeView === item.id ? 'active' : ''}" onclick="navigate('${item.id}')">
+                    <span class="nav-icon">${item.icon}</span>
+                    <span>${item.label}</span>
+                </button>
+            `).join('');
+        }
+
+        window.navigate = navigate;
+
+        async function navigate(view) {
+            activeView = view;
+            buildBottomNav();
+            content.innerHTML = `<div class="empty-state">⏳ جاري التحميل...</div>`;
+
+            try {
+                // قائمة المستخدمين تُحدّث فقط عند الحاجة، بدل إعادة تحميلها في كل تنقل.
+                if (view === 'team' || view === 'tasks' || view === 'dashboard') {
+                    await refreshUsersList();
+                }
+
+                switch (view) {
+                    case 'dashboard':
+                        await renderDashboard();
+                        break;
+                    case 'my-projects':
+                        await renderMyProjects();
+                        break;
+                    case 'my-deals':
+                        await renderMyDeals();
+                        break;
+                    case 'leads':
+                        await renderLeads();
+                        break;
+                    case 'clients':
+                        await renderClients();
+                        break;
+                    case 'projects':
+                        await renderProjects();
+                        break;
+                    case 'deals':
+                        await renderDeals();
+                        break;
+                    case 'commissions':
+                        await renderCommissions();
+                        break;
+                    case 'team':
+                        await renderTeam();
+                        break;
+                    case 'tasks':
+                        await renderTasks();
+                        break;
+                    case 'notifications':
+                        await renderNotifications();
+                        break;
+                    case 'profile':
+                        await renderProfile();
+                        break;
+                    default:
+                        content.innerHTML = `<div class="card"><div class="empty-state">🚧 قيد التطوير</div></div>`;
+                }
+            } catch (e) {
+                console.error(e);
+                content.innerHTML = `<div class="card">❌ خطأ: ${esc(e.message)}</div>`;
+            }
+        }
+
+        // ============================================================
+        // DASHBOARD (الرئيسية الفاخرة)
+        // ============================================================
+        async function renderDashboard() {
+            if (currentRole === 'client') {
+                const q = query(collection(db, 'deals'), where('clientName', '==', currentUserData?.name || currentUser
+                .email));
+                const snap = await getDocs(q);
+                let total = 0,
+                    count = 0;
+                snap.forEach(d => { total += Number(d.data().finalPrice || 0);
+                    count++; });
+                content.innerHTML = `
+                    <div class="page-title">مرحباً ${esc(currentUserData?.name || 'عميلنا')} 👋</div>
+                    <div class="stats-grid">
+                        <div class="stat-item"><div class="stat-number">${count}</div><div class="stat-label">الطلبات</div></div>
+                        <div class="stat-item"><div class="stat-number">${money(total)}</div><div class="stat-label">المشتريات</div></div>
+                    </div>
+                `;
+                return;
+            }
+
+            const [usersSnap, leadsSnap, clientsSnap, dealsSnap, commSnap] = await Promise.all([
+                getDocs(collection(db, 'users')),
+                getDocs(collection(db, 'leads')),
+                getDocs(collection(db, 'clients')),
+                getDocs(collection(db, 'deals')),
+                getDocs(collection(db, 'commissions'))
+            ]);
+
+            let revenue = 0,
+                commissions = 0,
+                won = 0;
+            const perf = {};
+            dealsSnap.forEach(d => {
+                const x = d.data();
+                if (x.status === 'won') {
+                    won++;
+                    const amt = Number(x.finalPrice || 0);
+                    revenue += amt;
+                    const m = x.memberName || 'غير معين';
+                    perf[m] = (perf[m] || 0) + amt;
+                }
+            });
+            commSnap.forEach(d => { commissions += Number(d.data().amount || 0); });
+
+            let rankHtml = '';
+            const sorted = Object.entries(perf).sort((a, b) => b[1] - a[1]);
+            if (sorted.length === 0) rankHtml =
+                `<div class="empty-state">لا توجد مبيعات بعد</div>`;
+            else {
+                rankHtml = `<div class="table-wrap"><table><thead><tr><th>المندوب</th><th>المبيعات</th></tr></thead><tbody>
+                    ${sorted.map(([name, total]) => `<tr><td><strong>${esc(name)}</strong></td><td style="color:var(--color-gold);font-weight:800;">${money(total)}</td></tr>`).join('')}
+                </tbody></table></div>`;
+            }
+
+            const isAdmin = (currentRole === 'admin' || currentRole === 'manager');
+
+            content.innerHTML = `
+                <div class="page-title">مرحباً ${esc(currentUserData?.name || 'بك')} 👑</div>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-number">${clientsSnap.size}</div><div class="stat-label">العملاء</div></div>
+                    <div class="stat-item"><div class="stat-number">${leadsSnap.size}</div><div class="stat-label">Leads</div></div>
+                    <div class="stat-item"><div class="stat-number" style="color:var(--color-emerald);">${money(revenue)}</div><div class="stat-label">المبيعات</div></div>
+                    <div class="stat-item"><div class="stat-number" style="color:var(--color-gold);">${money(commissions)}</div><div class="stat-label">العمولات</div></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">🏆 <span>ترتيب</span> المندوبين</span></div>
+                    ${rankHtml}
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">📈 أداء <span>المبيعات</span></span> <span class="badge badge-emerald">${won} صفقة</span></div>
+                    <div style="height:200px;"><canvas id="salesChart"></canvas></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">⚡ إجراءات <span>سريعة</span></span></div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <button class="btn btn-small" onclick="openLeadModal()">🔥 Lead</button>
+                        <button class="btn btn-small btn-secondary" onclick="openClientModal()">🤝 عميل</button>
+                        <button class="btn btn-small btn-secondary" onclick="openDealModal()">💎 صفقة</button>
+                        ${isAdmin ? `<button class="btn btn-small btn-secondary" onclick="openTaskModal()">📋 مهمة</button>` : ''}
+                        ${isAdmin ? `<button class="btn btn-small btn-secondary" onclick="openProjectModal()">📦 مشروع</button>` : ''}
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                const ctx = document.getElementById('salesChart')?.getContext('2d');
+                if (ctx) {
+                    if (charts.sales) charts.sales.destroy();
+                    charts.sales = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                            datasets: [{ label: 'المبيعات', data: [12000, 18500, 15000, 27000, 23000, revenue],
+                                backgroundColor: '#8b5cf6', borderRadius: 12 }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                    });
+                }
+            }, 100);
+        }
+
+        // ============================================================
+        // MY PROJECTS / DEALS (client)
+        // ============================================================
+        async function renderMyProjects() {
+            const q = query(collection(db, 'clients'), where('email', '==', currentUser.email));
+            const snap = await getDocs(q);
+            let rows = '';
+            if (snap.empty) rows = `<tr><td colspan="4"><div class="empty-state">لا توجد مشاريع</div></td></tr>`;
+            else snap.forEach(d => {
+                const x = d.data();
+                rows +=
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.project||'-')}</td><td>${esc(x.phone)}</td><td>${esc(x.notes||'-')}</td></tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">📦 مشاريعي</div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>الاسم</th><th>المشروع</th><th>الهاتف</th><th>ملاحظات</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+            `;
+        }
+
+        async function renderMyDeals() {
+            const q = query(collection(db, 'deals'), where('clientName', '==', currentUserData?.name || currentUser.email));
+            const snap = await getDocs(q);
+            let rows = '',
+                total = 0;
+            if (snap.empty) rows = `<tr><td colspan="5"><div class="empty-state">لا توجد طلبات</div></td></tr>`;
+            else snap.forEach(d => {
+                const x = d.data();
+                total += Number(x.finalPrice || 0);
+                rows +=
+                    `<tr><td>${esc(x.clientName)}</td><td>${money(x.finalPrice)}</td><td>${x.commissionRate||0}%</td><td>${money(x.commissionAmount||0)}</td><td>${statusBadge(x.status)}</td></tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">💰 طلباتي</div>
+                <div class="stats-grid"><div class="stat-item"><div class="stat-number">${money(total)}</div><div class="stat-label">الإجمالي</div></div></div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العميل</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th></tr></thead><tbody>${rows}</tbody></table></div></div>
+            `;
+        }
+
+        // ============================================================
+        // LEADS
+        // ============================================================
+        async function renderLeads() {
+            const snap = await getDocs(collection(db, 'leads'));
+            let rows = '';
+            snap.forEach(d => {
+                const x = d.data();
+                const creator = x.createdByName || x.assignedName || '-';
+                rows += `<tr>
+                    <td data-label="الاسم"><strong>${esc(x.name)}</strong></td>
+                    <td data-label="الهاتف">${esc(x.phone)}</td>
+                    <td data-label="المصدر">${esc(x.source||'-')}</td>
+                    <td data-label="الحالة">${statusBadge(x.status)}</td>
+                    <td data-label="أضافه">${esc(creator)}</td>
+                    <td data-label="التاريخ">${formatDate(x.createdAt)}</td>
+                    <td data-label="إجراءات"><div class="actions"><button class="btn btn-small btn-secondary" onclick="editLead('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteLead('${d.id}')">🗑</button></div></td>
+                </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">🔥 Leads</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <input class="search" placeholder="🔍 بحث..." oninput="filterTable('leadTable',this.value)" style="flex:1;padding:10px 14px;border:1px solid var(--border-subtle);border-radius:40px;background:var(--bg-primary);color:var(--text-primary);">
+                        <button class="btn btn-small" onclick="openLeadModal()">+ جديد</button>
+                    </div>
+                    <div class="table-wrap"><table id="leadTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>المصدر</th><th>الحالة</th><th>أضافه</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد Leads</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
+
+        window.openLeadModal = function(id = null, data = {}) {
+            showModal(id ? 'تعديل Lead' : 'Lead جديد', `
+                <div class="field"><label>الاسم</label><input id="leadName" value="${esc(data.name)}"></div>
+                <div class="field"><label>الهاتف *</label><input id="leadPhone" value="${esc(data.phone)}"></div>
+                <div class="field"><label>المصدر</label><select id="leadSource">${[['facebook','Facebook'],['website','Website'],['whatsapp','WhatsApp'],['manual','Manual']].map(x => `<option value="${x[0]}" ${data.source===x[0]?'selected':''}>${x[1]}</option>`).join('')}</select></div>
+                <div class="field"><label>الحالة</label><select id="leadStatus">${[['new','جديد'],['contacted','تم التواصل'],['qualified','مؤهل'],['negotiation','تفاوض'],['won','مربوحة'],['lost','خاسرة']].map(x => `<option value="${x[0]}" ${data.status===x[0]?'selected':''}>${x[1]}</option>`).join('')}</select></div>
+                <button class="btn" onclick="saveLead('${id||''}')">💾 حفظ</button>
+            `);
+        };
+
+        window.saveLead = async function(id) {
+            const data = {
+                name: $('leadName').value.trim(),
+                phone: $('leadPhone').value.trim(),
+                source: $('leadSource').value,
+                status: $('leadStatus').value,
+                assignedTo: currentUser.uid,
+                assignedName: currentUserData?.name || ''
+            };
+            if (!data.phone) { toast('الهاتف مطلوب'); return; }
+            try {
+                if (id) {
+                    data.updatedById = currentUser.uid;
+                    data.updatedByName = currentUserData?.name || currentUser.email || '';
+                    data.updatedAt = serverTimestamp();
+                    delete data.assignedTo;
+                    delete data.assignedName;
+                    await updateDoc(doc(db, 'leads', id), data);
+                } else {
+                    data.createdAt = serverTimestamp();
+                    data.createdById = currentUser.uid;
+                    data.createdByName = currentUserData?.name || currentUser.email || '';
+                    data.createdByEmail = currentUser.email || '';
+                    await addDoc(collection(db, 'leads'), data);
+                }
+                toast('تم الحفظ');
+                closeModal();
+                renderLeads();
+            } catch (e) { toast(e.message); }
+        };
+        window.editLead = async function(id) { const s = await getDoc(doc(db, 'leads', id)); if (s.exists()) openLeadModal(
+                id, s.data()); };
+        window.deleteLead = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'leads', id));
+            toast('تم الحذف');
+            renderLeads(); };
+
+        // ============================================================
+        // CLIENTS
+        // ============================================================
+        async function renderClients() {
+            const snap = await getDocs(collection(db, 'clients'));
+            let rows = '';
+            snap.forEach(d => {
+                const x = d.data();
+                rows +=
+                    `<tr>
+                        <td data-label="الاسم"><strong>${esc(x.name)}</strong></td>
+                        <td data-label="الهاتف">${esc(x.phone)}</td>
+                        <td data-label="البريد">${esc(x.email||'-')}</td>
+                        <td data-label="المشروع">${esc(x.project||'-')}</td>
+                        <td data-label="أضافه">${esc(x.createdByName || x.memberName || '-')}</td>
+                        <td data-label="التاريخ">${formatDate(x.createdAt)}</td>
+                        <td data-label="إجراءات"><div class="actions"><button class="btn btn-small btn-secondary" onclick="editClient('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteClient('${d.id}')">🗑</button></div></td>
+                    </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">🤝 العملاء</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <input class="search" placeholder="🔍 بحث..." oninput="filterTable('clientsTable',this.value)" style="flex:1;padding:10px 14px;border:1px solid var(--border-subtle);border-radius:40px;background:var(--bg-primary);color:var(--text-primary);">
+                        <button class="btn btn-small" onclick="openClientModal()">+ عميل</button>
+                    </div>
+                    <div class="table-wrap"><table id="clientsTable"><thead><tr><th>الاسم</th><th>الهاتف</th><th>البريد</th><th>المشروع</th><th>أضافه</th><th>التاريخ</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا يوجد عملاء</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
+
+        window.openClientModal = function(id = null, data = {}) {
+            showModal(id ? 'تعديل عميل' : 'عميل جديد', `
+                <div class="field"><label>الاسم</label><input id="clientName" value="${esc(data.name)}"></div>
+                <div class="field"><label>الهاتف *</label><input id="clientPhone" value="${esc(data.phone)}"></div>
+                <div class="field"><label>ملاحظات</label><textarea id="clientNotes">${esc(data.notes)}</textarea></div>
+                <button class="btn" onclick="saveClient('${id||''}')">💾 حفظ</button>
+            `);
+        };
+
+        window.saveClient = async function(id) {
+            const data = {
+                name: $('clientName').value.trim(),
+                phone: $('clientPhone').value.trim(),
+                notes: $('clientNotes').value.trim(),
+                memberId: currentUser.uid,
+                memberName: currentUserData?.name || ''
+            };
+            if (!data.phone) { toast('الهاتف مطلوب'); return; }
+            try {
+                if (id) {
+                    data.updatedById = currentUser.uid;
+                    data.updatedByName = currentUserData?.name || currentUser.email || '';
+                    data.updatedAt = serverTimestamp();
+                    delete data.memberId;
+                    delete data.memberName;
+                    await updateDoc(doc(db, 'clients', id), data);
+                } else {
+                    data.createdAt = serverTimestamp();
+                    data.createdById = currentUser.uid;
+                    data.createdByName = currentUserData?.name || currentUser.email || '';
+                    data.createdByEmail = currentUser.email || '';
+                    await addDoc(collection(db, 'clients'), data);
+                }
+                toast('تم الحفظ');
+                closeModal();
+                renderClients();
+            } catch (e) { toast(e.message); }
+        };
+        window.editClient = async function(id) { const s = await getDoc(doc(db, 'clients', id)); if (s.exists())
+                openClientModal(id, s.data()); };
+        window.deleteClient = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'clients', id));
+            toast('تم الحذف');
+            renderClients(); };
+
+        // ============================================================
+        // PROJECTS (Admin only)
+        // ============================================================
+        async function renderProjects() {
+            const snap = await getDocs(collection(db, 'projects'));
+            const isAdmin = (currentRole === 'admin' || currentRole === 'manager');
+            let rows = '';
+            snap.forEach(d => {
+                const x = d.data();
+                const act = isAdmin ?
+                    `<div class="actions"><button class="btn btn-small btn-secondary" onclick="editProject('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteProject('${d.id}')">🗑</button></div>` :
+                    `<span style="color:var(--text-muted);font-size:12px;">عرض</span>`;
+                rows +=
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.category||'-')}</td><td>${money(x.price)}</td><td>${x.commissionRate||0}%</td><td>${statusBadge(x.status)}</td><td>${act}</td></tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">📦 المشاريع</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        ${isAdmin ? `<button class="btn btn-small" onclick="openProjectModal()">+ مشروع</button>` : ''}
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>الاسم</th><th>الفئة</th><th>السعر</th><th>العمولة</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="6"><div class="empty-state">لا توجد مشاريع</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
+
+        window.openProjectModal = function(id = null, data = {}) {
+            showModal(id ? 'تعديل مشروع' : 'مشروع جديد', `
+                <div class="field"><label>الاسم</label><input id="projectName" value="${esc(data.name)}"></div>
+                <div class="field"><label>السعر</label><input id="projectPrice" type="number" value="${data.price||0}"></div>
+                <div class="field"><label>العمولة %</label><input id="projectCommission" type="number" value="${data.commissionRate||0}"></div>
+                <button class="btn" onclick="saveProject('${id||''}')">💾 حفظ</button>
+            `);
+        };
+
+        window.saveProject = async function(id) {
+            const data = { name: $('projectName').value.trim(), price: Number($('projectPrice').value || 0),
+                commissionRate: Number($('projectCommission').value || 0), status: 'active' };
+            if (!data.name) { toast('الاسم مطلوب'); return; }
+            try {
+                if (id) await updateDoc(doc(db, 'projects', id), data);
+                else { data.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'projects'), data); }
+                toast('تم الحفظ');
+                closeModal();
+                renderProjects();
+            } catch (e) { toast(e.message); }
+        };
+        window.editProject = async function(id) { const s = await getDoc(doc(db, 'projects', id)); if (s.exists())
+                openProjectModal(id, s.data()); };
+        window.deleteProject = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'projects', id));
+            toast('تم الحذف');
+            renderProjects(); };
+
+        // ============================================================
+        // DEALS
+        // ============================================================
+        async function renderDeals() {
+            const snap = await getDocs(collection(db, 'deals'));
+            let rows = '';
+            snap.forEach(d => {
+                const x = d.data();
+                rows +=
+                    `<tr>
+                        <td data-label="العميل"><strong>${esc(x.clientName)}</strong></td>
+                        <td data-label="باع بواسطة"><strong>${esc(x.createdByName || x.memberName || '-')}</strong></td>
+                        <td data-label="السعر" style="color:var(--color-emerald);font-weight:800;">${money(x.finalPrice)}</td>
+                        <td data-label="العمولة">${x.commissionRate||0}%</td>
+                        <td data-label="قيمة العمولة" style="color:var(--color-gold);">${money(x.commissionAmount)}</td>
+                        <td data-label="الحالة">${statusBadge(x.status)}</td>
+                        <td data-label="إجراءات"><button class="btn btn-small btn-secondary" onclick="editDeal('${d.id}')">✏️</button></td>
+                    </tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">💎 الصفقات</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        <button class="btn btn-small" onclick="openDealModal()">+ صفقة</button>
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>العميل</th><th>باع بواسطة</th><th>السعر</th><th>العمولة</th><th>قيمتها</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="7"><div class="empty-state">لا توجد صفقات</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
+
+        window.openDealModal = function(id = null, data = {}) {
+            showModal(id ? 'تعديل صفقة' : 'صفقة جديدة', `
+                <div class="field"><label>اسم العميل</label><input id="dealClient" value="${esc(data.clientName)}"></div>
+                <div class="field"><label>السعر</label><input id="dealPrice" type="number" value="${data.finalPrice||0}"></div>
+                <div class="field"><label>العمولة %</label><input id="dealCommission" type="number" value="${data.commissionRate||10}"></div>
+                <div class="field"><label>الحالة</label><select id="dealStatus"><option value="pending" ${data.status==='pending'?'selected':''}>معلقة</option><option value="won" ${data.status==='won'?'selected':''}>مربوحة</option><option value="lost" ${data.status==='lost'?'selected':''}>خاسرة</option></select></div>
+                <button class="btn" onclick="saveDeal('${id||''}')">💾 حفظ</button>
+            `);
+        };
+
+        window.saveDeal = async function(id) {
+            const price = Number($('dealPrice').value || 0);
+            const rate = Number($('dealCommission').value || 0);
+            const data = {
+                clientName: $('dealClient').value.trim(),
+                memberName: currentUserData?.name || '',
+                memberId: currentUser.uid,
+                finalPrice: price,
+                commissionRate: rate,
+                commissionAmount: price * rate / 100,
+                status: $('dealStatus').value
+            };
+            if (!data.clientName) { toast('اسم العميل مطلوب'); return; }
+            try {
+                if (id) {
+                    delete data.memberId;
+                    delete data.memberName;
+                    data.updatedById = currentUser.uid;
+                    data.updatedByName = currentUserData?.name || currentUser.email || '';
+                    data.updatedAt = serverTimestamp();
+                    await updateDoc(doc(db, 'deals', id), data);
+                } else {
+                    data.createdAt = serverTimestamp();
+                    data.createdById = currentUser.uid;
+                    data.createdByName = currentUserData?.name || currentUser.email || '';
+                    data.createdByEmail = currentUser.email || '';
+                    await addDoc(collection(db, 'deals'), data);
+                }
+                toast('تم الحفظ');
+                closeModal();
+                renderDeals();
+            } catch (e) { toast(e.message); }
+        };
+        window.editDeal = async function(id) { const s = await getDoc(doc(db, 'deals', id)); if (s.exists()) openDealModal(
+                id, s.data()); };
+
+        // ============================================================
+        // COMMISSIONS
+        // ============================================================
+        async function renderCommissions() {
+            const snap = await getDocs(collection(db, 'commissions'));
+            let rows = '',
+                pending = 0,
+                paid = 0;
+            snap.forEach(d => {
+                const x = d.data();
+                const amt = Number(x.amount || 0);
+                if (x.status === 'paid') paid += amt;
+                else pending += amt;
+                rows +=
+                    `<tr><td><strong>${esc(x.memberName||'-')}</strong></td><td style="color:var(--color-gold);font-weight:800;">${money(amt)}</td><td>${statusBadge(x.status)}</td><td>${x.status==='pending'?`<button class="btn btn-small btn-gold" onclick="changeComm('${d.id}','approved')">اعتماد</button>`:x.status==='approved'?`<button class="btn btn-small btn-emerald" onclick="changeComm('${d.id}','paid')">دفع</button>`:'-'}</td></tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">💰 العمولات</div>
+                <div class="stats-grid">
+                    <div class="stat-item"><div class="stat-number" style="color:var(--color-gold);">${money(pending)}</div><div class="stat-label">معلقة</div></div>
+                    <div class="stat-item"><div class="stat-number" style="color:var(--color-emerald);">${money(paid)}</div><div class="stat-label">مدفوعة</div></div>
+                </div>
+                <div class="card"><div class="table-wrap"><table><thead><tr><th>العضو</th><th>المبلغ</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="4"><div class="empty-state">لا توجد عمولات</div></td></tr>'}</tbody></table></div></div>
+            `;
+        }
+        window.changeComm = async function(id, status) { await updateDoc(doc(db, 'commissions', id), { status });
+            toast('تم');
+            renderCommissions(); };
+
+        // ============================================================
+        // TEAM (Admin only)
+        // ============================================================
+        async function renderTeam() {
+            if (currentRole !== 'admin' && currentRole !== 'manager') {
+                content.innerHTML = `<div class="card"><div class="empty-state">⛔ غير مصرح</div></div>`;
+                return;
+            }
+            const snap = await getDocs(collection(db, 'users'));
+            let rows = '';
+            snap.forEach(d => {
+                const x = d.data();
+                rows +=
+                    `<tr><td><strong>${esc(x.name)}</strong></td><td>${esc(x.email)}</td><td><span class="badge ${x.role==='admin'?'badge-gold':x.role==='manager'?'badge-purple':'badge-blue'}">${esc(x.role)}</span></td><td>${statusBadge(x.status)}</td><td>${currentRole==='admin'?`<button class="btn btn-small btn-secondary" onclick="editUser('${d.id}')">✏️</button>`:'-'}</td></tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">👨‍💼 الفريق</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        ${currentRole==='admin' ? `<button class="btn btn-small btn-gold" onclick="openUserModal()">+ عضو</button>` : ''}
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>الاسم</th><th>البريد</th><th>الدور</th><th>الحالة</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty-state">لا يوجد أعضاء</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
+
+        window.openUserModal = function(id = null, data = {}) {
+            showModal(id ? 'تعديل عضو' : 'عضو جديد', `
+                <div class="field"><label>الاسم</label><input id="userName" value="${esc(data.name||'')}"></div>
+                <div class="field"><label>البريد</label><input id="userEmail" type="email" value="${esc(data.email||'')}" ${id?'disabled':''}></div>
+                <div class="field"><label>الدور</label><select id="userRole"><option value="member" ${data.role==='member'?'selected':''}>Member</option><option value="manager" ${data.role==='manager'?'selected':''}>Manager</option><option value="admin" ${data.role==='admin'?'selected':''}>Admin</option><option value="client" ${data.role==='client'?'selected':''}>Client</option></select></div>
+                <div class="field"><label>العمولة %</label><input id="userCommission" type="number" value="${data.commissionRate||0}"></div>
+                ${!id?`<div class="field"><label>كلمة المرور</label><input id="userPassword" type="password" placeholder="6 أحرف على الأقل"></div>`:''}
+                <button class="btn" onclick="saveUser('${id||''}')">💾 حفظ</button>
+                <div id="userSaveResult" style="margin-top:10px;text-align:center;color:var(--color-emerald);"></div>
+            `);
+        };
+
+        window.saveUser = async function(id) {
+            const name = $('userName').value.trim(),
+                email = $('userEmail').value.trim();
+            const role = $('userRole').value,
+                commissionRate = Number($('userCommission').value || 0);
+            const password = $('userPassword')?.value || '';
+            if (!name || !email) { toast('الاسم والبريد مطلوبان'); return; }
+            if (id) {
+                await updateDoc(doc(db, 'users', id), { name, role, commissionRate });
+                toast('تم التحديث');
+                closeModal();
+                renderTeam();
+                return;
+            }
+            if (!password || password.length < 6) { toast('كلمة المرور 6 أحرف على الأقل'); return; }
+            try {
+                const res = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+                await setDoc(doc(db, 'users', res.user.uid), {
+                    uid: res.user.uid,
+                    name,
+                    email,
+                    role,
+                    commissionRate,
+                    status: 'active',
+                    createdAt: serverTimestamp()
+                });
+                toast('تم إنشاء الحساب');
+                closeModal();
+                renderTeam();
+            } catch (e) { toast('خطأ: ' + e.message); }
+        };
+        window.editUser = async function(id) { const s = await getDoc(doc(db, 'users', id)); if (s.exists()) openUserModal(
+                id, s.data()); };
+
+        // ============================================================
+        // TASKS (assign to specific user + notifications)
+        // ============================================================
+        async function renderTasks() {
+            const snap = await getDocs(collection(db, 'tasks'));
+            const isAdmin = (currentRole === 'admin' || currentRole === 'manager');
+            let rows = '';
+            snap.forEach(d => {
+                const x = d.data();
+                let act = '';
+                if (isAdmin) {
+                    act =
+                        `<div class="actions"><button class="btn btn-small btn-secondary" onclick="editTask('${d.id}')">✏️</button><button class="btn btn-small btn-red" onclick="deleteTask('${d.id}')">🗑</button></div>`;
+                } else {
+                    const st = x.status || 'todo';
+                    if (st === 'todo') act =
+                        `<button class="btn btn-small btn-gold" onclick="updateTaskStatus('${d.id}','doing')">⏳ بدء</button>`;
+                    else if (st === 'doing') act =
+                        `<button class="btn btn-small btn-emerald" onclick="updateTaskStatus('${d.id}','done')">✅ إنهاء</button>`;
+                    else act = `<span class="badge badge-emerald">مكتملة</span>`;
+                }
+                const assignedName = usersList.find(u => u.uid === x.assignedToId)?.name || x.assignedTo || '-';
+                rows +=
+                    `<tr><td><strong>${esc(x.title)}</strong></td><td>${esc(assignedName)}</td><td>${statusBadge(x.status)}</td><td><span class="badge ${x.priority==='high'?'badge-red':'badge-gold'}">${esc(x.priority||'medium')}</span></td><td>${act}</td></tr>`;
+            });
+            content.innerHTML = `
+                <div class="page-title">📋 المهام</div>
+                <div class="card">
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+                        ${isAdmin ? `<button class="btn btn-small btn-gold" onclick="openTaskModal()">+ مهمة</button>` : ''}
+                    </div>
+                    <div class="table-wrap"><table><thead><tr><th>المهمة</th><th>المسؤول</th><th>الحالة</th><th>الأولوية</th><th></th></tr></thead><tbody>${rows||'<tr><td colspan="5"><div class="empty-state">لا توجد مهام</div></td></tr>'}</tbody></table></div>
+                </div>
+            `;
+        }
+
+        window.updateTaskStatus = async function(id, newStatus) {
+            try {
+                const ref = doc(db, 'tasks', id);
+                await updateDoc(ref, { status: newStatus });
+                const snap = await getDoc(ref);
+                const data = snap.data();
+                if (newStatus === 'done') {
+                    const admins = await getDocs(query(collection(db, 'users'), where('role', 'in', ['admin', 'manager'])));
+                    admins.forEach(a => {
+                        createNotification(a.data().uid, '✅ مهمة مكتملة',
+                            `${currentUserData?.name || 'عضو'} أنهى مهمة: ${data.title}`, '#tasks');
+                    });
+                }
+                toast('تم تحديث الحالة');
+                renderTasks();
+            } catch (e) { toast('خطأ: ' + e.message); }
+        };
+
+        window.openTaskModal = function(id = null, data = {}) {
+            let opts = '<option value="">-- اختر عضو --</option>';
+            usersList.forEach(u => {
+                const sel = (u.uid === data.assignedToId) ? 'selected' : '';
+                opts += `<option value="${u.uid}" ${sel}>${esc(u.name)}</option>`;
+            });
+
+            showModal(id ? 'تعديل مهمة' : 'مهمة جديدة', `
+                <div class="field"><label>عنوان المهمة</label><input id="taskTitle" value="${esc(data.title)}"></div>
+                <div class="field"><label>المسؤول</label><select id="taskAssignedId">${opts}</select></div>
+                <div class="field"><label>الحالة</label><select id="taskStatus"><option value="todo">جديدة</option><option value="doing">قيد التنفيذ</option><option value="done">مكتملة</option></select></div>
+                <div class="field"><label>الأولوية</label><select id="taskPriority"><option value="low">منخفضة</option><option value="medium" selected>متوسطة</option><option value="high">عالية</option></select></div>
+                <button class="btn" onclick="saveTask('${id||''}')">💾 حفظ</button>
+            `);
+        };
+
+        window.saveTask = async function(id) {
+            const title = $('taskTitle').value.trim();
+            const assignedToId = $('taskAssignedId').value;
+            const status = $('taskStatus').value;
+            const priority = $('taskPriority').value;
+            if (!title) { toast('عنوان المهمة مطلوب'); return; }
+            if (!assignedToId) { toast('اختر عضو مسؤول'); return; }
+
+            const assignedUser = usersList.find(u => u.uid === assignedToId);
+            const data = {
+                title,
+                assignedToId,
+                assignedTo: assignedUser?.name || '',
+                status,
+                priority,
+                createdBy: currentUser.uid
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, 'tasks', id), data);
+                    toast('تم تحديث المهمة');
+                } else {
+                    data.createdAt = serverTimestamp();
+                    const ref = await addDoc(collection(db, 'tasks'), data);
+                    toast('تم إضافة المهمة');
+                    await createNotification(assignedToId, '📋 مهمة جديدة',
+                        `تم تعيين مهمة "${title}" لك من قبل ${currentUserData?.name || 'الإدارة'}`, '#tasks');
+                }
+                closeModal();
+                renderTasks();
+            } catch (e) { toast('خطأ: ' + e.message); }
+        };
+        window.editTask = async function(id) { const s = await getDoc(doc(db, 'tasks', id)); if (s.exists()) openTaskModal(
+                id, s.data()); };
+        window.deleteTask = async function(id) { if (!confirm('حذف؟')) return; await deleteDoc(doc(db, 'tasks', id));
+            toast('تم الحذف');
+            renderTasks(); };
+
+        // ============================================================
+        // NOTIFICATIONS
+        // ============================================================
+        async function renderNotifications() {
+            if (!currentUser) return;
+            const q = query(collection(db, 'notifications'), where('userId', '==', currentUser.uid), orderBy('createdAt',
+                'desc'));
+            const snap = await getDocs(q);
+            let items = '';
+            if (snap.empty) {
+                items = `<div class="empty-state">🔕 لا توجد إشعارات</div>`;
+            } else {
+                snap.forEach(d => {
+                    const n = d.data();
+                    const cls = n.read ? '' : 'unread';
+                    items += `
+                        <div class="card" style="border-right:4px solid ${n.read ? 'var(--border-subtle)' : 'var(--color-gold)'}; margin-bottom:8px; cursor:pointer;" onclick="markNotifRead('${d.id}')">
+                            <div style="display:flex;justify-content:space-between;">
+                                <strong style="color:var(--text-primary);">${esc(n.title)}</strong>
+                                <span style="font-size:11px;color:var(--text-muted);">${formatDate(n.createdAt)}</span>
+                            </div>
+                            <div style="font-size:14px;color:var(--text-secondary);margin-top:4px;">${esc(n.body)}</div>
+                        </div>
+                    `;
+                });
+            }
+            content.innerHTML = `
+                <div class="page-title">🔔 الإشعارات</div>
+                <div style="display:flex;gap:8px;margin-bottom:12px;">
+                    <button class="btn btn-small btn-gold" onclick="markAllRead('${currentUser.uid}')">تحديد الكل كمقروء</button>
+                </div>
+                ${items}
+            `;
+            updateNotifBadge();
+        }
+
+        window.markNotifRead = markNotifRead;
+        window.markAllRead = markAllRead;
+
+        // ============================================================
+        // PROFILE
+        // ============================================================
+        async function renderProfile() {
+            content.innerHTML = `
+                <div class="page-title">👤 ملفي</div>
+                <div class="card">
+                    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+                        <div class="avatar" style="width:60px;height:60px;font-size:28px;">${(currentUserData?.name||'M')[0]}</div>
+                        <div><div style="font-weight:800;font-size:20px;color:var(--text-primary);">${esc(currentUserData?.name||'غير محدد')}</div><div style="color:var(--text-muted);">${esc(currentUser.email)}</div><span class="badge badge-gold">${esc(currentRole)}</span></div>
+                    </div>
+                    <div class="field"><label>الاسم</label><input id="profileName" value="${esc(currentUserData?.name||'')}"></div>
+                    <button class="btn" onclick="updateProfile()">💾 تحديث</button>
+                </div>
+            `;
+        }
+
+        window.updateProfile = async function() {
+            const name = $('profileName').value.trim();
+            if (!name) { toast('الاسم مطلوب'); return; }
+            await updateDoc(doc(db, 'users', currentUserData?._docId || currentUser.uid), { name });
+            currentUserData.name = name;
+            $('topName').textContent = name;
+            toast('تم التحديث');
+            renderProfile();
+        };
+
+        // ============================================================
+        // THEME
+        // ============================================================
+        window.toggleTheme = function() {
+            document.body.classList.toggle('light');
+            try {
+                localStorage.setItem('mina-theme', document.body.classList.contains('light') ? 'light' : 'dark');
+            } catch (e) {
+                console.warn('Theme storage unavailable:', e);
+            }
+        };
+        // الافتراضي dark، لكن لو كان مخزن light نشغله
+        try {
+            if (localStorage.getItem('mina-theme') === 'light') document.body.classList.add('light');
+        } catch (e) {
+            console.warn('Theme preference unavailable:', e);
+        }
+
+        console.log('👑 MINA KING CRM loaded successfully!');
+    </script>
+</body>
+</html>
