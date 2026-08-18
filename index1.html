@@ -87,8 +87,8 @@
   <div style="background:var(--surface);padding:2.5rem;border-radius:var(--radius);border:1px solid var(--line);width:350px;text-align:center;">
     <h2 style="color:var(--primary);font-family:var(--fontDisplay);">📦 مخزني Pro</h2>
     <p style="color:var(--muted);margin:.5rem 0 1.5rem;">نظام إدارة متكامل (احترافي)</p>
-    <input class="input" id="loginUsername" type="text" placeholder="اسم المستخدم" style="text-align:center;margin-bottom:.5rem;">
-    <input class="input" id="loginPass" type="password" placeholder="كلمة المرور" style="text-align:center;">
+    <input class="input" id="loginUsername" type="text" placeholder="اسم المستخدم" style="text-align:center;margin-bottom:.5rem;" value="admin">
+    <input class="input" id="loginPass" type="password" placeholder="كلمة المرور" style="text-align:center;" value="admin123">
     <button class="btn btn-primary" style="width:100%;margin-top:.8rem;" id="loginBtn">دخول</button>
     <div style="margin-top:1rem;font-size:.7rem;color:var(--muted);">(يمكن تغيير بيانات الدخول من الإعدادات)</div>
   </div>
@@ -141,16 +141,17 @@
     // ============================================================
     // 1. التخزين
     // ============================================================
-    const Storage = {
-      get(key, fallback = null) {
+    var Storage = {
+      get: function(key, fallback) {
+        if (fallback === undefined) fallback = null;
         try {
-          const raw = localStorage.getItem(key);
+          var raw = localStorage.getItem(key);
           return raw !== null ? JSON.parse(raw) : fallback;
-        } catch {
+        } catch (e) {
           return fallback;
         }
       },
-      set(key, value) {
+      set: function(key, value) {
         localStorage.setItem(key, JSON.stringify(value));
       }
     };
@@ -158,11 +159,11 @@
     // ============================================================
     // 2. الخدمات (Services)
     // ============================================================
-    const Services = {};
+    var Services = {};
 
     // ---- الإعدادات ----
     Services.Settings = {
-      getDefaults() {
+      getDefaults: function() {
         return {
           shopName: 'مخزني Pro',
           currency: 'ج.م',
@@ -172,13 +173,19 @@
           logo: '📦'
         };
       },
-      get() {
-        const saved = Storage.get('wm_settings', null);
-        return saved ? { ...this.getDefaults(), ...saved } : this.getDefaults();
+      get: function() {
+        var saved = Storage.get('wm_settings', null);
+        return saved ? this._merge(this.getDefaults(), saved) : this.getDefaults();
       },
-      update(data) {
-        const current = this.get();
-        const updated = { ...current, ...data };
+      _merge: function(a, b) {
+        var result = {};
+        for (var key in a) result[key] = a[key];
+        for (var key in b) result[key] = b[key];
+        return result;
+      },
+      update: function(data) {
+        var current = this.get();
+        var updated = this._merge(current, data);
         Storage.set('wm_settings', updated);
         return updated;
       }
@@ -186,23 +193,23 @@
 
     // ---- المصادقة ----
     Services.Auth = {
-      getDefaults() {
+      getDefaults: function() {
         return { username: 'admin', password: btoa('admin123') };
       },
-      getCredentials() {
-        let creds = Storage.get('wm_credentials', null);
+      getCredentials: function() {
+        var creds = Storage.get('wm_credentials', null);
         if (!creds) {
           creds = this.getDefaults();
           Storage.set('wm_credentials', creds);
         }
         return creds;
       },
-      login(username, password) {
-        const creds = this.getCredentials();
+      login: function(username, password) {
+        var creds = this.getCredentials();
         return username === creds.username && btoa(password) === creds.password;
       },
-      updateCredentials(username, password) {
-        const newCreds = { username: username.trim(), password: btoa(password.trim()) };
+      updateCredentials: function(username, password) {
+        var newCreds = { username: username.trim(), password: btoa(password.trim()) };
         Storage.set('wm_credentials', newCreds);
         return newCreds;
       }
@@ -210,33 +217,45 @@
 
     // ---- المنتجات ----
     Services.Product = {
-      getAll() { return Storage.get('wm_products', []); },
-      getById(id) { return this.getAll().find(p => p.id === id); },
-      create(data) {
-        const list = this.getAll();
-        const newP = {
+      getAll: function() { return Storage.get('wm_products', []); },
+      getById: function(id) {
+        var list = this.getAll();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) return list[i];
+        }
+        return null;
+      },
+      create: function(data) {
+        var list = this.getAll();
+        var newP = {
           id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-          createdAt: Date.now(),
-          ...data
+          createdAt: Date.now()
         };
+        for (var key in data) newP[key] = data[key];
         list.push(newP);
         Storage.set('wm_products', list);
         return newP;
       },
-      update(id, data) {
-        const list = this.getAll();
-        const idx = list.findIndex(p => p.id === id);
+      update: function(id, data) {
+        var list = this.getAll();
+        var idx = -1;
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) { idx = i; break; }
+        }
         if (idx === -1) return null;
-        list[idx] = { ...list[idx], ...data };
+        for (var key in data) list[idx][key] = data[key];
         Storage.set('wm_products', list);
         return list[idx];
       },
-      delete(id) {
-        let list = this.getAll();
-        list = list.filter(p => p.id !== id);
-        Storage.set('wm_products', list);
+      delete: function(id) {
+        var list = this.getAll();
+        var newList = [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id !== id) newList.push(list[i]);
+        }
+        Storage.set('wm_products', newList);
       },
-      getStatus(p) {
+      getStatus: function(p) {
         if (p.quantity <= 0) return 'out';
         if (p.quantity <= (p.minStock || 5)) return 'low';
         return 'ok';
@@ -245,11 +264,19 @@
 
     // ---- الموردين ----
     Services.Supplier = {
-      getAll() { return Storage.get('wm_suppliers', []); },
-      getById(id) { return this.getAll().find(s => s.id === id); },
-      create(name, contact = '', phone = '') {
-        const list = this.getAll();
-        const newS = {
+      getAll: function() { return Storage.get('wm_suppliers', []); },
+      getById: function(id) {
+        var list = this.getAll();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === id) return list[i];
+        }
+        return null;
+      },
+      create: function(name, contact, phone) {
+        if (contact === undefined) contact = '';
+        if (phone === undefined) phone = '';
+        var list = this.getAll();
+        var newS = {
           id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
           name: name.trim(),
           contact: contact.trim(),
@@ -260,42 +287,52 @@
         Storage.set('wm_suppliers', list);
         return newS;
       },
-      delete(id) {
-        let list = this.getAll();
-        list = list.filter(s => s.id !== id);
-        Storage.set('wm_suppliers', list);
+      delete: function(id) {
+        var list = this.getAll();
+        var newList = [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id !== id) newList.push(list[i]);
+        }
+        Storage.set('wm_suppliers', newList);
       }
     };
 
     // ---- طلبات الشراء ----
     Services.Purchase = {
-      getAll() { return Storage.get('wm_purchases', []); },
-      create(data) {
-        const list = this.getAll();
-        const newPO = {
+      getAll: function() { return Storage.get('wm_purchases', []); },
+      create: function(data) {
+        var list = this.getAll();
+        var newPO = {
           id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
           status: 'pending',
-          createdAt: Date.now(),
-          ...data
+          createdAt: Date.now()
         };
+        for (var key in data) newPO[key] = data[key];
         list.push(newPO);
         Storage.set('wm_purchases', list);
         return newPO;
       },
-      receive(poId) {
-        const list = this.getAll();
-        const po = list.find(p => p.id === poId);
+      receive: function(poId) {
+        var list = this.getAll();
+        var po = null;
+        var poIdx = -1;
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === poId) { po = list[i]; poIdx = i; break; }
+        }
         if (!po || po.status === 'received') return null;
         po.status = 'received';
         po.receivedAt = Date.now();
 
-        const products = Services.Product.getAll();
-        po.items.forEach(item => {
-          const prod = products.find(p => p.id === item.productId);
+        var products = Services.Product.getAll();
+        var ops = Storage.get('wm_operations', []);
+        for (var j = 0; j < po.items.length; j++) {
+          var item = po.items[j];
+          var prod = null;
+          for (var k = 0; k < products.length; k++) {
+            if (products[k].id === item.productId) { prod = products[k]; break; }
+          }
           if (prod) {
             prod.quantity = (prod.quantity || 0) + item.qty;
-            // تسجيل حركة
-            const ops = Storage.get('wm_operations', []);
             ops.push({
               id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
               productId: prod.id,
@@ -305,26 +342,30 @@
               note: 'استلام طلب شراء #' + po.id.slice(0, 8),
               createdAt: Date.now()
             });
-            Storage.set('wm_operations', ops);
           }
-        });
+        }
         Storage.set('wm_products', products);
+        Storage.set('wm_operations', ops);
         Storage.set('wm_purchases', list);
         return po;
       },
-      delete(id) {
-        let list = this.getAll();
-        list = list.filter(p => p.id !== id);
-        Storage.set('wm_purchases', list);
+      delete: function(id) {
+        var list = this.getAll();
+        var newList = [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id !== id) newList.push(list[i]);
+        }
+        Storage.set('wm_purchases', newList);
       }
     };
 
     // ---- العملاء ----
     Services.Customer = {
-      getAll() { return Storage.get('wm_customers', []); },
-      create(name, phone = '') {
-        const list = this.getAll();
-        const c = {
+      getAll: function() { return Storage.get('wm_customers', []); },
+      create: function(name, phone) {
+        if (phone === undefined) phone = '';
+        var list = this.getAll();
+        var c = {
           id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
           name: name.trim(),
           phone: phone.trim(),
@@ -334,29 +375,32 @@
         Storage.set('wm_customers', list);
         return c;
       },
-      delete(id) {
-        let list = this.getAll();
-        list = list.filter(c => c.id !== id);
-        Storage.set('wm_customers', list);
+      delete: function(id) {
+        var list = this.getAll();
+        var newList = [];
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id !== id) newList.push(list[i]);
+        }
+        Storage.set('wm_customers', newList);
       }
     };
 
     // ---- المبيعات ----
     Services.Sales = {
-      getAll() { return Storage.get('wm_sales', []); },
-      create({ customerId, items, total, discount = 0, tax = 0, paymentMethod = 'cash', note = '' }) {
-        const list = this.getAll();
-        const number = 'INV-' + Date.now().toString(36).toUpperCase();
-        const sale = {
+      getAll: function() { return Storage.get('wm_sales', []); },
+      create: function(data) {
+        var list = this.getAll();
+        var number = 'INV-' + Date.now().toString(36).toUpperCase();
+        var sale = {
           id: Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
-          number,
-          customerId,
-          items,
-          total,
-          discount,
-          tax,
-          paymentMethod,
-          note: note.trim(),
+          number: number,
+          customerId: data.customerId || '',
+          items: data.items || [],
+          total: data.total || 0,
+          discount: data.discount || 0,
+          tax: data.tax || 0,
+          paymentMethod: data.paymentMethod || 'cash',
+          note: (data.note || '').trim(),
           createdAt: Date.now()
         };
         list.push(sale);
@@ -367,97 +411,136 @@
 
     // ---- التقارير ----
     Services.Report = {
-      getDashboardStats() {
-        const products = Services.Product.getAll();
-        const sales = Services.Sales.getAll();
-        const suppliers = Services.Supplier.getAll();
-        const totalStockValue = products.reduce((s, p) => s + (p.purchasePrice || 0) * (p.quantity || 0), 0);
-        const totalSales = sales.reduce((s, p) => s + p.total, 0);
-        const lowStock = products.filter(p => Services.Product.getStatus(p) !== 'ok').length;
+      getDashboardStats: function() {
+        var products = Services.Product.getAll();
+        var sales = Services.Sales.getAll();
+        var suppliers = Services.Supplier.getAll();
+        var totalStockValue = 0;
+        for (var i = 0; i < products.length; i++) {
+          var p = products[i];
+          totalStockValue += (p.purchasePrice || 0) * (p.quantity || 0);
+        }
+        var totalSales = 0;
+        for (var j = 0; j < sales.length; j++) totalSales += sales[j].total;
+        var lowStock = 0;
+        for (var k = 0; k < products.length; k++) {
+          if (Services.Product.getStatus(products[k]) !== 'ok') lowStock++;
+        }
         return {
           products: products.length,
           suppliers: suppliers.length,
-          totalStockValue,
-          totalSales,
-          lowStock
+          totalStockValue: totalStockValue,
+          totalSales: totalSales,
+          lowStock: lowStock
         };
       },
-      getPaymentMethodDistribution() {
-        const sales = Services.Sales.getAll();
-        const map = {};
-        sales.forEach(s => {
-          map[s.paymentMethod] = (map[s.paymentMethod] || 0) + s.total;
-        });
-        return Object.entries(map).map(([k, v]) => ({ label: k, value: v }));
+      getPaymentMethodDistribution: function() {
+        var sales = Services.Sales.getAll();
+        var map = {};
+        for (var i = 0; i < sales.length; i++) {
+          var method = sales[i].paymentMethod || 'cash';
+          map[method] = (map[method] || 0) + sales[i].total;
+        }
+        var result = [];
+        for (var key in map) {
+          result.push({ label: key, value: map[key] });
+        }
+        return result;
       },
-      getBestSuppliers() {
-        const purchases = Services.Purchase.getAll().filter(p => p.status === 'received');
-        const map = {};
-        purchases.forEach(p => {
-          const supplier = Services.Supplier.getById(p.supplierId);
-          const name = supplier ? supplier.name : 'غير معروف';
-          map[name] = (map[name] || 0) + p.totalCost;
-        });
-        return Object.entries(map).map(([k, v]) => ({ name: k, spent: v })).sort((a, b) => b.spent - a.spent);
+      getBestSuppliers: function() {
+        var purchases = Services.Purchase.getAll();
+        var received = [];
+        for (var i = 0; i < purchases.length; i++) {
+          if (purchases[i].status === 'received') received.push(purchases[i]);
+        }
+        var map = {};
+        for (var j = 0; j < received.length; j++) {
+          var p = received[j];
+          var supplier = Services.Supplier.getById(p.supplierId);
+          var name = supplier ? supplier.name : 'غير معروف';
+          map[name] = (map[name] || 0) + (p.totalCost || 0);
+        }
+        var result = [];
+        for (var key in map) {
+          result.push({ name: key, spent: map[key] });
+        }
+        result.sort(function(a, b) { return b.spent - a.spent; });
+        return result;
       }
     };
 
     // ---- الذكاء الاصطناعي ----
     Services.AI = {
-      analyze() {
-        const products = Services.Product.getAll();
-        const ops = Storage.get('wm_operations', []);
-        const sales = Services.Sales.getAll();
-        const low = products.filter(p => Services.Product.getStatus(p) !== 'ok');
-        const outOps = ops.filter(o => o.type === 'out');
-        const totalOut = outOps.reduce((s, o) => s + o.qty, 0);
-        const avgDailySale = totalOut / Math.max(1, 30);
-        const restock = low.map(p => {
-          const daysToEmpty = avgDailySale > 0 ? Math.floor(p.quantity / avgDailySale) : 99;
-          return {
+      analyze: function() {
+        var products = Services.Product.getAll();
+        var ops = Storage.get('wm_operations', []);
+        var sales = Services.Sales.getAll();
+        var low = [];
+        for (var i = 0; i < products.length; i++) {
+          if (Services.Product.getStatus(products[i]) !== 'ok') low.push(products[i]);
+        }
+        var totalOut = 0;
+        for (var j = 0; j < ops.length; j++) {
+          if (ops[j].type === 'out') totalOut += ops[j].qty;
+        }
+        var avgDailySale = totalOut / Math.max(1, 30);
+        var restock = [];
+        for (var k = 0; k < low.length; k++) {
+          var p = low[k];
+          var daysToEmpty = avgDailySale > 0 ? Math.floor(p.quantity / avgDailySale) : 99;
+          restock.push({
             product: p,
             urgency: daysToEmpty < 3 ? 'عاجل' : 'متوسط',
-            daysToEmpty
-          };
-        });
-        const totalRevenue = sales.reduce((s, v) => s + v.total, 0);
-        const totalProfit = sales.reduce((s, v) => {
-          const cost = v.items.reduce((a, i) => a + (i.cost || 0) * i.qty, 0);
-          return s + (v.total - cost);
-        }, 0);
-        return { restock, totalRevenue, totalProfit, totalSales: sales.length };
+            daysToEmpty: daysToEmpty
+          });
+        }
+        var totalRevenue = 0;
+        for (var l = 0; l < sales.length; l++) totalRevenue += sales[l].total;
+        var totalProfit = 0;
+        for (var m = 0; m < sales.length; m++) {
+          var cost = 0;
+          var items = sales[m].items || [];
+          for (var n = 0; n < items.length; n++) {
+            cost += (items[n].cost || 0) * items[n].qty;
+          }
+          totalProfit += (sales[m].total - cost);
+        }
+        return { restock: restock, totalRevenue: totalRevenue, totalProfit: totalProfit, totalSales: sales.length };
       }
     };
 
     // ============================================================
     // 3. واجهة المستخدم (UI)
     // ============================================================
-    const UI = {
-      showToast(msg, type = 'success') {
-        const container = document.getElementById('toastContainer');
-        const el = document.createElement('div');
+    var UI = {
+      showToast: function(msg, type) {
+        if (type === undefined) type = 'success';
+        var container = document.getElementById('toastContainer');
+        var el = document.createElement('div');
         el.className = 'toast ' + type;
         el.textContent = msg;
         container.appendChild(el);
-        setTimeout(() => {
+        setTimeout(function() {
           el.style.opacity = '0';
-          setTimeout(() => el.remove(), 300);
+          setTimeout(function() { el.remove(); }, 300);
         }, 3500);
       },
-      openModal(title, bodyHTML, actionLabel = 'حفظ', onAction = null) {
+      openModal: function(title, bodyHTML, actionLabel, onAction) {
+        if (actionLabel === undefined) actionLabel = 'حفظ';
         document.getElementById('gModalTitle').textContent = title;
         document.getElementById('gModalBody').innerHTML = bodyHTML;
         document.getElementById('gModalAction').textContent = actionLabel;
-        document.getElementById('gModalAction').onclick = function() {
+        var actionBtn = document.getElementById('gModalAction');
+        actionBtn.onclick = function() {
           if (onAction) onAction();
         };
         document.getElementById('genericModal').classList.add('open');
       },
-      closeModal() {
+      closeModal: function() {
         document.getElementById('genericModal').classList.remove('open');
       },
-      renderPage(pageId, html) {
-        let container = document.getElementById('page-' + pageId);
+      renderPage: function(pageId, html) {
+        var container = document.getElementById('page-' + pageId);
         if (!container) {
           container = document.createElement('section');
           container.id = 'page-' + pageId;
@@ -466,21 +549,24 @@
         }
         container.innerHTML = html;
         container.classList.add('active');
-        document.querySelectorAll('.page').forEach(p => {
-          if (p.id !== container.id) p.classList.remove('active');
-        });
-        const navBtn = document.querySelector('.nav-item[data-page="' + pageId + '"]');
+        var allPages = document.querySelectorAll('.page');
+        for (var i = 0; i < allPages.length; i++) {
+          if (allPages[i].id !== container.id) allPages[i].classList.remove('active');
+        }
+        var navBtn = document.querySelector('.nav-item[data-page="' + pageId + '"]');
         if (navBtn) document.getElementById('pageTitle').textContent = navBtn.textContent.trim();
-        document.querySelectorAll('.nav-item').forEach(b => {
-          b.classList.toggle('active', b.dataset.page === pageId);
-        });
+        var allNav = document.querySelectorAll('.nav-item');
+        for (var j = 0; j < allNav.length; j++) {
+          if (allNav[j].dataset.page === pageId) allNav[j].classList.add('active');
+          else allNav[j].classList.remove('active');
+        }
       }
     };
 
     // ============================================================
     // 4. الكونترولرز (Controllers)
     // ============================================================
-    const Controllers = {};
+    var Controllers = {};
 
     function uid() {
       return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -488,78 +574,92 @@
 
     // ---- لوحة التحكم ----
     Controllers.Dashboard = {
-      render() {
-        const stats = Services.Report.getDashboardStats();
-        const bestSuppliers = Services.Report.getBestSuppliers();
-        const paymentDist = Services.Report.getPaymentMethodDistribution();
-        const html = `
-          <div class="stats-grid">
-            <div class="stat" style="--statColor:var(--blue);--statSoft:rgba(90,162,255,.14);">
-              <div class="stat-icon">📦</div><div><span class="stat-label">المنتجات</span><span class="stat-value">${stats.products}</span></div>
-            </div>
-            <div class="stat" style="--statColor:var(--primary);--statSoft:var(--primarySoft);">
-              <div class="stat-icon">💰</div><div><span class="stat-label">قيمة المخزون</span><span class="stat-value">${stats.totalStockValue.toFixed(0)}</span></div>
-            </div>
-            <div class="stat" style="--statColor:var(--violet);--statSoft:rgba(180,140,255,.14);">
-              <div class="stat-icon">📈</div><div><span class="stat-label">إجمالي المبيعات</span><span class="stat-value">${stats.totalSales.toFixed(0)}</span></div>
-            </div>
-            <div class="stat" style="--statColor:var(--amber);--statSoft:rgba(255,178,36,.14);">
-              <div class="stat-icon">⚠️</div><div><span class="stat-label">تنبيهات المخزون</span><span class="stat-value">${stats.lowStock}</span></div>
-            </div>
-            <div class="stat" style="--statColor:var(--coral);--statSoft:rgba(255,107,94,.14);">
-              <div class="stat-icon">🏢</div><div><span class="stat-label">الموردين</span><span class="stat-value">${stats.suppliers}</span></div>
-            </div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div class="panel"><div class="panel-head"><h3>🏆 أفضل الموردين</h3></div>
-              <ul>${bestSuppliers.slice(0,5).map(s => `<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>${s.name}</span><span>${s.spent.toFixed(0)}</span></li>`).join('') || '<li class="text-muted" style="padding:.5rem 1rem;">لا توجد بيانات</li>'}</ul>
-            </div>
-            <div class="panel"><div class="panel-head"><h3>💳 توزيع المدفوعات</h3></div>
-              <ul>${paymentDist.map(p => `<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>${p.label}</span><span>${p.value.toFixed(0)}</span></li>`).join('') || '<li class="text-muted" style="padding:.5rem 1rem;">لا توجد مبيعات</li>'}</ul>
-            </div>
-          </div>
-        `;
+      render: function() {
+        var stats = Services.Report.getDashboardStats();
+        var bestSuppliers = Services.Report.getBestSuppliers();
+        var paymentDist = Services.Report.getPaymentMethodDistribution();
+        var html = '';
+        html += '<div class="stats-grid">';
+        html += '<div class="stat" style="--statColor:var(--blue);--statSoft:rgba(90,162,255,.14);">';
+        html += '<div class="stat-icon">📦</div><div><span class="stat-label">المنتجات</span><span class="stat-value">' + stats.products + '</span></div></div>';
+        html += '<div class="stat" style="--statColor:var(--primary);--statSoft:var(--primarySoft);">';
+        html += '<div class="stat-icon">💰</div><div><span class="stat-label">قيمة المخزون</span><span class="stat-value">' + stats.totalStockValue.toFixed(0) + '</span></div></div>';
+        html += '<div class="stat" style="--statColor:var(--violet);--statSoft:rgba(180,140,255,.14);">';
+        html += '<div class="stat-icon">📈</div><div><span class="stat-label">إجمالي المبيعات</span><span class="stat-value">' + stats.totalSales.toFixed(0) + '</span></div></div>';
+        html += '<div class="stat" style="--statColor:var(--amber);--statSoft:rgba(255,178,36,.14);">';
+        html += '<div class="stat-icon">⚠️</div><div><span class="stat-label">تنبيهات المخزون</span><span class="stat-value">' + stats.lowStock + '</span></div></div>';
+        html += '<div class="stat" style="--statColor:var(--coral);--statSoft:rgba(255,107,94,.14);">';
+        html += '<div class="stat-icon">🏢</div><div><span class="stat-label">الموردين</span><span class="stat-value">' + stats.suppliers + '</span></div></div>';
+        html += '</div>';
+
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">';
+        html += '<div class="panel"><div class="panel-head"><h3>🏆 أفضل الموردين</h3></div><ul>';
+        if (bestSuppliers.length > 0) {
+          var limit = Math.min(5, bestSuppliers.length);
+          for (var i = 0; i < limit; i++) {
+            html += '<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>' + bestSuppliers[i].name + '</span><span>' + bestSuppliers[i].spent.toFixed(0) + '</span></li>';
+          }
+        } else {
+          html += '<li class="text-muted" style="padding:.5rem 1rem;">لا توجد بيانات</li>';
+        }
+        html += '</ul></div>';
+
+        html += '<div class="panel"><div class="panel-head"><h3>💳 توزيع المدفوعات</h3></div><ul>';
+        if (paymentDist.length > 0) {
+          for (var j = 0; j < paymentDist.length; j++) {
+            html += '<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>' + paymentDist[j].label + '</span><span>' + paymentDist[j].value.toFixed(0) + '</span></li>';
+          }
+        } else {
+          html += '<li class="text-muted" style="padding:.5rem 1rem;">لا توجد مبيعات</li>';
+        }
+        html += '</ul></div></div>';
         UI.renderPage('dashboard', html);
       }
     };
 
     // ---- المنتجات ----
     Controllers.Products = {
-      render() {
-        const products = Services.Product.getAll();
-        let rows = products.map(p => {
-          const st = Services.Product.getStatus(p);
-          const stCls = st === 'ok' ? 'success' : st === 'low' ? 'warning' : 'danger';
-          const stLabel = st === 'ok' ? 'متوفر' : st === 'low' ? 'منخفض' : 'نافد';
-          return `<tr><td><strong>${p.name}</strong><br><span class="text-muted" style="font-size:.7rem;">${p.sku}</span></td>
-          <td>${p.category || 'عام'}</td><td>${p.purchasePrice || 0}</td><td>${p.salePrice || 0}</td>
-          <td>${p.quantity || 0}</td><td><span class="pill ${stCls}">${stLabel}</span></td>
-          <td class="flex"><button class="btn btn-sm btn-primary" onclick="Controllers.Products.edit('${p.id}')">✏️</button>
-          <button class="btn btn-sm btn-danger" onclick="Controllers.Products.delete('${p.id}')">🗑️</button></td></tr>`;
-        }).join('');
-        const html = `
-          <div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Products.showAdd()">➕ إضافة منتج</button></div>
-          <div class="panel"><table class="tbl"><thead><tr><th>المنتج</th><th>التصنيف</th><th>سعر الشراء</th><th>سعر البيع</th><th>الكمية</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="7" class="text-muted">لا توجد منتجات</td></tr>'}</tbody></table></div>
-        `;
+      render: function() {
+        var products = Services.Product.getAll();
+        var rows = '';
+        for (var i = 0; i < products.length; i++) {
+          var p = products[i];
+          var st = Services.Product.getStatus(p);
+          var stCls = st === 'ok' ? 'success' : st === 'low' ? 'warning' : 'danger';
+          var stLabel = st === 'ok' ? 'متوفر' : st === 'low' ? 'منخفض' : 'نافد';
+          rows += '<tr><td><strong>' + p.name + '</strong><br><span class="text-muted" style="font-size:.7rem;">' + p.sku + '</span></td>';
+          rows += '<td>' + (p.category || 'عام') + '</td><td>' + (p.purchasePrice || 0) + '</td><td>' + (p.salePrice || 0) + '</td>';
+          rows += '<td>' + (p.quantity || 0) + '</td><td><span class="pill ' + stCls + '">' + stLabel + '</span></td>';
+          rows += '<td class="flex"><button class="btn btn-sm btn-primary" onclick="Controllers.Products.edit(\'' + p.id + '\')">✏️</button>';
+          rows += '<button class="btn btn-sm btn-danger" onclick="Controllers.Products.delete(\'' + p.id + '\')">🗑️</button></td></tr>';
+        }
+        var html = '';
+        html += '<div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Products.showAdd()">➕ إضافة منتج</button></div>';
+        html += '<div class="panel"><table class="tbl"><thead><tr><th>المنتج</th><th>التصنيف</th><th>سعر الشراء</th><th>سعر البيع</th><th>الكمية</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>';
+        if (rows) html += rows;
+        else html += '<tr><td colspan="7" class="text-muted">لا توجد منتجات</td></tr>';
+        html += '</tbody></table></div>';
         UI.renderPage('products', html);
       },
-      showAdd() {
-        const suppliers = Services.Supplier.getAll();
-        const supplierOpts = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-        const body = `
-          <div class="form-grid">
-            <div class="span-2"><label>اسم المنتج</label><input class="input" id="fPName" placeholder="اسم المنتج"></div>
-            <div><label>SKU</label><input class="input" id="fPSku" placeholder="SKU"></div>
-            <div><label>التصنيف</label><input class="input" id="fPCat" placeholder="تصنيف"></div>
-            <div><label>سعر الشراء</label><input class="input" id="fPPurchase" type="number"></div>
-            <div><label>سعر البيع</label><input class="input" id="fPSale" type="number"></div>
-            <div><label>الكمية الابتدائية</label><input class="input" id="fPQty" type="number" value="0"></div>
-            <div><label>الحد الأدنى</label><input class="input" id="fPMin" type="number" value="${Services.Settings.get().defaultMinStock}"></div>
-            <div><label>المورد</label><select class="select" id="fPSupplier"><option value="">بدون</option>${supplierOpts}</select></div>
-          </div>
-        `;
+      showAdd: function() {
+        var suppliers = Services.Supplier.getAll();
+        var supplierOpts = '';
+        for (var i = 0; i < suppliers.length; i++) {
+          supplierOpts += '<option value="' + suppliers[i].id + '">' + suppliers[i].name + '</option>';
+        }
+        var body = '';
+        body += '<div class="form-grid">';
+        body += '<div class="span-2"><label>اسم المنتج</label><input class="input" id="fPName" placeholder="اسم المنتج"></div>';
+        body += '<div><label>SKU</label><input class="input" id="fPSku" placeholder="SKU"></div>';
+        body += '<div><label>التصنيف</label><input class="input" id="fPCat" placeholder="تصنيف"></div>';
+        body += '<div><label>سعر الشراء</label><input class="input" id="fPPurchase" type="number"></div>';
+        body += '<div><label>سعر البيع</label><input class="input" id="fPSale" type="number"></div>';
+        body += '<div><label>الكمية الابتدائية</label><input class="input" id="fPQty" type="number" value="0"></div>';
+        body += '<div><label>الحد الأدنى</label><input class="input" id="fPMin" type="number" value="' + Services.Settings.get().defaultMinStock + '"></div>';
+        body += '<div><label>المورد</label><select class="select" id="fPSupplier"><option value="">بدون</option>' + supplierOpts + '</select></div>';
+        body += '</div>';
         UI.openModal('إضافة منتج جديد', body, 'حفظ', function() {
-          const data = {
+          var data = {
             name: document.getElementById('fPName').value.trim(),
             sku: document.getElementById('fPSku').value.trim(),
             category: document.getElementById('fPCat').value.trim(),
@@ -569,31 +669,32 @@
             minStock: parseInt(document.getElementById('fPMin').value) || 5,
             supplierId: document.getElementById('fPSupplier').value || ''
           };
-          if (!data.name) return UI.showToast('الاسم مطلوب', 'error');
+          if (!data.name) { UI.showToast('الاسم مطلوب', 'error'); return; }
           Services.Product.create(data);
           UI.closeModal();
           Controllers.Products.render();
           UI.showToast('تمت الإضافة');
         });
       },
-      edit(id) {
-        const p = Services.Product.getById(id);
+      edit: function(id) {
+        var p = Services.Product.getById(id);
         if (!p) return;
-        const suppliers = Services.Supplier.getAll();
-        const supplierOpts = suppliers.map(s =>
-          `<option value="${s.id}" ${s.id === p.supplierId ? 'selected' : ''}>${s.name}</option>`
-        ).join('');
-        const body = `
-          <div class="form-grid">
-            <div class="span-2"><label>اسم المنتج</label><input class="input" id="fPName" value="${p.name}"></div>
-            <div><label>SKU</label><input class="input" id="fPSku" value="${p.sku}"></div>
-            <div><label>التصنيف</label><input class="input" id="fPCat" value="${p.category || ''}"></div>
-            <div><label>سعر الشراء</label><input class="input" id="fPPurchase" type="number" value="${p.purchasePrice || 0}"></div>
-            <div><label>سعر البيع</label><input class="input" id="fPSale" type="number" value="${p.salePrice || 0}"></div>
-            <div><label>الحد الأدنى</label><input class="input" id="fPMin" type="number" value="${p.minStock || 5}"></div>
-            <div><label>المورد</label><select class="select" id="fPSupplier"><option value="">بدون</option>${supplierOpts}</select></div>
-          </div>
-        `;
+        var suppliers = Services.Supplier.getAll();
+        var supplierOpts = '';
+        for (var i = 0; i < suppliers.length; i++) {
+          var selected = (suppliers[i].id === p.supplierId) ? 'selected' : '';
+          supplierOpts += '<option value="' + suppliers[i].id + '" ' + selected + '>' + suppliers[i].name + '</option>';
+        }
+        var body = '';
+        body += '<div class="form-grid">';
+        body += '<div class="span-2"><label>اسم المنتج</label><input class="input" id="fPName" value="' + p.name + '"></div>';
+        body += '<div><label>SKU</label><input class="input" id="fPSku" value="' + p.sku + '"></div>';
+        body += '<div><label>التصنيف</label><input class="input" id="fPCat" value="' + (p.category || '') + '"></div>';
+        body += '<div><label>سعر الشراء</label><input class="input" id="fPPurchase" type="number" value="' + (p.purchasePrice || 0) + '"></div>';
+        body += '<div><label>سعر البيع</label><input class="input" id="fPSale" type="number" value="' + (p.salePrice || 0) + '"></div>';
+        body += '<div><label>الحد الأدنى</label><input class="input" id="fPMin" type="number" value="' + (p.minStock || 5) + '"></div>';
+        body += '<div><label>المورد</label><select class="select" id="fPSupplier"><option value="">بدون</option>' + supplierOpts + '</select></div>';
+        body += '</div>';
         UI.openModal('تعديل منتج', body, 'تحديث', function() {
           Services.Product.update(id, {
             name: document.getElementById('fPName').value,
@@ -609,7 +710,7 @@
           UI.showToast('تم التحديث');
         });
       },
-      delete(id) {
+      delete: function(id) {
         if (!confirm('حذف المنتج نهائياً؟')) return;
         Services.Product.delete(id);
         Controllers.Products.render();
@@ -619,30 +720,39 @@
 
     // ---- الموردين ----
     Controllers.Suppliers = {
-      render() {
-        const list = Services.Supplier.getAll();
-        let rows = list.map(s => `<tr><td>${s.name}</td><td>${s.contact || ''}</td><td>${s.phone || ''}</td>
-          <td><button class="btn btn-sm btn-danger" onclick="Controllers.Suppliers.delete('${s.id}')">🗑️</button></td></tr>`).join('');
-        const html = `
-          <div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Suppliers.showAdd()">➕ إضافة مورد</button></div>
-          <div class="panel"><table class="tbl"><thead><tr><th>الاسم</th><th>جهة الاتصال</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="4" class="text-muted">لا يوجد موردون</td></tr>'}</tbody></table></div>
-        `;
+      render: function() {
+        var list = Services.Supplier.getAll();
+        var rows = '';
+        for (var i = 0; i < list.length; i++) {
+          var s = list[i];
+          rows += '<tr><td>' + s.name + '</td><td>' + (s.contact || '') + '</td><td>' + (s.phone || '') + '</td>';
+          rows += '<td><button class="btn btn-sm btn-danger" onclick="Controllers.Suppliers.delete(\'' + s.id + '\')">🗑️</button></td></tr>';
+        }
+        var html = '';
+        html += '<div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Suppliers.showAdd()">➕ إضافة مورد</button></div>';
+        html += '<div class="panel"><table class="tbl"><thead><tr><th>الاسم</th><th>جهة الاتصال</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>';
+        if (rows) html += rows;
+        else html += '<tr><td colspan="4" class="text-muted">لا يوجد موردون</td></tr>';
+        html += '</tbody></table></div>';
         UI.renderPage('suppliers', html);
       },
-      showAdd() {
-        const body = `<div class="form-grid"><div class="span-2"><label>اسم المورد</label><input class="input" id="fSName"></div>
-        <div><label>جهة الاتصال</label><input class="input" id="fSContact"></div>
-        <div><label>الهاتف</label><input class="input" id="fSPhone"></div></div>`;
+      showAdd: function() {
+        var body = '';
+        body += '<div class="form-grid">';
+        body += '<div class="span-2"><label>اسم المورد</label><input class="input" id="fSName"></div>';
+        body += '<div><label>جهة الاتصال</label><input class="input" id="fSContact"></div>';
+        body += '<div><label>الهاتف</label><input class="input" id="fSPhone"></div>';
+        body += '</div>';
         UI.openModal('إضافة مورد', body, 'حفظ', function() {
-          const name = document.getElementById('fSName').value.trim();
-          if (!name) return UI.showToast('الاسم مطلوب', 'error');
+          var name = document.getElementById('fSName').value.trim();
+          if (!name) { UI.showToast('الاسم مطلوب', 'error'); return; }
           Services.Supplier.create(name, document.getElementById('fSContact').value, document.getElementById('fSPhone').value);
           UI.closeModal();
           Controllers.Suppliers.render();
           UI.showToast('تمت الإضافة');
         });
       },
-      delete(id) {
+      delete: function(id) {
         if (confirm('حذف المورد؟')) {
           Services.Supplier.delete(id);
           Controllers.Suppliers.render();
@@ -652,49 +762,76 @@
     };
 
     // ---- طلبات الشراء ----
-    let poItems = [];
+    var poItems = [];
     Controllers.Purchases = {
-      render() {
-        const list = Services.Purchase.getAll();
-        const suppliers = Services.Supplier.getAll();
-        let rows = list.map(po => {
-          const sup = suppliers.find(s => s.id === po.supplierId);
-          return `<tr><td>${po.id.slice(0,8)}</td><td>${sup ? sup.name : 'غير معروف'}</td><td>${po.items ? po.items.length : 0} صنف</td>
-          <td>${(po.totalCost || 0).toFixed(0)}</td><td><span class="pill ${po.status === 'received' ? 'success' : 'warning'}">${po.status === 'received' ? 'مستلم' : 'قيد الانتظار'}</span></td>
-          <td>${po.status !== 'received' ? `<button class="btn btn-sm btn-primary" onclick="Controllers.Purchases.receive('${po.id}')">استلام</button>` : 'تم'}</td></tr>`;
-        }).join('');
-        const html = `
-          <div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Purchases.showAdd()">➕ طلب شراء جديد</button></div>
-          <div class="panel"><table class="tbl"><thead><tr><th>رقم الطلب</th><th>المورد</th><th>الأصناف</th><th>الإجمالي</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="6" class="text-muted">لا توجد طلبات</td></tr>'}</tbody></table></div>
-        `;
+      render: function() {
+        var list = Services.Purchase.getAll();
+        var suppliers = Services.Supplier.getAll();
+        var rows = '';
+        for (var i = 0; i < list.length; i++) {
+          var po = list[i];
+          var sup = null;
+          for (var j = 0; j < suppliers.length; j++) {
+            if (suppliers[j].id === po.supplierId) { sup = suppliers[j]; break; }
+          }
+          var supName = sup ? sup.name : 'غير معروف';
+          var itemCount = po.items ? po.items.length : 0;
+          var totalCost = po.totalCost || 0;
+          var statusClass = po.status === 'received' ? 'success' : 'warning';
+          var statusLabel = po.status === 'received' ? 'مستلم' : 'قيد الانتظار';
+          var receiveBtn = '';
+          if (po.status !== 'received') {
+            receiveBtn = '<button class="btn btn-sm btn-primary" onclick="Controllers.Purchases.receive(\'' + po.id + '\')">استلام</button>';
+          } else {
+            receiveBtn = 'تم';
+          }
+          rows += '<tr><td>' + po.id.slice(0, 8) + '</td><td>' + supName + '</td><td>' + itemCount + ' صنف</td>';
+          rows += '<td>' + totalCost.toFixed(0) + '</td><td><span class="pill ' + statusClass + '">' + statusLabel + '</span></td>';
+          rows += '<td>' + receiveBtn + '</td></tr>';
+        }
+        var html = '';
+        html += '<div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Purchases.showAdd()">➕ طلب شراء جديد</button></div>';
+        html += '<div class="panel"><table class="tbl"><thead><tr><th>رقم الطلب</th><th>المورد</th><th>الأصناف</th><th>الإجمالي</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>';
+        if (rows) html += rows;
+        else html += '<tr><td colspan="6" class="text-muted">لا توجد طلبات</td></tr>';
+        html += '</tbody></table></div>';
         UI.renderPage('purchases', html);
       },
-      showAdd() {
-        const products = Services.Product.getAll();
-        const suppliers = Services.Supplier.getAll();
-        const prodOpts = products.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
-        const supOpts = suppliers.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
-        const body = `
-          <div class="form-grid">
-            <div class="span-2"><label>المورد</label><select class="select" id="fPOSupplier">${supOpts}</select></div>
-            <div class="span-2"><label>المنتجات (اختر واضف)</label>
-              <div class="flex"><select class="select" id="fPOProduct">${prodOpts}</select>
-              <input class="input" id="fPOQty" type="number" placeholder="الكمية" style="width:80px;">
-              <button class="btn btn-primary btn-sm" id="addPOItemBtn">➕</button></div>
-              <ul id="poItemsList" style="margin-top:.5rem;"></ul>
-            </div>
-            <div><label>ملاحظات</label><input class="input" id="fPONote"></div>
-          </div>
-        `;
+      showAdd: function() {
+        var products = Services.Product.getAll();
+        var suppliers = Services.Supplier.getAll();
+        var prodOpts = '';
+        for (var i = 0; i < products.length; i++) {
+          prodOpts += '<option value="' + products[i].id + '">' + products[i].name + '</option>';
+        }
+        var supOpts = '';
+        for (var j = 0; j < suppliers.length; j++) {
+          supOpts += '<option value="' + suppliers[j].id + '">' + suppliers[j].name + '</option>';
+        }
+        var body = '';
+        body += '<div class="form-grid">';
+        body += '<div class="span-2"><label>المورد</label><select class="select" id="fPOSupplier">' + supOpts + '</select></div>';
+        body += '<div class="span-2"><label>المنتجات (اختر واضف)</label>';
+        body += '<div class="flex"><select class="select" id="fPOProduct">' + prodOpts + '</select>';
+        body += '<input class="input" id="fPOQty" type="number" placeholder="الكمية" style="width:80px;">';
+        body += '<button class="btn btn-primary btn-sm" id="addPOItemBtn">➕</button></div>';
+        body += '<ul id="poItemsList" style="margin-top:.5rem;"></ul>';
+        body += '</div>';
+        body += '<div><label>ملاحظات</label><input class="input" id="fPONote"></div>';
+        body += '</div>';
+
         UI.openModal('طلب شراء جديد', body, 'إنشاء الطلب', function() {
-          const supplierId = document.getElementById('fPOSupplier').value;
-          if (!supplierId) return UI.showToast('اختر مورد', 'error');
-          if (!poItems.length) return UI.showToast('أضف منتجات', 'error');
-          const totalCost = poItems.reduce((s, i) => s + i.qty * i.price, 0);
+          var supplierId = document.getElementById('fPOSupplier').value;
+          if (!supplierId) { UI.showToast('اختر مورد', 'error'); return; }
+          if (poItems.length === 0) { UI.showToast('أضف منتجات', 'error'); return; }
+          var totalCost = 0;
+          for (var k = 0; k < poItems.length; k++) {
+            totalCost += poItems[k].qty * poItems[k].price;
+          }
           Services.Purchase.create({
-            supplierId,
+            supplierId: supplierId,
             items: poItems,
-            totalCost,
+            totalCost: totalCost,
             note: document.getElementById('fPONote').value
           });
           poItems = [];
@@ -702,27 +839,35 @@
           Controllers.Purchases.render();
           UI.showToast('تم إنشاء الطلب');
         });
+
         poItems = [];
-        document.getElementById('poItemsList')?.innerHTML = '';
-        // ربط زر الإضافة
-        document.getElementById('addPOItemBtn')?.addEventListener('click', function() {
-          const pid = document.getElementById('fPOProduct').value;
-          const qty = parseInt(document.getElementById('fPOQty').value);
-          if (!pid || !qty) return UI.showToast('اختر منتج وكمية', 'error');
-          const p = Services.Product.getById(pid);
-          if (!p) return;
-          poItems.push({ productId: pid, name: p.name, qty, price: p.purchasePrice || 0 });
-          const ul = document.getElementById('poItemsList');
-          ul.innerHTML = poItems.map((item, i) =>
-            `<li>${item.name} × ${item.qty} (${item.price}) <button class="btn btn-sm btn-danger" onclick="poItems.splice(${i},1);document.getElementById('poItemsList').innerHTML='';">✕</button></li>`
-          ).join('');
-          document.getElementById('fPOQty').value = '';
-          UI.showToast('تمت الإضافة');
-        });
+        var listEl = document.getElementById('poItemsList');
+        if (listEl) listEl.innerHTML = '';
+
+        var addBtn = document.getElementById('addPOItemBtn');
+        if (addBtn) {
+          addBtn.onclick = function() {
+            var pid = document.getElementById('fPOProduct').value;
+            var qty = parseInt(document.getElementById('fPOQty').value);
+            if (!pid || !qty) { UI.showToast('اختر منتج وكمية', 'error'); return; }
+            var p = Services.Product.getById(pid);
+            if (!p) return;
+            poItems.push({ productId: pid, name: p.name, qty: qty, price: p.purchasePrice || 0 });
+            var ul = document.getElementById('poItemsList');
+            var htmlItems = '';
+            for (var i = 0; i < poItems.length; i++) {
+              htmlItems += '<li>' + poItems[i].name + ' × ' + poItems[i].qty + ' (' + poItems[i].price + ') ';
+              htmlItems += '<button class="btn btn-sm btn-danger" onclick="poItems.splice(' + i + ',1);document.getElementById(\'poItemsList\').innerHTML=\'\';">✕</button></li>';
+            }
+            ul.innerHTML = htmlItems;
+            document.getElementById('fPOQty').value = '';
+            UI.showToast('تمت الإضافة');
+          };
+        }
       },
-      receive(id) {
+      receive: function(id) {
         if (!confirm('استلام الطلبية وإضافة الكميات للمخزون؟')) return;
-        const po = Services.Purchase.receive(id);
+        var po = Services.Purchase.receive(id);
         if (po) {
           UI.showToast('تم استلام الطلبية');
           Controllers.Purchases.render();
@@ -734,77 +879,98 @@
     };
 
     // ---- نقاط البيع ----
-    let cartItems = [];
+    var cartItems = [];
     Controllers.POS = {
-      render() {
-        const products = Services.Product.getAll().filter(p => p.quantity > 0);
-        const customers = Services.Customer.getAll();
-        const prodHTML = products.map(p =>
-          `<button class="btn btn-line btn-sm" onclick="Controllers.POS.addToCart('${p.id}')">${p.name} (${p.quantity})</button>`
-        ).join(' ');
-        const cartHTML = cartItems.map((item, idx) =>
-          `<div class="flex" style="padding:.2rem 0;border-bottom:1px solid var(--lineSoft);">
-            <span>${item.name} × ${item.qty}</span><span>${(item.price * item.qty).toFixed(0)}</span>
-            <button class="btn btn-sm btn-danger" onclick="Controllers.POS.removeFromCart(${idx})">✕</button>
-          </div>`
-        ).join('');
-        const total = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-        const settings = Services.Settings.get();
-        const tax = total * (settings.taxRate || 0) / 100;
-        const grandTotal = total + tax;
-        const html = `
-          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;">
-            <div class="panel"><div class="panel-head"><h3>🛍️ المنتجات</h3></div><div style="padding:.8rem;display:flex;flex-wrap:wrap;gap:.4rem;">${prodHTML || 'لا توجد منتجات'}</div></div>
-            <div class="panel"><div class="panel-head"><h3>🧾 السلة</h3></div>
-              <div style="padding:.8rem;">
-                <div class="flex"><label>العميل</label><select class="select" id="posCustomer"><option value="">نقدي</option>${customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}</select></div>
-                <div class="flex"><label>طريقة الدفع</label><select class="select" id="posPayment"><option value="cash">نقدي</option><option value="card">بطاقة</option><option value="transfer">تحويل</option><option value="wallet">محفظة</option></select></div>
-                <div class="flex"><label>خصم (%)</label><input class="input" id="posDiscount" type="number" value="0" style="width:80px;"></div>
-                <div id="posCartItems">${cartHTML || '<span class="text-muted">السلة فارغة</span>'}</div>
-                <div style="border-top:1px solid var(--lineSoft);margin-top:.5rem;padding-top:.5rem;">
-                  <div class="flex"><span>المجموع</span><span>${total.toFixed(0)}</span></div>
-                  <div class="flex"><span>الضريبة (${settings.taxRate || 0}%)</span><span>${tax.toFixed(0)}</span></div>
-                  <div class="flex" style="font-weight:800;font-size:1.2rem;"><span>الإجمالي</span><span>${grandTotal.toFixed(0)}</span></div>
-                </div>
-                <button class="btn btn-primary" style="width:100%;margin-top:.5rem;" onclick="Controllers.POS.checkout()">💰 إتمام البيع</button>
-                <button class="btn btn-danger" style="width:100%;margin-top:.3rem;" onclick="Controllers.POS.clearCart()">🗑️ تفريغ</button>
-              </div>
-            </div>
-          </div>
-        `;
+      render: function() {
+        var products = Services.Product.getAll();
+        var available = [];
+        for (var i = 0; i < products.length; i++) {
+          if (products[i].quantity > 0) available.push(products[i]);
+        }
+        var customers = Services.Customer.getAll();
+        var prodHTML = '';
+        for (var j = 0; j < available.length; j++) {
+          prodHTML += '<button class="btn btn-line btn-sm" onclick="Controllers.POS.addToCart(\'' + available[j].id + '\')">' + available[j].name + ' (' + available[j].quantity + ')</button> ';
+        }
+        var cartHTML = '';
+        for (var k = 0; k < cartItems.length; k++) {
+          var item = cartItems[k];
+          cartHTML += '<div class="flex" style="padding:.2rem 0;border-bottom:1px solid var(--lineSoft);">';
+          cartHTML += '<span>' + item.name + ' × ' + item.qty + '</span><span>' + (item.price * item.qty).toFixed(0) + '</span>';
+          cartHTML += '<button class="btn btn-sm btn-danger" onclick="Controllers.POS.removeFromCart(' + k + ')">✕</button>';
+          cartHTML += '</div>';
+        }
+        var total = 0;
+        for (var l = 0; l < cartItems.length; l++) {
+          total += cartItems[l].price * cartItems[l].qty;
+        }
+        var settings = Services.Settings.get();
+        var tax = total * (settings.taxRate || 0) / 100;
+        var grandTotal = total + tax;
+
+        var customerOpts = '<option value="">نقدي</option>';
+        for (var m = 0; m < customers.length; m++) {
+          customerOpts += '<option value="' + customers[m].id + '">' + customers[m].name + '</option>';
+        }
+
+        var html = '';
+        html += '<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:1rem;">';
+        html += '<div class="panel"><div class="panel-head"><h3>🛍️ المنتجات</h3></div><div style="padding:.8rem;display:flex;flex-wrap:wrap;gap:.4rem;">' + (prodHTML || 'لا توجد منتجات') + '</div></div>';
+        html += '<div class="panel"><div class="panel-head"><h3>🧾 السلة</h3></div>';
+        html += '<div style="padding:.8rem;">';
+        html += '<div class="flex"><label>العميل</label><select class="select" id="posCustomer">' + customerOpts + '</select></div>';
+        html += '<div class="flex"><label>طريقة الدفع</label><select class="select" id="posPayment"><option value="cash">نقدي</option><option value="card">بطاقة</option><option value="transfer">تحويل</option><option value="wallet">محفظة</option></select></div>';
+        html += '<div class="flex"><label>خصم (%)</label><input class="input" id="posDiscount" type="number" value="0" style="width:80px;"></div>';
+        html += '<div id="posCartItems">' + (cartHTML || '<span class="text-muted">السلة فارغة</span>') + '</div>';
+        html += '<div style="border-top:1px solid var(--lineSoft);margin-top:.5rem;padding-top:.5rem;">';
+        html += '<div class="flex"><span>المجموع</span><span>' + total.toFixed(0) + '</span></div>';
+        html += '<div class="flex"><span>الضريبة (' + (settings.taxRate || 0) + '%)</span><span>' + tax.toFixed(0) + '</span></div>';
+        html += '<div class="flex" style="font-weight:800;font-size:1.2rem;"><span>الإجمالي</span><span>' + grandTotal.toFixed(0) + '</span></div>';
+        html += '</div>';
+        html += '<button class="btn btn-primary" style="width:100%;margin-top:.5rem;" onclick="Controllers.POS.checkout()">💰 إتمام البيع</button>';
+        html += '<button class="btn btn-danger" style="width:100%;margin-top:.3rem;" onclick="Controllers.POS.clearCart()">🗑️ تفريغ</button>';
+        html += '</div></div></div>';
         UI.renderPage('pos', html);
       },
-      addToCart(id) {
-        const p = Services.Product.getById(id);
-        if (!p || p.quantity <= 0) return UI.showToast('غير متوفر', 'error');
-        const existing = cartItems.find(item => item.id === id);
+      addToCart: function(id) {
+        var p = Services.Product.getById(id);
+        if (!p || p.quantity <= 0) { UI.showToast('غير متوفر', 'error'); return; }
+        var existing = null;
+        for (var i = 0; i < cartItems.length; i++) {
+          if (cartItems[i].id === id) { existing = cartItems[i]; break; }
+        }
         if (existing) {
-          if (existing.qty >= p.quantity) return UI.showToast('الكمية القصوى', 'warning');
+          if (existing.qty >= p.quantity) { UI.showToast('الكمية القصوى', 'warning'); return; }
           existing.qty++;
         } else {
           cartItems.push({ id: p.id, name: p.name, price: p.salePrice, qty: 1 });
         }
         this.render();
       },
-      removeFromCart(idx) { cartItems.splice(idx, 1); this.render(); },
-      clearCart() { cartItems = []; this.render(); },
-      checkout() {
-        if (!cartItems.length) return UI.showToast('السلة فارغة', 'error');
-        const customerId = document.getElementById('posCustomer').value;
-        const paymentMethod = document.getElementById('posPayment').value;
-        const discount = parseFloat(document.getElementById('posDiscount').value) || 0;
-        const settings = Services.Settings.get();
-        let total = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-        const discountAmount = total * (discount / 100);
+      removeFromCart: function(idx) { cartItems.splice(idx, 1); this.render(); },
+      clearCart: function() { cartItems = []; this.render(); },
+      checkout: function() {
+        if (cartItems.length === 0) { UI.showToast('السلة فارغة', 'error'); return; }
+        var customerId = document.getElementById('posCustomer').value;
+        var paymentMethod = document.getElementById('posPayment').value;
+        var discount = parseFloat(document.getElementById('posDiscount').value) || 0;
+        var settings = Services.Settings.get();
+        var total = 0;
+        for (var i = 0; i < cartItems.length; i++) {
+          total += cartItems[i].price * cartItems[i].qty;
+        }
+        var discountAmount = total * (discount / 100);
         total = total - discountAmount;
-        const tax = total * (settings.taxRate || 0) / 100;
-        const grandTotal = total + tax;
-        const items = cartItems.map(item => {
-          const p = Services.Product.getById(item.id);
+        var tax = total * (settings.taxRate || 0) / 100;
+        var grandTotal = total + tax;
+        var items = [];
+        for (var j = 0; j < cartItems.length; j++) {
+          var item = cartItems[j];
+          var p = Services.Product.getById(item.id);
           if (p) {
             p.quantity -= item.qty;
             Services.Product.update(p.id, { quantity: p.quantity });
-            const ops = Storage.get('wm_operations', []);
+            var ops = Storage.get('wm_operations', []);
             ops.push({
               id: uid(),
               productId: p.id,
@@ -816,9 +982,9 @@
             });
             Storage.set('wm_operations', ops);
           }
-          return { ...item, cost: p ? p.purchasePrice : 0 };
-        });
-        Services.Sales.create({ customerId, items, total: grandTotal, discount: discountAmount, tax, paymentMethod, note: '' });
+          items.push({ id: item.id, name: item.name, qty: item.qty, price: item.price, cost: p ? p.purchasePrice : 0 });
+        }
+        Services.Sales.create({ customerId: customerId, items: items, total: grandTotal, discount: discountAmount, tax: tax, paymentMethod: paymentMethod, note: '' });
         cartItems = [];
         this.render();
         UI.showToast('✅ تم البيع - ' + grandTotal.toFixed(0) + ' ' + settings.currency);
@@ -828,29 +994,38 @@
 
     // ---- العملاء ----
     Controllers.Customers = {
-      render() {
-        const list = Services.Customer.getAll();
-        let rows = list.map(c => `<tr><td>${c.name}</td><td>${c.phone || ''}</td>
-          <td><button class="btn btn-sm btn-danger" onclick="Controllers.Customers.delete('${c.id}')">🗑️</button></td></tr>`).join('');
-        const html = `
-          <div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Customers.showAdd()">➕ إضافة عميل</button></div>
-          <div class="panel"><table class="tbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>${rows || '<tr><td colspan="3" class="text-muted">لا يوجد عملاء</td></tr>'}</tbody></table></div>
-        `;
+      render: function() {
+        var list = Services.Customer.getAll();
+        var rows = '';
+        for (var i = 0; i < list.length; i++) {
+          var c = list[i];
+          rows += '<tr><td>' + c.name + '</td><td>' + (c.phone || '') + '</td>';
+          rows += '<td><button class="btn btn-sm btn-danger" onclick="Controllers.Customers.delete(\'' + c.id + '\')">🗑️</button></td></tr>';
+        }
+        var html = '';
+        html += '<div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Customers.showAdd()">➕ إضافة عميل</button></div>';
+        html += '<div class="panel"><table class="tbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>';
+        if (rows) html += rows;
+        else html += '<tr><td colspan="3" class="text-muted">لا يوجد عملاء</td></tr>';
+        html += '</tbody></table></div>';
         UI.renderPage('customers', html);
       },
-      showAdd() {
-        const body = `<div class="form-grid"><div class="span-2"><label>اسم العميل</label><input class="input" id="fCName"></div>
-        <div><label>الهاتف</label><input class="input" id="fCPhone"></div></div>`;
+      showAdd: function() {
+        var body = '';
+        body += '<div class="form-grid">';
+        body += '<div class="span-2"><label>اسم العميل</label><input class="input" id="fCName"></div>';
+        body += '<div><label>الهاتف</label><input class="input" id="fCPhone"></div>';
+        body += '</div>';
         UI.openModal('إضافة عميل', body, 'حفظ', function() {
-          const name = document.getElementById('fCName').value.trim();
-          if (!name) return UI.showToast('الاسم مطلوب', 'error');
+          var name = document.getElementById('fCName').value.trim();
+          if (!name) { UI.showToast('الاسم مطلوب', 'error'); return; }
           Services.Customer.create(name, document.getElementById('fCPhone').value);
           UI.closeModal();
           Controllers.Customers.render();
           UI.showToast('تمت الإضافة');
         });
       },
-      delete(id) {
+      delete: function(id) {
         if (confirm('حذف العميل؟')) {
           Services.Customer.delete(id);
           Controllers.Customers.render();
@@ -861,82 +1036,110 @@
 
     // ---- التقارير ----
     Controllers.Reports = {
-      render() {
-        const stats = Services.Report.getDashboardStats();
-        const dist = Services.Report.getPaymentMethodDistribution();
-        const bestSuppliers = Services.Report.getBestSuppliers();
-        const products = Services.Product.getAll();
-        const topProducts = products.sort((a, b) => (b.salePrice * b.quantity) - (a.salePrice * a.quantity)).slice(0, 5);
-        const html = `
-          <div class="stats-grid">
-            <div class="stat"><div class="stat-icon">💰</div><div><span class="stat-label">إجمالي المبيعات</span><span class="stat-value">${stats.totalSales.toFixed(0)}</span></div></div>
-            <div class="stat"><div class="stat-icon">📦</div><div><span class="stat-label">قيمة المخزون</span><span class="stat-value">${stats.totalStockValue.toFixed(0)}</span></div></div>
-            <div class="stat"><div class="stat-icon">🏢</div><div><span class="stat-label">عدد الموردين</span><span class="stat-value">${stats.suppliers}</span></div></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div class="panel"><div class="panel-head"><h3>💳 توزيع المدفوعات</h3></div><ul>${dist.map(d => `<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>${d.label}</span><span>${d.value.toFixed(0)}</span></li>`).join('') || '<li class="text-muted">لا توجد بيانات</li>'}</ul></div>
-            <div class="panel"><div class="panel-head"><h3>🏆 أفضل الموردين</h3></div><ul>${bestSuppliers.map(d => `<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>${d.name}</span><span>${d.spent.toFixed(0)}</span></li>`).join('') || '<li class="text-muted">لا توجد بيانات</li>'}</ul></div>
-          </div>
-          <div class="panel"><div class="panel-head"><h3>📋 تحليل ABC (محاكاة)</h3></div><div style="padding:1rem;color:var(--muted);">منتجات الفئة A (الأعلى قيمة): ${topProducts.map(p => p.name).join('، ') || 'لا توجد منتجات'}</div></div>
-        `;
+      render: function() {
+        var stats = Services.Report.getDashboardStats();
+        var dist = Services.Report.getPaymentMethodDistribution();
+        var bestSuppliers = Services.Report.getBestSuppliers();
+        var products = Services.Product.getAll();
+        var sorted = products.slice(0);
+        sorted.sort(function(a, b) { return (b.salePrice * b.quantity) - (a.salePrice * a.quantity); });
+        var topNames = [];
+        var limit = Math.min(5, sorted.length);
+        for (var i = 0; i < limit; i++) {
+          topNames.push(sorted[i].name);
+        }
+        var html = '';
+        html += '<div class="stats-grid">';
+        html += '<div class="stat"><div class="stat-icon">💰</div><div><span class="stat-label">إجمالي المبيعات</span><span class="stat-value">' + stats.totalSales.toFixed(0) + '</span></div></div>';
+        html += '<div class="stat"><div class="stat-icon">📦</div><div><span class="stat-label">قيمة المخزون</span><span class="stat-value">' + stats.totalStockValue.toFixed(0) + '</span></div></div>';
+        html += '<div class="stat"><div class="stat-icon">🏢</div><div><span class="stat-label">عدد الموردين</span><span class="stat-value">' + stats.suppliers + '</span></div></div>';
+        html += '</div>';
+
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">';
+        html += '<div class="panel"><div class="panel-head"><h3>💳 توزيع المدفوعات</h3></div><ul>';
+        if (dist.length > 0) {
+          for (var j = 0; j < dist.length; j++) {
+            html += '<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>' + dist[j].label + '</span><span>' + dist[j].value.toFixed(0) + '</span></li>';
+          }
+        } else { html += '<li class="text-muted">لا توجد بيانات</li>'; }
+        html += '</ul></div>';
+
+        html += '<div class="panel"><div class="panel-head"><h3>🏆 أفضل الموردين</h3></div><ul>';
+        if (bestSuppliers.length > 0) {
+          for (var k = 0; k < bestSuppliers.length; k++) {
+            html += '<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>' + bestSuppliers[k].name + '</span><span>' + bestSuppliers[k].spent.toFixed(0) + '</span></li>';
+          }
+        } else { html += '<li class="text-muted">لا توجد بيانات</li>'; }
+        html += '</ul></div></div>';
+
+        html += '<div class="panel"><div class="panel-head"><h3>📋 تحليل ABC (محاكاة)</h3></div><div style="padding:1rem;color:var(--muted);">منتجات الفئة A (الأعلى قيمة): ' + (topNames.join('، ') || 'لا توجد منتجات') + '</div></div>';
         UI.renderPage('reports', html);
       }
     };
 
     // ---- الذكاء الاصطناعي ----
     Controllers.AI = {
-      render() {
-        const analysis = Services.AI.analyze();
-        const html = `
-          <div class="stats-grid">
-            <div class="stat"><div class="stat-icon">🧠</div><div><span class="stat-label">توصيات لإعادة الطلب</span><span class="stat-value">${analysis.restock.length}</span></div></div>
-            <div class="stat"><div class="stat-icon">💰</div><div><span class="stat-label">إجمالي الإيرادات</span><span class="stat-value">${analysis.totalRevenue.toFixed(0)}</span></div></div>
-            <div class="stat"><div class="stat-icon">📈</div><div><span class="stat-label">صافي الربح</span><span class="stat-value">${analysis.totalProfit.toFixed(0)}</span></div></div>
-          </div>
-          <div class="panel"><div class="panel-head"><h3>📋 توصيات ذكية</h3></div>
-            <ul>${analysis.restock.length ? analysis.restock.map(r => `<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>${r.product.name}</span><span class="pill ${r.urgency === 'عاجل' ? 'danger' : 'warning'}">${r.urgency} (ينفد خلال ${r.daysToEmpty} يوم)</span></li>`).join('') : '<li class="text-muted" style="padding:.5rem 1rem;">جميع المنتجات بحالة جيدة ✅</li>'}</ul>
-          </div>
-        `;
+      render: function() {
+        var analysis = Services.AI.analyze();
+        var html = '';
+        html += '<div class="stats-grid">';
+        html += '<div class="stat"><div class="stat-icon">🧠</div><div><span class="stat-label">توصيات لإعادة الطلب</span><span class="stat-value">' + analysis.restock.length + '</span></div></div>';
+        html += '<div class="stat"><div class="stat-icon">💰</div><div><span class="stat-label">إجمالي الإيرادات</span><span class="stat-value">' + analysis.totalRevenue.toFixed(0) + '</span></div></div>';
+        html += '<div class="stat"><div class="stat-icon">📈</div><div><span class="stat-label">صافي الربح</span><span class="stat-value">' + analysis.totalProfit.toFixed(0) + '</span></div></div>';
+        html += '</div>';
+
+        html += '<div class="panel"><div class="panel-head"><h3>📋 توصيات ذكية</h3></div><ul>';
+        if (analysis.restock.length > 0) {
+          for (var i = 0; i < analysis.restock.length; i++) {
+            var r = analysis.restock[i];
+            var cls = r.urgency === 'عاجل' ? 'danger' : 'warning';
+            html += '<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>' + r.product.name + '</span><span class="pill ' + cls + '">' + r.urgency + ' (ينفد خلال ' + r.daysToEmpty + ' يوم)</span></li>';
+          }
+        } else {
+          html += '<li class="text-muted" style="padding:.5rem 1rem;">جميع المنتجات بحالة جيدة ✅</li>';
+        }
+        html += '</ul></div>';
         UI.renderPage('ai', html);
       }
     };
 
     // ---- الإعدادات ----
     Controllers.Settings = {
-      render() {
-        const settings = Services.Settings.get();
-        const creds = Services.Auth.getCredentials();
-        const html = `
-          <div class="panel"><div class="panel-head"><h3>⚙️ إعدادات النظام</h3></div>
-          <div style="padding:1.2rem;">
-            <div class="form-grid">
-              <div><label>اسم المتجر</label><input class="input" id="setShopName" value="${settings.shopName}"></div>
-              <div><label>العملة</label><input class="input" id="setCurrency" value="${settings.currency}"></div>
-              <div><label>نسبة الضريبة (%)</label><input class="input" id="setTax" type="number" value="${settings.taxRate}"></div>
-              <div><label>الحد الأدنى الافتراضي</label><input class="input" id="setMinStock" type="number" value="${settings.defaultMinStock}"></div>
-              <div><label>الشعار (رمز)</label><input class="input" id="setLogo" value="${settings.logo}"></div>
-            </div>
-            <button class="btn btn-primary mt-1" onclick="Controllers.Settings.saveSettings()">💾 حفظ الإعدادات</button>
-          </div></div>
-          <div class="panel"><div class="panel-head"><h3>🔐 بيانات الدخول</h3></div>
-          <div style="padding:1.2rem;">
-            <div class="form-grid">
-              <div><label>اسم المستخدم الجديد</label><input class="input" id="newUsername" value="${creds.username}" placeholder="اسم المستخدم"></div>
-              <div><label>كلمة المرور الجديدة</label><input class="input" id="newPassword" type="text" placeholder="كلمة المرور الجديدة"></div>
-            </div>
-            <button class="btn btn-primary mt-1" onclick="Controllers.Settings.changeCredentials()">🔑 تغيير بيانات الدخول</button>
-            <div style="margin-top:.5rem;font-size:.7rem;color:var(--muted);">(سيتم تسجيل الخروج تلقائياً بعد التغيير)</div>
-          </div></div>
-          <div class="panel"><div class="panel-head"><h3>👤 إدارة المستخدمين</h3></div>
-          <div style="padding:1.2rem;">
-            <div class="flex"><input class="input" id="newUsername2" placeholder="اسم المستخدم" style="max-width:200px;"><input class="input" id="newUserPass2" type="password" placeholder="كلمة المرور" style="max-width:200px;"><button class="btn btn-primary" onclick="Controllers.Settings.addUser()">➕ إضافة</button></div>
-            <ul id="userList" style="margin-top:.5rem;"></ul>
-          </div></div>
-        `;
+      render: function() {
+        var settings = Services.Settings.get();
+        var creds = Services.Auth.getCredentials();
+        var html = '';
+        html += '<div class="panel"><div class="panel-head"><h3>⚙️ إعدادات النظام</h3></div>';
+        html += '<div style="padding:1.2rem;">';
+        html += '<div class="form-grid">';
+        html += '<div><label>اسم المتجر</label><input class="input" id="setShopName" value="' + settings.shopName + '"></div>';
+        html += '<div><label>العملة</label><input class="input" id="setCurrency" value="' + settings.currency + '"></div>';
+        html += '<div><label>نسبة الضريبة (%)</label><input class="input" id="setTax" type="number" value="' + settings.taxRate + '"></div>';
+        html += '<div><label>الحد الأدنى الافتراضي</label><input class="input" id="setMinStock" type="number" value="' + settings.defaultMinStock + '"></div>';
+        html += '<div><label>الشعار (رمز)</label><input class="input" id="setLogo" value="' + settings.logo + '"></div>';
+        html += '</div>';
+        html += '<button class="btn btn-primary mt-1" onclick="Controllers.Settings.saveSettings()">💾 حفظ الإعدادات</button>';
+        html += '</div></div>';
+
+        html += '<div class="panel"><div class="panel-head"><h3>🔐 بيانات الدخول</h3></div>';
+        html += '<div style="padding:1.2rem;">';
+        html += '<div class="form-grid">';
+        html += '<div><label>اسم المستخدم الجديد</label><input class="input" id="newUsername" value="' + creds.username + '" placeholder="اسم المستخدم"></div>';
+        html += '<div><label>كلمة المرور الجديدة</label><input class="input" id="newPassword" type="text" placeholder="كلمة المرور الجديدة"></div>';
+        html += '</div>';
+        html += '<button class="btn btn-primary mt-1" onclick="Controllers.Settings.changeCredentials()">🔑 تغيير بيانات الدخول</button>';
+        html += '<div style="margin-top:.5rem;font-size:.7rem;color:var(--muted);">(سيتم تسجيل الخروج تلقائياً بعد التغيير)</div>';
+        html += '</div></div>';
+
+        html += '<div class="panel"><div class="panel-head"><h3>👤 إدارة المستخدمين</h3></div>';
+        html += '<div style="padding:1.2rem;">';
+        html += '<div class="flex"><input class="input" id="newUsername2" placeholder="اسم المستخدم" style="max-width:200px;"><input class="input" id="newUserPass2" type="password" placeholder="كلمة المرور" style="max-width:200px;"><button class="btn btn-primary" onclick="Controllers.Settings.addUser()">➕ إضافة</button></div>';
+        html += '<ul id="userList" style="margin-top:.5rem;"></ul>';
+        html += '</div></div>';
         UI.renderPage('settings', html);
         this.renderUsers();
       },
-      saveSettings() {
+      saveSettings: function() {
         Services.Settings.update({
           shopName: document.getElementById('setShopName').value,
           currency: document.getElementById('setCurrency').value,
@@ -947,40 +1150,48 @@
         UI.showToast('تم حفظ الإعدادات');
         this.render();
       },
-      changeCredentials() {
-        const username = document.getElementById('newUsername').value.trim();
-        const password = document.getElementById('newPassword').value.trim();
-        if (!username || !password) return UI.showToast('املأ الحقول', 'error');
-        if (password.length < 4) return UI.showToast('كلمة المرور يجب أن تكون 4 أحرف على الأقل', 'error');
+      changeCredentials: function() {
+        var username = document.getElementById('newUsername').value.trim();
+        var password = document.getElementById('newPassword').value.trim();
+        if (!username || !password) { UI.showToast('املأ الحقول', 'error'); return; }
+        if (password.length < 4) { UI.showToast('كلمة المرور يجب أن تكون 4 أحرف على الأقل', 'error'); return; }
         Services.Auth.updateCredentials(username, password);
         UI.showToast('✅ تم تغيير بيانات الدخول، سيتم تسجيل الخروج');
         Storage.set('wm_auth', { loggedIn: false });
-        setTimeout(() => location.reload(), 1000);
+        setTimeout(function() { location.reload(); }, 1000);
       },
-      renderUsers() {
-        const users = Storage.get('wm_users', []);
-        const list = document.getElementById('userList');
+      renderUsers: function() {
+        var users = Storage.get('wm_users', []);
+        var list = document.getElementById('userList');
         if (list) {
-          list.innerHTML = users.map(u =>
-            `<li style="padding:.3rem 0;display:flex;justify-content:space-between;"><span>${u.username} (${u.role || 'كاشير'})</span><button class="btn btn-sm btn-danger" onclick="Controllers.Settings.deleteUser('${u.username}')">✕</button></li>`
-          ).join('');
+          var html = '';
+          for (var i = 0; i < users.length; i++) {
+            html += '<li style="padding:.3rem 0;display:flex;justify-content:space-between;"><span>' + users[i].username + ' (' + (users[i].role || 'كاشير') + ')</span>';
+            html += '<button class="btn btn-sm btn-danger" onclick="Controllers.Settings.deleteUser(\'' + users[i].username + '\')">✕</button></li>';
+          }
+          list.innerHTML = html;
         }
       },
-      addUser() {
-        const username = document.getElementById('newUsername2').value.trim();
-        const pass = document.getElementById('newUserPass2').value.trim();
-        if (!username || !pass) return UI.showToast('املأ الحقول', 'error');
-        const users = Storage.get('wm_users', []);
-        if (users.find(u => u.username === username)) return UI.showToast('المستخدم موجود', 'error');
-        users.push({ username, password: btoa(pass), role: 'كاشير' });
+      addUser: function() {
+        var username = document.getElementById('newUsername2').value.trim();
+        var pass = document.getElementById('newUserPass2').value.trim();
+        if (!username || !pass) { UI.showToast('املأ الحقول', 'error'); return; }
+        var users = Storage.get('wm_users', []);
+        for (var i = 0; i < users.length; i++) {
+          if (users[i].username === username) { UI.showToast('المستخدم موجود', 'error'); return; }
+        }
+        users.push({ username: username, password: btoa(pass), role: 'كاشير' });
         Storage.set('wm_users', users);
         this.renderUsers();
         UI.showToast('تمت الإضافة');
       },
-      deleteUser(username) {
-        let users = Storage.get('wm_users', []);
-        users = users.filter(u => u.username !== username);
-        Storage.set('wm_users', users);
+      deleteUser: function(username) {
+        var users = Storage.get('wm_users', []);
+        var newList = [];
+        for (var i = 0; i < users.length; i++) {
+          if (users[i].username !== username) newList.push(users[i]);
+        }
+        Storage.set('wm_users', newList);
         this.renderUsers();
       }
     };
@@ -989,8 +1200,7 @@
     // 5. التهيئة والتشغيل
     // ============================================================
     function initApp() {
-      // التحقق من الدخول
-      const auth = Storage.get('wm_auth', null);
+      var auth = Storage.get('wm_auth', null);
       if (!auth || !auth.loggedIn) {
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('appRoot').style.display = 'none';
@@ -999,73 +1209,68 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('appRoot').style.display = 'flex';
 
-      // الثيم
-      const settings = Services.Settings.get();
+      var settings = Services.Settings.get();
       document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
       document.getElementById('themeToggle').textContent = settings.theme === 'dark' ? '☀️' : '🌙';
 
-      // رندر الصفحة الافتراضية
       Controllers.Dashboard.render();
 
-      // أزرار التنقل
-      document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const page = this.dataset.page;
-          const map = {
-            dashboard: Controllers.Dashboard,
-            products: Controllers.Products,
-            suppliers: Controllers.Suppliers,
-            purchases: Controllers.Purchases,
-            pos: Controllers.POS,
-            customers: Controllers.Customers,
-            reports: Controllers.Reports,
-            ai: Controllers.AI,
-            settings: Controllers.Settings
-          };
-          if (map[page]) map[page].render();
-          else UI.showToast('صفحة قيد التطوير', 'warning');
-        });
-      });
+      var navBtns = document.querySelectorAll('.nav-item');
+      for (var i = 0; i < navBtns.length; i++) {
+        (function(btn) {
+          btn.addEventListener('click', function() {
+            var page = this.dataset.page;
+            var map = {
+              dashboard: Controllers.Dashboard,
+              products: Controllers.Products,
+              suppliers: Controllers.Suppliers,
+              purchases: Controllers.Purchases,
+              pos: Controllers.POS,
+              customers: Controllers.Customers,
+              reports: Controllers.Reports,
+              ai: Controllers.AI,
+              settings: Controllers.Settings
+            };
+            if (map[page]) map[page].render();
+            else UI.showToast('صفحة قيد التطوير', 'warning');
+          });
+        })(navBtns[i]);
+      }
 
-      // زر إضافة سريع
       document.getElementById('quickAddBtn').addEventListener('click', function() {
         Controllers.Products.showAdd();
       });
 
-      // تبديل الثيم
       document.getElementById('themeToggle').addEventListener('click', function() {
-        const current = document.documentElement.getAttribute('data-theme');
-        const next = current === 'dark' ? 'light' : 'dark';
+        var current = document.documentElement.getAttribute('data-theme');
+        var next = current === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         Services.Settings.update({ theme: next });
         this.textContent = next === 'dark' ? '☀️' : '🌙';
       });
 
-      // خروج
       document.getElementById('logoutBtn').addEventListener('click', function() {
         Storage.set('wm_auth', { loggedIn: false });
         location.reload();
       });
 
-      // إغلاق المودال
-      document.querySelectorAll('[data-close]').forEach(el => {
-        el.addEventListener('click', UI.closeModal);
-      });
+      var closeBtns = document.querySelectorAll('[data-close]');
+      for (var j = 0; j < closeBtns.length; j++) {
+        closeBtns[j].addEventListener('click', UI.closeModal);
+      }
       document.getElementById('genericModal').addEventListener('click', function(e) {
         if (e.target === this) UI.closeModal();
       });
 
-      // الساعة
       function updateClock() {
         document.getElementById('dateTime').textContent = new Date().toLocaleString('ar');
       }
       updateClock();
       setInterval(updateClock, 1000);
 
-      // تسجيل الدخول
       document.getElementById('loginBtn').addEventListener('click', function() {
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPass').value.trim();
+        var username = document.getElementById('loginUsername').value.trim();
+        var password = document.getElementById('loginPass').value.trim();
         if (Services.Auth.login(username, password)) {
           Storage.set('wm_auth', { loggedIn: true });
           location.reload();
@@ -1080,37 +1285,23 @@
         if (e.key === 'Enter') document.getElementById('loginBtn').click();
       });
 
-      // بيانات افتراضية (Seed)
+      // بيانات افتراضية
       if (Storage.get('wm_products', null) === null) {
-        Services.Product.create({
-          name: 'ماوس لاسلكي',
-          sku: 'MS-01',
-          category: 'إلكترونيات',
-          purchasePrice: 150,
-          salePrice: 250,
-          quantity: 50,
-          minStock: 10
-        });
-        Services.Product.create({
-          name: 'كيبورد ميكانيكي',
-          sku: 'KB-01',
-          category: 'إلكترونيات',
-          purchasePrice: 400,
-          salePrice: 650,
-          quantity: 20,
-          minStock: 5
-        });
-        const sup = Services.Supplier.create('الشركة العالمية للتوزيع', 'احمد', '0123456789');
-        Services.Purchase.create({
-          supplierId: sup.id,
-          items: [{ productId: Services.Product.getAll()[0].id, name: 'ماوس', qty: 100, price: 120 }],
-          totalCost: 12000,
-          status: 'received'
-        });
+        Services.Product.create({ name: 'ماوس لاسلكي', sku: 'MS-01', category: 'إلكترونيات', purchasePrice: 150, salePrice: 250, quantity: 50, minStock: 10 });
+        Services.Product.create({ name: 'كيبورد ميكانيكي', sku: 'KB-01', category: 'إلكترونيات', purchasePrice: 400, salePrice: 650, quantity: 20, minStock: 5 });
+        var sup = Services.Supplier.create('الشركة العالمية للتوزيع', 'احمد', '0123456789');
+        var allProds = Services.Product.getAll();
+        if (allProds.length > 0) {
+          Services.Purchase.create({
+            supplierId: sup.id,
+            items: [{ productId: allProds[0].id, name: 'ماوس', qty: 100, price: 120 }],
+            totalCost: 12000,
+            status: 'received'
+          });
+        }
         UI.showToast('✅ تم تهيئة البيانات الافتراضية');
       }
 
-      // جعل الكونترولرز عالمية للاستخدام في onclicks
       window.Controllers = Controllers;
       UI.showToast('🚀 مرحباً بك في مخزني Pro الاحترافي');
     }
