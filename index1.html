@@ -7,9 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Changa:wght@500;700;800&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    /* ===== أنماط متقدمة ===== */
     * { margin:0; padding:0; box-sizing:border-box; }
     :root {
       --bg: #0d1219; --surface: #151c28; --surface2: #1a2332;
@@ -32,7 +30,6 @@
     .nav { display:flex;flex-direction:column;gap:.3rem;padding:0 .6rem; }
     .nav-item { display:flex;align-items:center;gap:.7rem;padding:.6rem .9rem;border-radius:10px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:.85rem;cursor:pointer;width:100%;text-align:start;transition:.2s; }
     .nav-item:hover, .nav-item.active { background:var(--primarySoft);color:var(--primary); }
-    .nav-item svg { width:18px;height:18px; }
     .content { flex:1; min-width:0; }
     .topbar { position:sticky;top:0;z-index:10;padding:.7rem 1.5rem;background:rgba(13,18,25,.85);backdrop-filter:blur(6px);border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;align-items:center; }
     main { padding:1.2rem 1.5rem 3rem; }
@@ -98,7 +95,6 @@
 <!-- التطبيق -->
 <div class="app" style="display:none;" id="appRoot">
 
-  <!-- سايدبار -->
   <aside class="sidebar">
     <div class="brand"><div class="brand-mark">📦</div><div><h3 style="font-family:var(--fontDisplay);">مخزني</h3><small style="color:var(--muted);font-size:.7rem;">Pro v3.0</small></div></div>
     <nav class="nav" id="mainNav">
@@ -139,9 +135,7 @@
   (function() {
     'use strict';
 
-    // ====================================================
-    // 1. التخزين
-    // ====================================================
+    // ===================== 1. التخزين =====================
     const Storage = {
       get(key, fallback = null) {
         try { const raw = localStorage.getItem(key); return raw !== null ? JSON.parse(raw) : fallback; } catch { return fallback; }
@@ -149,9 +143,7 @@
       set(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
     };
 
-    // ====================================================
-    // 2. الخدمات
-    // ====================================================
+    // ===================== 2. الخدمات الأساسية =====================
     const Services = {};
 
     // ---- الإعدادات ----
@@ -173,14 +165,12 @@
 
     // ---- المصادقة ----
     Services.Auth = {
-      // بيانات الدخول الافتراضية (تُستخدم لأول مرة)
       getDefaults() {
-        return { username: 'admin', password: btoa('admin123') }; // مشفرة Base64
+        return { username: 'admin', password: btoa('admin123') };
       },
       getCredentials() {
         const saved = Storage.get('wm_credentials', null);
         if (!saved) {
-          // حفظ البيانات الافتراضية
           const def = this.getDefaults();
           Storage.set('wm_credentials', def);
           return def;
@@ -198,7 +188,7 @@
       }
     };
 
-    // ---- باقي الخدمات (المنتجات، الموردين، إلخ) ----
+    // ---- المنتجات ----
     Services.Product = {
       getAll() { return Storage.get('wm_products', []); },
       getById(id) { return this.getAll().find(p => p.id === id); },
@@ -229,6 +219,7 @@
       }
     };
 
+    // ---- الموردين ----
     Services.Supplier = {
       getAll() { return Storage.get('wm_suppliers', []); },
       getById(id) { return this.getAll().find(s => s.id === id); },
@@ -246,6 +237,7 @@
       }
     };
 
+    // ---- طلبات الشراء ----
     Services.Purchase = {
       getAll() { return Storage.get('wm_purchases', []); },
       create(data) {
@@ -290,6 +282,7 @@
       }
     };
 
+    // ---- العملاء ----
     Services.Customer = {
       getAll() { return Storage.get('wm_customers', []); },
       create(name, phone = '') {
@@ -306,6 +299,7 @@
       }
     };
 
+    // ---- المبيعات ----
     Services.Sales = {
       getAll() { return Storage.get('wm_sales', []); },
       create({ customerId, items, total, discount = 0, tax = 0, paymentMethod = 'cash', note = '' }) {
@@ -318,6 +312,7 @@
       }
     };
 
+    // ---- التقارير ----
     Services.Report = {
       getDashboardStats() {
         const products = Services.Product.getAll();
@@ -346,6 +341,7 @@
       }
     };
 
+    // ---- الذكاء الاصطناعي ----
     Services.AI = {
       analyze() {
         const products = Services.Product.getAll();
@@ -363,9 +359,7 @@
       }
     };
 
-    // ====================================================
-    // 3. واجهة المستخدم (UI)
-    // ====================================================
+    // ===================== 3. واجهة المستخدم =====================
     const UI = {
       showToast(msg, type = 'success') {
         const container = document.getElementById('toastContainer');
@@ -400,12 +394,10 @@
       }
     };
 
-    // ====================================================
-    // 4. الكونترولرز (Controllers)
-    // ====================================================
-    const Controllers = {};
-
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+    // ===================== 4. الكونترولرز =====================
+    const Controllers = {};
 
     // ---- لوحة التحكم ----
     Controllers.Dashboard = {
@@ -786,7 +778,7 @@
       }
     };
 
-    // ---- الإعدادات (مع إمكانية تغيير بيانات الدخول) ----
+    // ---- الإعدادات ----
     Controllers.Settings = {
       render() {
         const settings = Services.Settings.get();
@@ -839,7 +831,6 @@
         if (password.length < 4) return UI.showToast('كلمة المرور يجب أن تكون 4 أحرف على الأقل', 'error');
         Services.Auth.updateCredentials(username, password);
         UI.showToast('✅ تم تغيير بيانات الدخول، سيتم تسجيل الخروج');
-        // تسجيل الخروج
         Storage.set('wm_auth', { loggedIn: false });
         setTimeout(() => location.reload(), 1000);
       },
@@ -867,9 +858,7 @@
       }
     };
 
-    // ====================================================
-    // 5. التهيئة
-    // ====================================================
+    // ===================== 5. التهيئة =====================
     function init() {
       // التحقق من الدخول
       const auth = Storage.get('wm_auth', null);
@@ -889,7 +878,7 @@
       // رندر الصفحة الافتراضية
       Controllers.Dashboard.render();
 
-      // الأحداث العامة
+      // أحداث الأزرار
       document.getElementById('themeToggle').addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme');
         const next = current === 'dark' ? 'light' : 'dark';
@@ -936,7 +925,7 @@
       updateClock();
       setInterval(updateClock, 1000);
 
-      // تسجيل الدخول باستخدام بيانات التخزين المحلي
+      // تسجيل الدخول
       document.getElementById('loginBtn').addEventListener('click', () => {
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPass').value.trim();
@@ -954,7 +943,7 @@
         if (e.key === 'Enter') document.getElementById('loginBtn').click();
       });
 
-      // بيانات افتراضية (Seed)
+      // بيانات افتراضية
       if (Storage.get('wm_products', null) === null) {
         Services.Product.create({ name: 'ماوس لاسلكي', sku: 'MS-01', category: 'إلكترونيات', purchasePrice: 150, salePrice: 250, quantity: 50, minStock: 10 });
         Services.Product.create({ name: 'كيبورد ميكانيكي', sku: 'KB-01', category: 'إلكترونيات', purchasePrice: 400, salePrice: 650, quantity: 20, minStock: 5 });
