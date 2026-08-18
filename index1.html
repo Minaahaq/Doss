@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>مخزني Pro — الإصدار الاحترافي</title>
+  <title>مخزني Pro — الاحترافي</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Changa:wght@500;700;800&family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    /* ===== أنماط متقدمة مع دعم الوضع المظلم ===== */
+    /* ===== أنماط متقدمة ===== */
     * { margin:0; padding:0; box-sizing:border-box; }
     :root {
       --bg: #0d1219; --surface: #151c28; --surface2: #1a2332;
@@ -25,11 +25,10 @@
       --shadow: 0 10px 26px rgba(0,0,0,.08);
     }
     body { font-family: var(--font); background: var(--bg); color: var(--ink); transition: .3s; }
-    /* --- باقي الأنماط الأساسية (نفس السابق ولكن مضبوطة) --- */
     .app { display: flex; min-height: 100vh; }
-    .sidebar { width: 260px; background: var(--surface); border-inline-end: 1px solid var(--lineSoft); padding: 1rem 0; position: sticky; top:0; height:100vh; overflow-y:auto; }
+    .sidebar { width: 240px; background: var(--surface); border-inline-end: 1px solid var(--lineSoft); padding: 1rem 0; position: sticky; top:0; height:100vh; overflow-y:auto; }
     .brand { padding: 0 1.2rem 1.5rem; display:flex; align-items:center; gap:.8rem; }
-    .brand-mark { width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#59f0c0,var(--primary));display:grid;place-items:center;color:#04281e;font-weight:800;font-size:1.2rem; }
+    .brand-mark { width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#59f0c0,var(--primary));display:grid;place-items:center;color:#04281e;font-weight:800;font-size:1.2rem; }
     .nav { display:flex;flex-direction:column;gap:.3rem;padding:0 .6rem; }
     .nav-item { display:flex;align-items:center;gap:.7rem;padding:.6rem .9rem;border-radius:10px;border:none;background:transparent;color:var(--muted);font-weight:700;font-size:.85rem;cursor:pointer;width:100%;text-align:start;transition:.2s; }
     .nav-item:hover, .nav-item.active { background:var(--primarySoft);color:var(--primary); }
@@ -66,7 +65,6 @@
     .toasts { position:fixed;bottom:1rem;left:1rem;z-index:9999;display:flex;flex-direction:column;gap:.5rem;max-width:350px; }
     .toast { padding:.7rem 1rem;background:var(--surface);border:1px solid var(--line);border-inline-start:4px solid var(--primary);border-radius:8px;font-weight:700;animation:slideUp .3s ease; }
     .toast.error { border-inline-start-color:var(--coral); }
-    /* باقي التنسيقات (جداول، أزرار، إلخ) مشابهة للسابق مع تحسينات */
     .tbl { width:100%;border-collapse:collapse;font-size:.85rem; }
     .tbl th { text-align:start;padding:.6rem .8rem;background:var(--surface2);color:var(--muted);font-size:.75rem;border-bottom:2px solid var(--line); }
     .tbl td { padding:.5rem .8rem;border-bottom:1px solid var(--lineSoft); }
@@ -80,7 +78,6 @@
     .mt-1 { margin-top:.8rem; }
     .mb-1 { margin-bottom:.8rem; }
     .text-muted { color:var(--muted); }
-    /* جوال */
     @media(max-width:768px){ .sidebar{display:none;} .form-grid{grid-template-columns:1fr;} .topbar{padding:.5rem 1rem;} main{padding:.5rem 1rem 5rem;} }
   </style>
 </head>
@@ -91,9 +88,10 @@
   <div style="background:var(--surface);padding:2.5rem;border-radius:var(--radius);border:1px solid var(--line);width:350px;text-align:center;">
     <h2 style="color:var(--primary);font-family:var(--fontDisplay);">📦 مخزني Pro</h2>
     <p style="color:var(--muted);margin:.5rem 0 1.5rem;">نظام إدارة متكامل (احترافي)</p>
+    <input class="input" id="loginUsername" type="text" placeholder="اسم المستخدم" style="text-align:center;margin-bottom:.5rem;">
     <input class="input" id="loginPass" type="password" placeholder="كلمة المرور" style="text-align:center;">
     <button class="btn btn-primary" style="width:100%;margin-top:.8rem;" id="loginBtn">دخول</button>
-    <div style="margin-top:1rem;font-size:.7rem;color:var(--muted);">admin / admin123</div>
+    <div style="margin-top:1rem;font-size:.7rem;color:var(--muted);">(يمكن تغيير بيانات الدخول من الإعدادات)</div>
   </div>
 </div>
 
@@ -108,7 +106,6 @@
       <button class="nav-item" data-page="products">📦 المنتجات</button>
       <button class="nav-item" data-page="suppliers">🏢 الموردين</button>
       <button class="nav-item" data-page="purchases">📥 طلبات الشراء</button>
-      <button class="nav-item" data-page="operations">🔄 حركات المخزون</button>
       <button class="nav-item" data-page="pos">🛒 نقطة البيع</button>
       <button class="nav-item" data-page="customers">👤 العملاء</button>
       <button class="nav-item" data-page="reports">📈 التقارير</button>
@@ -129,13 +126,11 @@
         <button class="btn btn-primary btn-sm" id="quickAddBtn">➕ إضافة منتج</button>
       </div>
     </header>
-    <main id="mainContent">
-      <!-- الأقسام سيتم حقنها عبر JavaScript -->
-    </main>
+    <main id="mainContent"></main>
   </div>
 </div>
 
-<!-- مودالات عامة -->
+<!-- مودال عام -->
 <div class="modal-wrap" id="genericModal"><div class="modal"><div class="modal-head"><h3 id="gModalTitle">عنوان</h3><button class="btn btn-line btn-sm" data-close>✕</button></div><div class="modal-body" id="gModalBody"></div><div class="modal-foot"><button class="btn btn-line" data-close>إلغاء</button><button class="btn btn-primary" id="gModalAction">حفظ</button></div></div></div>
 
 <div class="toasts" id="toastContainer"></div>
@@ -144,67 +139,74 @@
   (function() {
     'use strict';
 
-    // =============================================================
-    // 1. التهيئة والإعدادات
-    // =============================================================
-    const APP = {
-      version: '3.0.0',
-      storageKeys: {
-        products: 'wm_products', suppliers: 'wm_suppliers', purchases: 'wm_purchases',
-        operations: 'wm_operations', customers: 'wm_customers', sales: 'wm_sales',
-        settings: 'wm_settings', users: 'wm_users'
-      }
-    };
-
-    // =============================================================
-    // 2. طبقة التخزين (StorageService)
-    // =============================================================
+    // ====================================================
+    // 1. التخزين
+    // ====================================================
     const Storage = {
       get(key, fallback = null) {
         try { const raw = localStorage.getItem(key); return raw !== null ? JSON.parse(raw) : fallback; } catch { return fallback; }
       },
-      set(key, value) { localStorage.setItem(key, JSON.stringify(value)); },
-      remove(key) { localStorage.removeItem(key); }
+      set(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
     };
 
-    // =============================================================
-    // 3. خدمات الأعمال (Services)
-    // =============================================================
+    // ====================================================
+    // 2. الخدمات
+    // ====================================================
     const Services = {};
 
-    // --- 3.1 الإعدادات ---
+    // ---- الإعدادات ----
     Services.Settings = {
       getDefaults() {
-        return {
-          shopName: 'مخزني Pro',
-          currency: 'ج.م',
-          taxRate: 14,
-          defaultMinStock: 5,
-          theme: 'dark',
-          logo: '📦'
-        };
+        return { shopName: 'مخزني Pro', currency: 'ج.م', taxRate: 14, defaultMinStock: 5, theme: 'dark', logo: '📦' };
       },
       get() {
-        const saved = Storage.get(APP.storageKeys.settings, null);
+        const saved = Storage.get('wm_settings', null);
         return saved ? { ...this.getDefaults(), ...saved } : this.getDefaults();
       },
       update(data) {
         const current = this.get();
         const updated = { ...current, ...data };
-        Storage.set(APP.storageKeys.settings, updated);
+        Storage.set('wm_settings', updated);
         return updated;
       }
     };
 
-    // --- 3.2 المنتجات ---
+    // ---- المصادقة ----
+    Services.Auth = {
+      // بيانات الدخول الافتراضية (تُستخدم لأول مرة)
+      getDefaults() {
+        return { username: 'admin', password: btoa('admin123') }; // مشفرة Base64
+      },
+      getCredentials() {
+        const saved = Storage.get('wm_credentials', null);
+        if (!saved) {
+          // حفظ البيانات الافتراضية
+          const def = this.getDefaults();
+          Storage.set('wm_credentials', def);
+          return def;
+        }
+        return saved;
+      },
+      login(username, password) {
+        const creds = this.getCredentials();
+        return username === creds.username && btoa(password) === creds.password;
+      },
+      updateCredentials(username, password) {
+        const newCreds = { username, password: btoa(password) };
+        Storage.set('wm_credentials', newCreds);
+        return newCreds;
+      }
+    };
+
+    // ---- باقي الخدمات (المنتجات، الموردين، إلخ) ----
     Services.Product = {
-      getAll() { return Storage.get(APP.storageKeys.products, []); },
+      getAll() { return Storage.get('wm_products', []); },
       getById(id) { return this.getAll().find(p => p.id === id); },
       create(data) {
         const list = this.getAll();
         const newP = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,6), createdAt: Date.now(), ...data };
         list.push(newP);
-        Storage.set(APP.storageKeys.products, list);
+        Storage.set('wm_products', list);
         return newP;
       },
       update(id, data) {
@@ -212,13 +214,13 @@
         const idx = list.findIndex(p => p.id === id);
         if (idx === -1) return null;
         list[idx] = { ...list[idx], ...data };
-        Storage.set(APP.storageKeys.products, list);
+        Storage.set('wm_products', list);
         return list[idx];
       },
       delete(id) {
         let list = this.getAll();
         list = list.filter(p => p.id !== id);
-        Storage.set(APP.storageKeys.products, list);
+        Storage.set('wm_products', list);
       },
       getStatus(p) {
         if (p.quantity <= 0) return 'out';
@@ -227,37 +229,30 @@
       }
     };
 
-    // --- 3.3 الموردين (جديد) ---
     Services.Supplier = {
-      getAll() { return Storage.get(APP.storageKeys.suppliers, []); },
+      getAll() { return Storage.get('wm_suppliers', []); },
       getById(id) { return this.getAll().find(s => s.id === id); },
       create(name, contact = '', phone = '') {
         const list = this.getAll();
         const newS = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, contact, phone, createdAt: Date.now() };
         list.push(newS);
-        Storage.set(APP.storageKeys.suppliers, list);
+        Storage.set('wm_suppliers', list);
         return newS;
       },
       delete(id) {
         let list = this.getAll();
         list = list.filter(s => s.id !== id);
-        Storage.set(APP.storageKeys.suppliers, list);
+        Storage.set('wm_suppliers', list);
       }
     };
 
-    // --- 3.4 طلبات الشراء (جديد) ---
     Services.Purchase = {
-      getAll() { return Storage.get(APP.storageKeys.purchases, []); },
+      getAll() { return Storage.get('wm_purchases', []); },
       create(data) {
         const list = this.getAll();
-        const newPO = {
-          id: Date.now().toString(36) + Math.random().toString(36).slice(2,5),
-          status: 'pending', // pending | received | cancelled
-          createdAt: Date.now(),
-          ...data
-        };
+        const newPO = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), status: 'pending', createdAt: Date.now(), ...data };
         list.push(newPO);
-        Storage.set(APP.storageKeys.purchases, list);
+        Storage.set('wm_purchases', list);
         return newPO;
       },
       receive(poId) {
@@ -266,92 +261,63 @@
         if (!po || po.status === 'received') return null;
         po.status = 'received';
         po.receivedAt = Date.now();
-        // إضافة الكميات للمخزون
         const products = Services.Product.getAll();
         po.items.forEach(item => {
           const prod = products.find(p => p.id === item.productId);
           if (prod) {
             prod.quantity = (prod.quantity || 0) + item.qty;
-            // تسجيل حركة
-            Services.Operation.record({
+            const ops = Storage.get('wm_operations', []);
+            ops.push({
+              id: Date.now().toString(36) + Math.random().toString(36).slice(2,5),
               productId: prod.id,
+              productName: prod.name,
               type: 'in',
               qty: item.qty,
-              note: `استلام طلب شراء #${po.id}`
+              note: `استلام طلب شراء #${po.id}`,
+              createdAt: Date.now()
             });
+            Storage.set('wm_operations', ops);
           }
         });
-        Storage.set(APP.storageKeys.products, products);
-        Storage.set(APP.storageKeys.purchases, list);
+        Storage.set('wm_products', products);
+        Storage.set('wm_purchases', list);
         return po;
       },
       delete(id) {
         let list = this.getAll();
         list = list.filter(p => p.id !== id);
-        Storage.set(APP.storageKeys.purchases, list);
+        Storage.set('wm_purchases', list);
       }
     };
 
-    // --- 3.5 الحركات ---
-    Services.Operation = {
-      getAll() { return Storage.get(APP.storageKeys.operations, []); },
-      record({ productId, type, qty, note = '' }) {
-        const product = Services.Product.getById(productId);
-        if (!product) return { error: 'المنتج غير موجود' };
-        qty = Math.floor(Number(qty));
-        if (qty <= 0) return { error: 'الكمية غير صحيحة' };
-        if (type === 'out' && qty > product.quantity) return { error: 'الكمية المتاحة غير كافية' };
-        const before = product.quantity;
-        product.quantity = type === 'in' ? before + qty : before - qty;
-        Services.Product.update(product.id, { quantity: product.quantity });
-        const op = {
-          id: Date.now().toString(36) + Math.random().toString(36).slice(2,5),
-          productId, productName: product.name, sku: product.sku,
-          type, qty, beforeQty: before, afterQty: product.quantity,
-          note: note || '', createdAt: Date.now()
-        };
-        const list = this.getAll();
-        list.push(op);
-        Storage.set(APP.storageKeys.operations, list);
-        return { ok: true, operation: op, product };
-      }
-    };
-
-    // --- 3.6 العملاء ---
     Services.Customer = {
-      getAll() { return Storage.get(APP.storageKeys.customers, []); },
+      getAll() { return Storage.get('wm_customers', []); },
       create(name, phone = '') {
         const list = this.getAll();
         const c = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), name, phone, createdAt: Date.now() };
         list.push(c);
-        Storage.set(APP.storageKeys.customers, list);
+        Storage.set('wm_customers', list);
         return c;
       },
       delete(id) {
         let list = this.getAll();
         list = list.filter(c => c.id !== id);
-        Storage.set(APP.storageKeys.customers, list);
+        Storage.set('wm_customers', list);
       }
     };
 
-    // --- 3.7 المبيعات ---
     Services.Sales = {
-      getAll() { return Storage.get(APP.storageKeys.sales, []); },
+      getAll() { return Storage.get('wm_sales', []); },
       create({ customerId, items, total, discount = 0, tax = 0, paymentMethod = 'cash', note = '' }) {
         const list = this.getAll();
         const number = 'INV-' + Date.now().toString(36).toUpperCase();
-        const sale = {
-          id: Date.now().toString(36) + Math.random().toString(36).slice(2,5),
-          number, customerId, items, total, discount, tax, paymentMethod, note,
-          createdAt: Date.now()
-        };
+        const sale = { id: Date.now().toString(36) + Math.random().toString(36).slice(2,5), number, customerId, items, total, discount, tax, paymentMethod, note, createdAt: Date.now() };
         list.push(sale);
-        Storage.set(APP.storageKeys.sales, list);
+        Storage.set('wm_sales', list);
         return sale;
       }
     };
 
-    // --- 3.8 التقارير (متقدمة) ---
     Services.Report = {
       getDashboardStats() {
         const products = Services.Product.getAll();
@@ -360,8 +326,7 @@
         const totalStockValue = products.reduce((s, p) => s + (p.purchasePrice||0) * (p.quantity||0), 0);
         const totalSales = sales.reduce((s, p) => s + p.total, 0);
         const lowStock = products.filter(p => Services.Product.getStatus(p) !== 'ok').length;
-        const totalPurchaseOrders = Services.Purchase.getAll().filter(p => p.status === 'received').length;
-        return { products: products.length, suppliers: suppliers.length, totalStockValue, totalSales, lowStock, totalPurchaseOrders };
+        return { products: products.length, suppliers: suppliers.length, totalStockValue, totalSales, lowStock };
       },
       getPaymentMethodDistribution() {
         const sales = Services.Sales.getAll();
@@ -381,30 +346,26 @@
       }
     };
 
-    // --- 3.9 الذكاء الاصطناعي (محاكاة متقدمة) ---
     Services.AI = {
       analyze() {
         const products = Services.Product.getAll();
+        const ops = Storage.get('wm_operations', []);
         const sales = Services.Sales.getAll();
-        const ops = Services.Operation.getAll();
-        const low = products.filter(p => Services.Product.getStatus(p) === 'low' || Services.Product.getStatus(p) === 'out');
-        const avgDailySale = ops.length > 0 ? ops.filter(o => o.type === 'out').reduce((s,o) => s + o.qty, 0) / Math.max(1, 30) : 0;
+        const low = products.filter(p => Services.Product.getStatus(p) !== 'ok');
+        const avgDailySale = ops.filter(o => o.type === 'out').reduce((s,o) => s + o.qty, 0) / Math.max(1, 30);
         const restock = low.map(p => {
           const daysToEmpty = avgDailySale > 0 ? Math.floor(p.quantity / avgDailySale) : 99;
           return { product: p, urgency: daysToEmpty < 3 ? 'عاجل' : 'متوسط', daysToEmpty };
         });
         const totalRevenue = sales.reduce((s, v) => s + v.total, 0);
-        const totalProfit = sales.reduce((s, v) => s + (v.total - (v.items.reduce((a,i) => a + (i.cost || 0)*i.qty, 0))), 0);
+        const totalProfit = sales.reduce((s, v) => s + (v.total - (v.items.reduce((a,i) => a + (i.cost||0)*i.qty, 0))), 0);
         return { restock, totalRevenue, totalProfit, totalSales: sales.length };
       }
     };
 
-    // =============================================================
-    // 4. وحدات التحكم (Controllers) - تقسيم المنطق
-    // =============================================================
-    const Controllers = {};
-
-    // --- 4.1 الأساسيات (تنقل، مودال، تواست) ---
+    // ====================================================
+    // 3. واجهة المستخدم (UI)
+    // ====================================================
     const UI = {
       showToast(msg, type = 'success') {
         const container = document.getElementById('toastContainer');
@@ -432,17 +393,21 @@
         }
         container.innerHTML = html;
         container.classList.add('active');
-        // إخفاء الباقي
         document.querySelectorAll('.page').forEach(p => { if (p.id !== container.id) p.classList.remove('active'); });
-        document.getElementById('pageTitle').textContent = document.querySelector(`[data-page="${pageId}"]`)?.textContent || pageId;
-        // تفعيل الناف
+        const navBtn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+        if (navBtn) document.getElementById('pageTitle').textContent = navBtn.textContent.trim();
         document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.page === pageId));
-      },
-      getVal(id) { return document.getElementById(id)?.value || ''; },
-      setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
+      }
     };
 
-    // --- 4.2 لوحة التحكم ---
+    // ====================================================
+    // 4. الكونترولرز (Controllers)
+    // ====================================================
+    const Controllers = {};
+
+    function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+    // ---- لوحة التحكم ----
     Controllers.Dashboard = {
       render() {
         const stats = Services.Report.getDashboardStats();
@@ -466,10 +431,10 @@
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
             <div class="panel"><div class="panel-head"><h3>🏆 أفضل الموردين</h3></div>
-              <ul>${Services.Report.getBestSuppliers().slice(0,5).map(s => `<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>${s.name}</span><span>${s.spent.toFixed(0)}</span></li>`).join('')}</ul>
+              <ul>${Services.Report.getBestSuppliers().slice(0,5).map(s => `<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>${s.name}</span><span>${s.spent.toFixed(0)}</span></li>`).join('')||'<li class="text-muted" style="padding:.5rem 1rem;">لا توجد بيانات</li>'}</ul>
             </div>
             <div class="panel"><div class="panel-head"><h3>💳 توزيع المدفوعات</h3></div>
-              <ul>${Services.Report.getPaymentMethodDistribution().map(p => `<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>${p.label}</span><span>${p.value.toFixed(0)}</span></li>`).join('')}</ul>
+              <ul>${Services.Report.getPaymentMethodDistribution().map(p => `<li style="padding:.5rem 1rem;border-bottom:1px solid var(--lineSoft);display:flex;justify-content:space-between;"><span>${p.label}</span><span>${p.value.toFixed(0)}</span></li>`).join('')||'<li class="text-muted" style="padding:.5rem 1rem;">لا توجد مبيعات</li>'}</ul>
             </div>
           </div>
         `;
@@ -477,16 +442,17 @@
       }
     };
 
-    // --- 4.3 المنتجات ---
+    // ---- المنتجات ----
     Controllers.Products = {
       render() {
         const products = Services.Product.getAll();
         let rows = products.map(p => {
           const st = Services.Product.getStatus(p);
           const stCls = st === 'ok' ? 'success' : st === 'low' ? 'warning' : 'danger';
+          const stLabel = st === 'ok' ? 'متوفر' : st === 'low' ? 'منخفض' : 'نافد';
           return `<tr><td><strong>${p.name}</strong><br><span class="text-muted" style="font-size:.7rem;">${p.sku}</span></td>
           <td>${p.category||'عام'}</td><td>${p.purchasePrice||0}</td><td>${p.salePrice||0}</td>
-          <td>${p.quantity||0}</td><td><span class="pill ${stCls}">${st === 'ok' ? 'متوفر' : st === 'low' ? 'منخفض' : 'نافد'}</span></td>
+          <td>${p.quantity||0}</td><td><span class="pill ${stCls}">${stLabel}</span></td>
           <td class="flex"><button class="btn btn-sm btn-primary" onclick="Controllers.Products.edit('${p.id}')">✏️</button>
           <button class="btn btn-sm btn-danger" onclick="Controllers.Products.delete('${p.id}')">🗑️</button></td></tr>`;
         }).join('');
@@ -513,9 +479,9 @@
         `;
         UI.openModal('إضافة منتج جديد', body, 'حفظ', () => {
           const data = {
-            name: document.getElementById('fPName').value,
-            sku: document.getElementById('fPSku').value,
-            category: document.getElementById('fPCat').value,
+            name: document.getElementById('fPName').value.trim(),
+            sku: document.getElementById('fPSku').value.trim(),
+            category: document.getElementById('fPCat').value.trim(),
             purchasePrice: parseFloat(document.getElementById('fPPurchase').value) || 0,
             salePrice: parseFloat(document.getElementById('fPSale').value) || 0,
             quantity: parseInt(document.getElementById('fPQty').value) || 0,
@@ -568,7 +534,7 @@
       }
     };
 
-    // --- 4.4 الموردين ---
+    // ---- الموردين ----
     Controllers.Suppliers = {
       render() {
         const list = Services.Supplier.getAll();
@@ -596,11 +562,11 @@
       delete(id) { if (confirm('حذف المورد؟')) { Services.Supplier.delete(id); Controllers.Suppliers.render(); UI.showToast('تم الحذف'); } }
     };
 
-    // --- 4.5 طلبات الشراء ---
+    // ---- طلبات الشراء ----
+    let poItems = [];
     Controllers.Purchases = {
       render() {
         const list = Services.Purchase.getAll();
-        const products = Services.Product.getAll();
         const suppliers = Services.Supplier.getAll();
         let rows = list.map(po => {
           const sup = suppliers.find(s => s.id === po.supplierId);
@@ -634,26 +600,25 @@
         UI.openModal('طلب شراء جديد', body, 'إنشاء الطلب', () => {
           const supplierId = document.getElementById('fPOSupplier').value;
           if (!supplierId) return UI.showToast('اختر مورد', 'error');
-          const items = window._poItems || [];
-          if (!items.length) return UI.showToast('أضف منتجات', 'error');
-          const totalCost = items.reduce((s, i) => s + i.qty * i.price, 0);
-          const po = Services.Purchase.create({ supplierId, items, totalCost, note: document.getElementById('fPONote').value });
-          window._poItems = [];
+          if (!poItems.length) return UI.showToast('أضف منتجات', 'error');
+          const totalCost = poItems.reduce((s, i) => s + i.qty * i.price, 0);
+          Services.Purchase.create({ supplierId, items: poItems, totalCost, note: document.getElementById('fPONote').value });
+          poItems = [];
           UI.closeModal();
           Controllers.Purchases.render();
-          UI.showToast(`تم إنشاء طلب #${po.id.slice(0,8)}`);
+          UI.showToast('تم إنشاء الطلب');
         });
-        window._poItems = [];
-        // override addItem
-        window.Controllers.Purchases.addItem = function() {
+        poItems = [];
+        document.getElementById('poItemsList')?.innerHTML = '';
+        Controllers.Purchases.addItem = function() {
           const pid = document.getElementById('fPOProduct').value;
           const qty = parseInt(document.getElementById('fPOQty').value);
           if (!pid || !qty) return UI.showToast('اختر منتج وكمية', 'error');
           const p = Services.Product.getById(pid);
           if (!p) return;
-          window._poItems.push({ productId: pid, name: p.name, qty, price: p.purchasePrice || 0 });
+          poItems.push({ productId: pid, name: p.name, qty, price: p.purchasePrice || 0 });
           const ul = document.getElementById('poItemsList');
-          ul.innerHTML = window._poItems.map((item,i) => `<li>${item.name} × ${item.qty} (${item.price}) <button class="btn btn-sm btn-danger" onclick="window._poItems.splice(${i},1);document.getElementById('poItemsList').innerHTML='';">✕</button></li>`).join('');
+          ul.innerHTML = poItems.map((item,i) => `<li>${item.name} × ${item.qty} (${item.price}) <button class="btn btn-sm btn-danger" onclick="poItems.splice(${i},1);document.getElementById('poItemsList').innerHTML='';">✕</button></li>`).join('');
           document.getElementById('fPOQty').value = '';
           UI.showToast('تمت الإضافة');
         };
@@ -661,22 +626,22 @@
       receive(id) {
         if (!confirm('استلام الطلبية وإضافة الكميات للمخزون؟')) return;
         const po = Services.Purchase.receive(id);
-        if (po) { UI.showToast('تم استلام الطلبية'); Controllers.Purchases.render(); } else { UI.showToast('خطأ', 'error'); }
+        if (po) { UI.showToast('تم استلام الطلبية'); Controllers.Purchases.render(); Controllers.Dashboard.render(); } else { UI.showToast('خطأ', 'error'); }
       }
     };
 
-    // --- 4.6 نقاط البيع (POS) مطورة ---
+    // ---- نقاط البيع ----
+    let cartItems = [];
     Controllers.POS = {
-      cart: [],
       render() {
         const products = Services.Product.getAll().filter(p => p.quantity > 0);
         const customers = Services.Customer.getAll();
         const prodHTML = products.map(p => `<button class="btn btn-line btn-sm" onclick="Controllers.POS.addToCart('${p.id}')">${p.name} (${p.quantity})</button>`).join(' ');
-        const cartHTML = this.cart.map((item, idx) => `<div class="flex" style="padding:.2rem 0;border-bottom:1px solid var(--lineSoft);">
+        const cartHTML = cartItems.map((item, idx) => `<div class="flex" style="padding:.2rem 0;border-bottom:1px solid var(--lineSoft);">
           <span>${item.name} × ${item.qty}</span><span>${(item.price*item.qty).toFixed(0)}</span>
           <button class="btn btn-sm btn-danger" onclick="Controllers.POS.removeFromCart(${idx})">✕</button>
         </div>`).join('');
-        const total = this.cart.reduce((s,i) => s + i.price * i.qty, 0);
+        const total = cartItems.reduce((s,i) => s + i.price * i.qty, 0);
         const settings = Services.Settings.get();
         const tax = total * (settings.taxRate || 0) / 100;
         const grandTotal = total + tax;
@@ -705,43 +670,83 @@
       addToCart(id) {
         const p = Services.Product.getById(id);
         if (!p || p.quantity <= 0) return UI.showToast('غير متوفر', 'error');
-        const existing = this.cart.find(item => item.id === id);
+        const existing = cartItems.find(item => item.id === id);
         if (existing) {
           if (existing.qty >= p.quantity) return UI.showToast('الكمية القصوى', 'warning');
           existing.qty++;
         } else {
-          this.cart.push({ id: p.id, name: p.name, price: p.salePrice, qty: 1 });
+          cartItems.push({ id: p.id, name: p.name, price: p.salePrice, qty: 1 });
         }
         this.render();
       },
-      removeFromCart(idx) { this.cart.splice(idx, 1); this.render(); },
-      clearCart() { this.cart = []; this.render(); },
+      removeFromCart(idx) { cartItems.splice(idx, 1); this.render(); },
+      clearCart() { cartItems = []; this.render(); },
       checkout() {
-        if (!this.cart.length) return UI.showToast('السلة فارغة', 'error');
+        if (!cartItems.length) return UI.showToast('السلة فارغة', 'error');
         const customerId = document.getElementById('posCustomer').value;
         const paymentMethod = document.getElementById('posPayment').value;
         const discount = parseFloat(document.getElementById('posDiscount').value) || 0;
         const settings = Services.Settings.get();
-        let total = this.cart.reduce((s, i) => s + i.price * i.qty, 0);
+        let total = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
         const discountAmount = total * (discount / 100);
         total = total - discountAmount;
         const tax = total * (settings.taxRate || 0) / 100;
         const grandTotal = total + tax;
-        const items = this.cart.map(item => {
+        const items = cartItems.map(item => {
           const p = Services.Product.getById(item.id);
-          if (p) { p.quantity -= item.qty; Services.Product.update(p.id, { quantity: p.quantity });
-            Services.Operation.record({ productId: p.id, type: 'out', qty: item.qty, note: 'بيع POS' }); }
+          if (p) {
+            p.quantity -= item.qty;
+            Services.Product.update(p.id, { quantity: p.quantity });
+            const ops = Storage.get('wm_operations', []);
+            ops.push({
+              id: uid(),
+              productId: p.id,
+              productName: p.name,
+              type: 'out',
+              qty: item.qty,
+              note: 'بيع POS',
+              createdAt: Date.now()
+            });
+            Storage.set('wm_operations', ops);
+          }
           return { ...item, cost: p?.purchasePrice || 0 };
         });
-        const sale = Services.Sales.create({ customerId, items, total: grandTotal, discount: discountAmount, tax, paymentMethod, note: '' });
-        this.cart = [];
+        Services.Sales.create({ customerId, items, total: grandTotal, discount: discountAmount, tax, paymentMethod, note: '' });
+        cartItems = [];
         this.render();
-        UI.showToast(`✅ فاتورة ${sale.number} - ${grandTotal.toFixed(0)} ${settings.currency}`);
-        Controllers.Dashboard.render(); // تحديث لوحة التحكم
+        UI.showToast(`✅ تم البيع - ${grandTotal.toFixed(0)} ${settings.currency}`);
+        Controllers.Dashboard.render();
       }
     };
 
-    // --- 4.7 التقارير المتقدمة ---
+    // ---- العملاء ----
+    Controllers.Customers = {
+      render() {
+        const list = Services.Customer.getAll();
+        let rows = list.map(c => `<tr><td>${c.name}</td><td>${c.phone||''}</td>
+          <td><button class="btn btn-sm btn-danger" onclick="Controllers.Customers.delete('${c.id}')">🗑️</button></td></tr>`).join('');
+        const html = `
+          <div class="flex mb-1"><div class="flex-spacer"></div><button class="btn btn-primary" onclick="Controllers.Customers.showAdd()">➕ إضافة عميل</button></div>
+          <div class="panel"><table class="tbl"><thead><tr><th>الاسم</th><th>الهاتف</th><th>إجراءات</th></tr></thead><tbody>${rows||'<tr><td colspan="3" class="text-muted">لا يوجد عملاء</td></tr>'}</tbody></table></div>
+        `;
+        UI.renderPage('customers', html);
+      },
+      showAdd() {
+        const body = `<div class="form-grid"><div class="span-2"><label>اسم العميل</label><input class="input" id="fCName"></div>
+        <div><label>الهاتف</label><input class="input" id="fCPhone"></div></div>`;
+        UI.openModal('إضافة عميل', body, 'حفظ', () => {
+          const name = document.getElementById('fCName').value.trim();
+          if (!name) return UI.showToast('الاسم مطلوب', 'error');
+          Services.Customer.create(name, document.getElementById('fCPhone').value);
+          UI.closeModal();
+          Controllers.Customers.render();
+          UI.showToast('تمت الإضافة');
+        });
+      },
+      delete(id) { if (confirm('حذف العميل؟')) { Services.Customer.delete(id); Controllers.Customers.render(); UI.showToast('تم الحذف'); } }
+    };
+
+    // ---- التقارير ----
     Controllers.Reports = {
       render() {
         const stats = Services.Report.getDashboardStats();
@@ -754,16 +759,16 @@
             <div class="stat"><div class="stat-icon">🏢</div><div><span class="stat-label">عدد الموردين</span><span class="stat-value">${stats.suppliers}</span></div></div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-            <div class="panel"><div class="panel-head"><h3>💳 توزيع المدفوعات</h3></div><ul>${dist.map(d => `<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>${d.label}</span><span>${d.value.toFixed(0)}</span></li>`).join('')}</ul></div>
-            <div class="panel"><div class="panel-head"><h3>🏆 أفضل الموردين</h3></div><ul>${bestSuppliers.map(d => `<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>${d.name}</span><span>${d.spent.toFixed(0)}</span></li>`).join('')}</ul></div>
+            <div class="panel"><div class="panel-head"><h3>💳 توزيع المدفوعات</h3></div><ul>${dist.map(d => `<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>${d.label}</span><span>${d.value.toFixed(0)}</span></li>`).join('')||'<li class="text-muted">لا توجد بيانات</li>'}</ul></div>
+            <div class="panel"><div class="panel-head"><h3>🏆 أفضل الموردين</h3></div><ul>${bestSuppliers.map(d => `<li style="padding:.5rem 1rem;display:flex;justify-content:space-between;"><span>${d.name}</span><span>${d.spent.toFixed(0)}</span></li>`).join('')||'<li class="text-muted">لا توجد بيانات</li>'}</ul></div>
           </div>
-          <div class="panel"><div class="panel-head"><h3>📋 تحليل ABC (محاكاة)</h3></div><div style="padding:1rem;color:var(--muted);">منتجات الفئة A (الأعلى قيمة): ${Services.Product.getAll().sort((a,b)=>(b.salePrice*b.quantity)-(a.salePrice*a.quantity)).slice(0,5).map(p=>p.name).join('، ')}</div></div>
+          <div class="panel"><div class="panel-head"><h3>📋 تحليل ABC (محاكاة)</h3></div><div style="padding:1rem;color:var(--muted);">منتجات الفئة A (الأعلى قيمة): ${Services.Product.getAll().sort((a,b)=>(b.salePrice*b.quantity)-(a.salePrice*a.quantity)).slice(0,5).map(p=>p.name).join('، ')||'لا توجد منتجات'}</div></div>
         `;
         UI.renderPage('reports', html);
       }
     };
 
-    // --- 4.8 الذكاء الاصطناعي ---
+    // ---- الذكاء الاصطناعي ----
     Controllers.AI = {
       render() {
         const analysis = Services.AI.analyze();
@@ -781,10 +786,11 @@
       }
     };
 
-    // --- 4.9 الإعدادات ---
+    // ---- الإعدادات (مع إمكانية تغيير بيانات الدخول) ----
     Controllers.Settings = {
       render() {
         const settings = Services.Settings.get();
+        const creds = Services.Auth.getCredentials();
         const html = `
           <div class="panel"><div class="panel-head"><h3>⚙️ إعدادات النظام</h3></div>
           <div style="padding:1.2rem;">
@@ -795,18 +801,27 @@
               <div><label>الحد الأدنى الافتراضي</label><input class="input" id="setMinStock" type="number" value="${settings.defaultMinStock}"></div>
               <div><label>الشعار (رمز)</label><input class="input" id="setLogo" value="${settings.logo}"></div>
             </div>
-            <button class="btn btn-primary mt-1" onclick="Controllers.Settings.save()">💾 حفظ الإعدادات</button>
+            <button class="btn btn-primary mt-1" onclick="Controllers.Settings.saveSettings()">💾 حفظ الإعدادات</button>
+          </div></div>
+          <div class="panel"><div class="panel-head"><h3>🔐 بيانات الدخول</h3></div>
+          <div style="padding:1.2rem;">
+            <div class="form-grid">
+              <div><label>اسم المستخدم الجديد</label><input class="input" id="newUsername" value="${creds.username}" placeholder="اسم المستخدم"></div>
+              <div><label>كلمة المرور الجديدة</label><input class="input" id="newPassword" type="text" placeholder="كلمة المرور الجديدة"></div>
+            </div>
+            <button class="btn btn-primary mt-1" onclick="Controllers.Settings.changeCredentials()">🔑 تغيير بيانات الدخول</button>
+            <div style="margin-top:.5rem;font-size:.7rem;color:var(--muted);">(سيتم تسجيل الخروج تلقائياً بعد التغيير)</div>
           </div></div>
           <div class="panel"><div class="panel-head"><h3>👤 إدارة المستخدمين</h3></div>
           <div style="padding:1.2rem;">
-            <div class="flex"><input class="input" id="newUsername" placeholder="اسم المستخدم" style="max-width:200px;"><input class="input" id="newUserPass" type="password" placeholder="كلمة المرور" style="max-width:200px;"><button class="btn btn-primary" onclick="Controllers.Settings.addUser()">➕ إضافة</button></div>
+            <div class="flex"><input class="input" id="newUsername2" placeholder="اسم المستخدم" style="max-width:200px;"><input class="input" id="newUserPass2" type="password" placeholder="كلمة المرور" style="max-width:200px;"><button class="btn btn-primary" onclick="Controllers.Settings.addUser()">➕ إضافة</button></div>
             <ul id="userList" style="margin-top:.5rem;"></ul>
           </div></div>
         `;
         UI.renderPage('settings', html);
         this.renderUsers();
       },
-      save() {
+      saveSettings() {
         Services.Settings.update({
           shopName: document.getElementById('setShopName').value,
           currency: document.getElementById('setCurrency').value,
@@ -817,36 +832,47 @@
         UI.showToast('تم حفظ الإعدادات');
         this.render();
       },
+      changeCredentials() {
+        const username = document.getElementById('newUsername').value.trim();
+        const password = document.getElementById('newPassword').value.trim();
+        if (!username || !password) return UI.showToast('املأ الحقول', 'error');
+        if (password.length < 4) return UI.showToast('كلمة المرور يجب أن تكون 4 أحرف على الأقل', 'error');
+        Services.Auth.updateCredentials(username, password);
+        UI.showToast('✅ تم تغيير بيانات الدخول، سيتم تسجيل الخروج');
+        // تسجيل الخروج
+        Storage.set('wm_auth', { loggedIn: false });
+        setTimeout(() => location.reload(), 1000);
+      },
       renderUsers() {
-        const users = Storage.get(APP.storageKeys.users, []);
+        const users = Storage.get('wm_users', []);
         const list = document.getElementById('userList');
         if (list) list.innerHTML = users.map(u => `<li style="padding:.3rem 0;display:flex;justify-content:space-between;"><span>${u.username} (${u.role||'كاشير'})</span><button class="btn btn-sm btn-danger" onclick="Controllers.Settings.deleteUser('${u.username}')">✕</button></li>`).join('');
       },
       addUser() {
-        const username = document.getElementById('newUsername').value.trim();
-        const pass = document.getElementById('newUserPass').value.trim();
+        const username = document.getElementById('newUsername2').value.trim();
+        const pass = document.getElementById('newUserPass2').value.trim();
         if (!username || !pass) return UI.showToast('املأ الحقول', 'error');
-        const users = Storage.get(APP.storageKeys.users, []);
+        const users = Storage.get('wm_users', []);
         if (users.find(u => u.username === username)) return UI.showToast('المستخدم موجود', 'error');
         users.push({ username, password: btoa(pass), role: 'كاشير' });
-        Storage.set(APP.storageKeys.users, users);
+        Storage.set('wm_users', users);
         this.renderUsers();
         UI.showToast('تمت الإضافة');
       },
       deleteUser(username) {
-        let users = Storage.get(APP.storageKeys.users, []);
+        let users = Storage.get('wm_users', []);
         users = users.filter(u => u.username !== username);
-        Storage.set(APP.storageKeys.users, users);
+        Storage.set('wm_users', users);
         this.renderUsers();
       }
     };
 
-    // =============================================================
-    // 5. تهيئة التطبيق
-    // =============================================================
-    function initApp() {
+    // ====================================================
+    // 5. التهيئة
+    // ====================================================
+    function init() {
       // التحقق من الدخول
-      const auth = Storage.get(APP.storageKeys.auth, null);
+      const auth = Storage.get('wm_auth', null);
       if (!auth || !auth.loggedIn) {
         document.getElementById('loginScreen').style.display = 'flex';
         document.getElementById('appRoot').style.display = 'none';
@@ -855,7 +881,7 @@
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('appRoot').style.display = 'flex';
 
-      // تعيين الثيم
+      // الثيم
       const settings = Services.Settings.get();
       document.documentElement.setAttribute('data-theme', settings.theme || 'dark');
       document.getElementById('themeToggle').textContent = settings.theme === 'dark' ? '☀️' : '🌙';
@@ -863,7 +889,7 @@
       // رندر الصفحة الافتراضية
       Controllers.Dashboard.render();
 
-      // ربط الأحداث العامة
+      // الأحداث العامة
       document.getElementById('themeToggle').addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme');
         const next = current === 'dark' ? 'light' : 'dark';
@@ -875,11 +901,17 @@
       document.querySelectorAll('.nav-item').forEach(btn => {
         btn.addEventListener('click', () => {
           const page = btn.dataset.page;
-          const map = { dashboard: Controllers.Dashboard, products: Controllers.Products,
-            suppliers: Controllers.Suppliers, purchases: Controllers.Purchases,
-            operations: Controllers.Products, pos: Controllers.POS,
-            customers: Controllers.Products, reports: Controllers.Reports,
-            ai: Controllers.AI, settings: Controllers.Settings };
+          const map = {
+            dashboard: Controllers.Dashboard,
+            products: Controllers.Products,
+            suppliers: Controllers.Suppliers,
+            purchases: Controllers.Purchases,
+            pos: Controllers.POS,
+            customers: Controllers.Customers,
+            reports: Controllers.Reports,
+            ai: Controllers.AI,
+            settings: Controllers.Settings
+          };
           if (map[page]) map[page].render();
           else UI.showToast('صفحة قيد التطوير', 'warning');
         });
@@ -887,13 +919,11 @@
 
       document.getElementById('quickAddBtn').addEventListener('click', () => Controllers.Products.showAdd());
 
-      // خروج
       document.getElementById('logoutBtn').addEventListener('click', () => {
-        Storage.set(APP.storageKeys.auth, { loggedIn: false });
+        Storage.set('wm_auth', { loggedIn: false });
         location.reload();
       });
 
-      // مودال إغلاق
       document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', UI.closeModal));
       document.getElementById('genericModal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) UI.closeModal();
@@ -906,20 +936,26 @@
       updateClock();
       setInterval(updateClock, 1000);
 
-      // تسجيل الدخول
+      // تسجيل الدخول باستخدام بيانات التخزين المحلي
       document.getElementById('loginBtn').addEventListener('click', () => {
-        const pass = document.getElementById('loginPass').value;
-        if (pass === 'admin123') {
-          Storage.set(APP.storageKeys.auth, { loggedIn: true });
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPass').value.trim();
+        if (Services.Auth.login(username, password)) {
+          Storage.set('wm_auth', { loggedIn: true });
           location.reload();
         } else {
-          UI.showToast('كلمة مرور خاطئة', 'error');
+          UI.showToast('اسم المستخدم أو كلمة المرور غير صحيحة', 'error');
         }
       });
-      document.getElementById('loginPass').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('loginBtn').click(); });
+      document.getElementById('loginPass').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('loginBtn').click();
+      });
+      document.getElementById('loginUsername').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') document.getElementById('loginBtn').click();
+      });
 
       // بيانات افتراضية (Seed)
-      if (Storage.get(APP.storageKeys.products, null) === null) {
+      if (Storage.get('wm_products', null) === null) {
         Services.Product.create({ name: 'ماوس لاسلكي', sku: 'MS-01', category: 'إلكترونيات', purchasePrice: 150, salePrice: 250, quantity: 50, minStock: 10 });
         Services.Product.create({ name: 'كيبورد ميكانيكي', sku: 'KB-01', category: 'إلكترونيات', purchasePrice: 400, salePrice: 650, quantity: 20, minStock: 5 });
         const sup = Services.Supplier.create('الشركة العالمية للتوزيع', 'احمد', '0123456789');
@@ -927,15 +963,11 @@
         UI.showToast('✅ تم تهيئة البيانات الافتراضية');
       }
 
-      UI.showToast('🚀 مرحباً بك في مخزني Pro الإصدار الاحترافي');
+      window.Controllers = Controllers;
+      UI.showToast('🚀 مرحباً بك في مخزني Pro الاحترافي');
     }
 
-    // ربط الكونترولرز بالعالمي للاستخدام في onclicks
-    window.Controllers = Controllers;
-
-    // بدء التطبيق
-    document.addEventListener('DOMContentLoaded', initApp);
-
+    document.addEventListener('DOMContentLoaded', init);
   })();
 </script>
 </body>
